@@ -23,6 +23,15 @@ const {
   replyOpts,
 } = require('./services/adminBotService');
 
+async function safeReply(bot, msg, text, extra = {}) {
+  try {
+    return await bot.sendMessage(msg.chat.id, text, replyOpts(msg, extra));
+  } catch (err) {
+    console.warn('[bot] safeReply retry plain:', err.message);
+    return bot.sendMessage(msg.chat.id, text, extra);
+  }
+}
+
 async function runAutoPost(slot = null, category = null) {
   return runPipeline({ target: 'channel', slot, category });
 }
@@ -30,12 +39,12 @@ async function runAutoPost(slot = null, category = null) {
 async function runTestCommand(msg, category = 'spot') {
   const bot = getBot();
   const chatId = msg.chat.id;
-  const statusMsg = await bot.sendMessage(
-    chatId,
+  const statusMsg = await safeReply(
+    bot,
+    msg,
     category === 'airdrop'
       ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-      : '⏳ Sedang mengambil data market terbaru & generate konten AI...',
-    { ...replyOpts(msg) }
+      : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
   );
 
 
@@ -67,7 +76,7 @@ async function runTestCommand(msg, category = 'spot') {
         message_id: statusMsg.message_id,
       });
     } catch {
-      await bot.sendMessage(chatId, `❌ Tes gagal: ${err.message}`, replyOpts(msg));
+      await safeReply(bot, msg, `❌ Tes gagal: ${err.message}`);
     }
     throw err;
   }
@@ -76,12 +85,12 @@ async function runTestCommand(msg, category = 'spot') {
 async function runPostNowCommand(msg, category = 'spot') {
   const bot = getBot();
   const chatId = msg.chat.id;
-  const statusMsg = await bot.sendMessage(
-    chatId,
+  const statusMsg = await safeReply(
+    bot,
+    msg,
     category === 'airdrop'
       ? '⏳ Posting Airdrop/DEX ke channel...'
-      : '⏳ Posting ke channel utama...',
-    { ...replyOpts(msg) }
+      : '⏳ Posting ke channel utama...'
   );
 
 
@@ -104,7 +113,7 @@ async function runPostNowCommand(msg, category = 'spot') {
         message_id: statusMsg.message_id,
       });
     } catch {
-      await bot.sendMessage(chatId, `❌ Post gagal: ${err.message}`, replyOpts(msg));
+      await safeReply(bot, msg, `❌ Post gagal: ${err.message}`);
     }
     throw err;
   }
@@ -121,10 +130,12 @@ async function handleIncomingMessage(msg) {
       msg.chat?.type === 'private' ||
       ['/test', '/postnow', '/test_airdrop', '/airdrop'].includes(parsed.cmd)
     ) {
-      await getBot().sendMessage(msg.chat.id, denyText(), replyOpts(msg));
+      await safeReply(getBot(), msg, denyText());
     }
     return;
   }
+
+  console.log(`[bot] cmd @${msg.from?.username}: ${msg.text}`);
 
   if (parsed.cmd === '/test') {
     await runTestCommand(msg, 'spot');
@@ -152,11 +163,9 @@ async function handleIncomingMessage(msg) {
 
   const result = handleAdminCommand(msg);
   if (result.reply) {
-    await getBot().sendMessage(
-      msg.chat.id,
-      result.reply,
-      replyOpts(msg, { parse_mode: result.parseMode || undefined })
-    );
+    await safeReply(getBot(), msg, result.reply, {
+      parse_mode: result.parseMode || undefined,
+    });
   }
 
   if (result.exchangeSource || result.postCategory) {

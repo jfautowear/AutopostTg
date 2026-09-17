@@ -3,7 +3,7 @@ name: Admin Telegram Commands
 # Poll command dari @jfnetworkindo untuk atur jadwal / force post
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:

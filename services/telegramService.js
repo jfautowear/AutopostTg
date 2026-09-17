@@ -6,16 +6,23 @@ const TelegramBot = require('node-telegram-bot-api');
  */
 const MAX_CAPTION_CHARS = Number(process.env.MAX_CAPTION_CHARS) || 700;
 
-const AFFILIATE_BUTTONS = [
-  { text: 'Trade di OKX CEX', url: 'https://okx.ac/join/76785925' },
-  { text: 'OKX Web3 DEX', url: 'https://web3.okx.ac/join/JFNETWORK' },
-  { text: 'Trade di Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
+/** Referral OKX Web3 DEX — dipilih acak tiap post. */
+const OKX_WEB3_URLS = [
+  'https://web3.okx.ac/join/JFNETWORK',
+  'https://web3.okx.ac/join/OKXDEXJF',
 ];
 
-const OKX_WEB3_DEX = {
-  text: '🔍 Cek di OKX Web3 DEX',
-  url: 'https://web3.okx.ac/join/JFNETWORK',
-};
+function pickOkxWeb3Url() {
+  return OKX_WEB3_URLS[Math.floor(Math.random() * OKX_WEB3_URLS.length)];
+}
+
+function buildAffiliateButtons() {
+  return [
+    { text: 'Trade di OKX CEX', url: 'https://okx.ac/join/76785925' },
+    { text: 'OKX Web3 DEX', url: pickOkxWeb3Url() },
+    { text: 'Trade di Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
+  ];
+}
 
 const AIRDROP_DISCLAIMER = '⚠️ HIGH RISK · NFA & DYOR. Bukan jaminan airdrop.';
 const DISCLAIMER = '⚠️ Disclaimer: NFA & DYOR.';
@@ -108,16 +115,20 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;');
 }
 
-/** Keyboard spot CEX (3 affiliate). */
+/** Keyboard spot CEX (3 affiliate) — OKX Web3 URL diacak. */
 function buildInlineKeyboard() {
   return {
-    inline_keyboard: AFFILIATE_BUTTONS.map((btn) => [{ text: btn.text, url: btn.url }]),
+    inline_keyboard: buildAffiliateButtons().map((btn) => [
+      { text: btn.text, url: btn.url },
+    ]),
   };
 }
 
-/** Keyboard khusus kategori airdrop/DEX — fokus OKX Web3 DEX. */
+/** Keyboard airdrop/DEX — tombol OKX Web3 diacak antar referral. */
 function buildAirdropInlineKeyboard(snapshot) {
-  const rows = [[{ text: OKX_WEB3_DEX.text, url: OKX_WEB3_DEX.url }]];
+  const web3Url = pickOkxWeb3Url();
+  console.log(`[telegram] OKX Web3 button → ${web3Url}`);
+  const rows = [[{ text: '🔍 Cek di OKX Web3 DEX', url: web3Url }]];
   const url = snapshot?.hotGem?.url;
   if (url && /^https?:\/\//i.test(url)) {
     rows.push([{ text: '📊 Lihat chart', url }]);
@@ -353,6 +364,7 @@ module.exports = {
   telegramLength,
   clip,
   MAX_CAPTION_CHARS,
-  AFFILIATE_BUTTONS,
-  OKX_WEB3_DEX,
+  OKX_WEB3_URLS,
+  pickOkxWeb3Url,
+  buildAffiliateButtons,
 };
