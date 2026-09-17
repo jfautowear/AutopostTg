@@ -178,7 +178,19 @@ async function handleIncomingMessage(msg) {
 
 function startCommandBot() {
   // Hindari double instance: buat bot polling baru
-  const bot = getBot({ polling: true, forceNew: true });
+  const bot = getBot({ polling: false, forceNew: true });
+
+  bot
+    .deleteWebHook({ drop_pending_updates: false })
+    .then(() => {
+      console.log('[bot] Webhook cleared, start polling…');
+      return bot.startPolling();
+    })
+    .catch((err) => {
+      console.warn('[bot] deleteWebhook/startPolling:', err.message);
+      return bot.startPolling();
+    });
+
   console.log('[bot] Polling command aktif (/test, /postnow, /jadwal, ...)');
   console.log(
     `[bot] Admin only: @${process.env.ADMIN_TELEGRAM_USERNAME || 'jfnetworkindo'}`

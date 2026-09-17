@@ -140,6 +140,15 @@ async function executePostNow(bot, msg, category = 'spot') {
 
 async function processCommands() {
   const bot = getBot();
+
+  // Bot yang pernah pakai webhook tidak bisa getUpdates sampai webhook dihapus
+  try {
+    await bot.deleteWebHook({ drop_pending_updates: false });
+    console.log('[commands] Webhook dihapus (siap polling getUpdates)');
+  } catch (err) {
+    console.warn('[commands] deleteWebhook:', err.message);
+  }
+
   let offset = readOffset();
   console.log(`[commands] Poll getUpdates offset=${offset}`);
 
