@@ -1,13 +1,9 @@
 name: Admin Telegram Commands
 
-# Hemat Actions (free tier):
-# - Command realtime = npm start di PC
-# - GHA hanya backup 2x/hari + Run manual
+# Command chat TIDAK dijalankan otomatis di Actions (hemat free tier).
+# Uji lokal: npm start  |  npm run commands
+# Workflow ini hanya untuk Run manual jika diperlukan.
 on:
-  schedule:
-    # 10:00 & 22:00 WIB (= 03:00 & 15:00 UTC)
-    - cron: '0 3 * * *'
-    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:

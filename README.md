@@ -28,15 +28,35 @@ Akun selain `@jfnetworkindo` ditolak.
 
 Jadwal tersimpan di `config/schedule.json`. Workflow **Admin Telegram Commands** poll tiap ~10 menit.
 
-## GitHub Actions (hemat free tier)
+## Uji lokal (CMD / PowerShell)
 
-| Workflow | Jadwal | Estimasi |
-|----------|--------|----------|
-| Autopost | **2x/hari** (09:00 & 21:00 WIB) + Run manual | ~2–4 menit/hari |
-| Admin commands | **2x/hari** backup + Run manual | ~1–2 menit/hari |
+Buka folder project dulu:
 
-Command **realtime** pakai `npm start` di PC (tidak makan kuota Actions).
-Jangan set cron `*/5` atau `*/15` — boros menit gratis.
+```bat
+cd /d "E:\AUTOPOST TELEGRAM"
+```
+
+| Perintah | Fungsi |
+|----------|--------|
+| `npm start` | Bot **realtime** + jadwal lokal (chat `/help`, `/test`, dll. langsung balas) |
+| `npm run commands` | Proses command Telegram **sekali** lalu keluar |
+| `npm run post:force` | Post spot ke channel sekarang |
+| `npm run post:airdrop` | Post airdrop/DEX ke channel sekarang |
+| `npm run post:test` | Preview spot ke `TEST_CHAT_ID` |
+| `npm run post:test-airdrop` | Preview airdrop ke `TEST_CHAT_ID` |
+| `npm run post:once` | Ikuti `config/schedule.json` (skip jika di luar jam) |
+
+Contoh uji chat:
+
+```bat
+cd /d "E:\AUTOPOST TELEGRAM"
+npm start
+```
+
+Lalu DM `@jfnetwork_bot` → `/help` / `/test` / `/airdrop`.
+Stop bot: `Ctrl+C` di jendela CMD.
+
+**GitHub Actions** hanya untuk **penjadwalan autopost** (09:00 & 21:00 WIB). Command chat tidak di-poll otomatis di Actions.
 
 ### Secrets (Settings → Secrets → Actions)
 
