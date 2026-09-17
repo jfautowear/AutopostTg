@@ -11,7 +11,11 @@
     "post:test": "node index.js --once --test",
     "post:airdrop": "node index.js --once --force --airdrop",
     "post:test-airdrop": "node index.js --once --test --airdrop",
-    "commands": "node scripts/processCommands.js"
+    "commands": "node scripts/processCommands.js",
+    "activity:poll": "node scripts/pollActivity.js",
+    "activity:announce": "node scripts/announceWeeklyTop.js",
+    "topaktif": "node scripts/announceWeeklyTop.js --force",
+    "topaktif:status": "node -e \"require('dotenv').config(); console.log(require('./services/weeklyTopService').statusText())\""
   },
   "engines": {
     "node": ">=18"

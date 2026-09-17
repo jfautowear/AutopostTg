@@ -22,6 +22,14 @@ const {
   parseCommand,
   replyOpts,
 } = require('./services/adminBotService');
+const {
+  recordMessage,
+  recordReaction,
+  activityEnabled,
+  getActivityChatRef,
+  resetWeek,
+} = require('./services/activityService');
+const { postWeeklyTop, statusText } = require('./services/weeklyTopService');
 
 async function safeReply(bot, msg, text, extra = {}) {
   try {
@@ -161,6 +169,20 @@ async function handleIncomingMessage(msg) {
     return;
   }
 
+  if (
+    parsed.cmd === '/topaktif' ||
+    parsed.cmd === '/top_aktif' ||
+    parsed.cmd === '/topaktif_post' ||
+    parsed.cmd === '/top_aktif_post' ||
+    parsed.cmd === '/topaktif_test' ||
+    parsed.cmd === '/top_aktif_test' ||
+    parsed.cmd === '/topaktif_reset' ||
+    parsed.cmd === '/top_aktif_reset'
+  ) {
+    await runTopAktifCommand(msg, parsed.cmd);
+    return;
+  }
+
   const result = handleAdminCommand(msg);
   if (result.reply) {
     await safeReply(getBot(), msg, result.reply, {
@@ -183,31 +205,119 @@ async function handleIncomingMessage(msg) {
   }
 }
 
+async function runTopAktifCommand(msg, cmd) {
+  const bot = getBot();
+  let mode = 'status';
+  if (String(cmd).includes('post')) mode = 'post';
+  else if (String(cmd).includes('test')) mode = 'test';
+  else if (String(cmd).includes('reset')) mode = 'reset';
+
+  try {
+    if (mode === 'status') {
+      await safeReply(bot, msg, statusText());
+      return;
+    }
+    if (mode === 'reset') {
+      resetWeek();
+      await safeReply(bot, msg, '✅ Skor Top Aktif minggu ini di-reset.');
+      return;
+    }
+    if (mode === 'test') {
+      const result = await postWeeklyTop({
+        force: true,
+        isTest: true,
+        targetChatId: msg.chat.id,
+      });
+      await safeReply(
+        bot,
+        msg,
+        `✅ Preview Top Aktif terkirim (test).\n👥 ${result.count} user | minggu ${result.weekKey}`
+      );
+      return;
+    }
+    if (mode === 'post') {
+      const statusMsg = await safeReply(bot, msg, '⏳ Mengirim Top 10 ke grup...');
+      const result = await postWeeklyTop({ force: true, isTest: false });
+      try {
+        await bot.editMessageText(
+          `✅ Top Aktif dipost!\n💬 ${result.chatId}#${result.messageId}\n👥 ${result.count} user`,
+          { chat_id: msg.chat.id, message_id: statusMsg.message_id }
+        );
+      } catch {
+        await safeReply(
+          bot,
+          msg,
+          `✅ Top Aktif dipost!\n💬 ${result.chatId}#${result.messageId}`
+        );
+      }
+    }
+  } catch (err) {
+    console.error('[topaktif] Gagal:', err.message);
+    await safeReply(bot, msg, `❌ Top Aktif gagal: ${err.message}`);
+  }
+}
+
 function startCommandBot() {
-  // Hindari double instance: buat bot polling baru
   const bot = getBot({ polling: false, forceNew: true });
+  // gha = tracking via Actions (default). local = PC mencatat aktivitas.
+  const activitySource = (process.env.ACTIVITY_SOURCE || 'gha').toLowerCase();
+  const trackLocal = activitySource === 'local' && activityEnabled();
+
+  const pollingOpts = {
+    params: {
+      allowed_updates: trackLocal
+        ? ['message', 'edited_message', 'message_reaction']
+        : ['message'],
+    },
+  };
 
   bot
     .deleteWebHook({ drop_pending_updates: false })
     .then(() => {
       console.log('[bot] Webhook cleared, start polling…');
-      return bot.startPolling();
+      return bot.startPolling(pollingOpts);
     })
     .catch((err) => {
       console.warn('[bot] deleteWebhook/startPolling:', err.message);
-      return bot.startPolling();
+      return bot.startPolling(pollingOpts);
     });
 
-  console.log('[bot] Polling command aktif (/test, /postnow, /jadwal, ...)');
+  console.log('[bot] Polling command aktif (/test, /postnow, /topaktif, ...)');
   console.log(
     `[bot] Admin only: @${process.env.ADMIN_TELEGRAM_USERNAME || 'jfnetworkindo'}`
   );
 
+  if (trackLocal) {
+    console.log(`[bot] Top Aktif LOCAL tracking: ${getActivityChatRef()}`);
+  } else {
+    console.log(
+      '[bot] Top Aktif via GitHub Actions (ACTIVITY_SOURCE=gha). Jangan biarkan npm start ON terus — bentrok getUpdates.'
+    );
+  }
+
   bot.on('message', (msg) => {
+    if (trackLocal) {
+      try {
+        recordMessage(msg);
+      } catch (err) {
+        console.warn('[activity] recordMessage:', err.message);
+      }
+    }
+
     handleIncomingMessage(msg).catch((err) => {
       console.error('[bot] Handler error:', err.message);
     });
   });
+
+  if (trackLocal) {
+    bot.on('message_reaction', (reaction) => {
+      try {
+        recordReaction(reaction);
+      } catch (err) {
+        console.warn('[activity] recordReaction:', err.message);
+      }
+    });
+  }
 
   bot.on('polling_error', (err) => {
     console.error('[bot] polling_error:', err.message);
@@ -283,6 +393,26 @@ function startScheduler() {
     { timezone }
   );
 
+  // Top 10 lokal hanya jika eksplisit (default = GHA announce, hindari double post)
+  if (
+    activityEnabled() &&
+    String(process.env.ACTIVITY_LOCAL_CRON || '').toLowerCase() === 'true'
+  ) {
+    const weeklyCron = process.env.WEEKLY_TOP_CRON || '0 10 * * 6';
+    console.log(`[scheduler] Weekly Top Aktif LOKAL: cron "${weeklyCron}" (${timezone})`);
+    cron.schedule(
+      weeklyCron,
+      () => {
+        postWeeklyTop({ force: false, isTest: false }).catch((err) => {
+          console.error('[weeklyTop] Gagal:', err.message);
+        });
+      },
+      { timezone }
+    );
+  } else if (activityEnabled()) {
+    console.log('[scheduler] Weekly Top Aktif: via GitHub Actions (Sabtu pagi)');
+  }
+
   if (process.env.RUN_ON_START === 'true') {
     console.log('[scheduler] RUN_ON_START=true → eksekusi segera');
     runAutoPost(`start-${Date.now()}`).catch((err) =>
@@ -312,7 +442,7 @@ async function main() {
   startScheduler();
   startCommandBot();
   console.log('[scheduler] Menunggu jadwal + command Telegram...');
-  console.log('[scheduler] /test → preview grup private | /postnow → channel');
+  console.log('[scheduler] /test → preview | /postnow → channel | /topaktif → ranking');
 }
 
 main().catch((err) => {

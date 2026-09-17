@@ -2,7 +2,7 @@ name: Autopost Telegram Crypto
 
 # Hemat Actions (free tier):
 # - Hanya 2 slot default (09:00 & 21:00 WIB) + Run manual
-# - Skip cepat jika di luar jadwal schedule.json
+# - Early schedule check SEBELUM npm ci (hemat menit jika skip)
 on:
   schedule:
     # 09:00 WIB = 02:00 UTC
@@ -53,16 +53,38 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Early schedule check (tanpa npm)
+        id: gate
+        env:
+          FORCE_POST: ${{ github.event.inputs.force_post == true && 'true' || 'false' }}
+        run: |
+          set +e
+          node scripts/checkSchedule.js
+          code=$?
+          set -e
+          if [ "$code" -eq 78 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Di luar jadwal / sudah dipost — skip install & AI"
+            exit 0
+          fi
+          if [ "$code" -ne 0 ]; then
+            exit "$code"
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
       - name: Setup Node.js
+        if: steps.gate.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
 
       - name: Install dependencies
+        if: steps.gate.outputs.skip != 'true'
         run: npm ci
 
-      - name: Run autopost (hormati jadwal)
+      - name: Run autopost
+        if: steps.gate.outputs.skip != 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
@@ -93,7 +115,7 @@ jobs:
         run: npm run post:once
 
       - name: Persist last posted slot
-        if: success()
+        if: success() && steps.gate.outputs.skip != 'true'
         run: |
           if git diff --quiet -- config/runtime.json; then
             echo "No runtime change"

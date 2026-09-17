@@ -21,6 +21,12 @@ Test & post:
 /postnow — post spot ke channel
 /airdrop — post Airdrop/DEX ke channel
 
+Top aktif grup (@caricuanhp):
+/topaktif — lihat ranking minggu ini
+/topaktif\\_post — kirim Top 10 ke grup sekarang
+/topaktif\\_test — preview Top 10 ke chat ini
+/topaktif\\_reset — reset skor minggu ini
+
 Jadwal:
 /jadwal — lihat jadwal
 /jadwal\\_set 09:00,21:00 — ganti semua jam
@@ -224,6 +230,22 @@ function handleAdminCommand(msg) {
         category: 'airdrop',
       };
 
+    case '/topaktif':
+    case '/top_aktif':
+      return { reply: null, allowed: true, runTopAktif: 'status' };
+
+    case '/topaktif_post':
+    case '/top_aktif_post':
+      return { reply: null, allowed: true, runTopAktif: 'post' };
+
+    case '/topaktif_test':
+    case '/top_aktif_test':
+      return { reply: null, allowed: true, runTopAktif: 'test' };
+
+    case '/topaktif_reset':
+    case '/top_aktif_reset':
+      return { reply: null, allowed: true, runTopAktif: 'reset' };
+
     case '/kategori':
     case '/category': {
       const val = String(args || '').toLowerCase().trim();
@@ -272,6 +294,7 @@ function handleAdminCommand(msg) {
           `EXCHANGE_SOURCE: ${process.env.EXCHANGE_SOURCE || 'auto'}`,
           `POST_CATEGORY: ${process.env.POST_CATEGORY || 'auto'}`,
           `Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,
+          `Top Aktif: ${process.env.ACTIVITY_ENABLED === 'false' ? 'OFF' : 'ON'} → ${process.env.ACTIVITY_CHAT_ID || process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp'}`,
         ].join('\n'),
         allowed: true,
       };

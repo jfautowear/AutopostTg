@@ -192,17 +192,20 @@ function buildExchangeBundle(tickers, exchangeLabel) {
 }
 
 /**
- * Ambil ringkasan pasar + top gainers + unusual volume + hot coin.
+ * Ambil ringkasan pasar — hanya fetch exchange yang dipakai (hemat API + waktu).
  */
 async function getMarketSnapshot() {
   const primarySource = resolvePrimarySource();
-  const [okxTickers, bitgetTickers] = await Promise.all([
-    fetchOkxTickers(),
-    fetchBitgetTickers(),
-  ]);
 
-  const okx = buildExchangeBundle(okxTickers, 'OKX');
-  const bitget = buildExchangeBundle(bitgetTickers, 'Bitget');
+  let okx = null;
+  let bitget = null;
+
+  if (primarySource === 'okx') {
+    okx = buildExchangeBundle(await fetchOkxTickers(), 'OKX');
+  } else {
+    bitget = buildExchangeBundle(await fetchBitgetTickers(), 'Bitget');
+  }
+
   const primary = primarySource === 'okx' ? okx : bitget;
   const primaryLabel = primarySource === 'okx' ? 'OKX' : 'Bitget';
 
@@ -329,14 +332,12 @@ function gemScore(t) {
 }
 
 async function fetchDexScreenerBoostAddresses() {
-  const urls = [
-    `${DEXSCREENER_BASE}/token-boosts/top/v1`,
-    `${DEXSCREENER_BASE}/token-boosts/latest/v1`,
-  ];
+  // Cukup "top" — hemat 1 round-trip vs top+latest
+  const urls = [`${DEXSCREENER_BASE}/token-boosts/top/v1`];
   const items = [];
   for (const url of urls) {
     try {
-      const { data } = await axios.get(url, { timeout: 15000 });
+      const { data } = await axios.get(url, { timeout: 12000 });
       if (Array.isArray(data)) items.push(...data);
     } catch (err) {
       console.warn('[cryptoService] DexScreener boosts gagal:', err.message);
@@ -353,7 +354,8 @@ async function fetchDexScreenerBoostAddresses() {
     seen.add(key);
     out.push({ chainId, tokenAddress: item.tokenAddress, url: item.url });
   }
-  return out.slice(0, 40);
+  // 15 token ≈ 3 batch parallel — cukup untuk pick hot gem
+  return out.slice(0, 15);
 }
 
 async function fetchDexScreenerPairsByTokens(boosts) {
@@ -394,7 +396,7 @@ async function fetchGeckoTrendingPools() {
         const { data } = await axios.get(
           `${GECKO_BASE}/networks/${network}/trending_pools`,
           {
-            timeout: 15000,
+            timeout: 12000,
             headers: { Accept: 'application/json' },
             params: { include: 'base_token', page: 1 },
           }
@@ -510,7 +512,7 @@ function buildAirdropSummaryText(snapshot) {
   }
 
   lines.push('Watchlist trending (volume spike 1–6h):');
-  for (const g of snapshot.gems || []) {
+  for (const g of (snapshot.gems || []).slice(0, 3)) {
     lines.push(
       `- ${g.symbol} @ ${g.chain}: $${formatPrice(g.priceUsd)} (1h ${formatPct(g.change1h)}, 6h ${formatPct(g.change6h)}) vol1h≈${Math.round(g.volume1h || 0)}`
     );

@@ -1,0 +1,87 @@
+name: Top Aktif Mingguan
+
+# Hemat free tier — poll 2×/hari, JADWAL DIGESER dari autopost (hindari race git push).
+# Autopost: 09:00 & 21:00 WIB | Top Aktif: 08:00 & 20:00 WIB
+# Sabtu pagi (<14:00 WIB) → poll + analisa + post ke t.me/caricuanhp/65640
+on:
+  schedule:
+    # 08:00 WIB = 01:00 UTC
+    - cron: '0 1 * * *'
+    # 20:00 WIB = 13:00 UTC
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force_announce:
+        description: 'Paksa umumkan Top 10 sekarang'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: activity-top-aktif
+  cancel-in-progress: false
+
+jobs:
+  activity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Tentukan mode (poll / poll+announce)
+        id: mode
+        env:
+          FORCE_ANNOUNCE: ${{ github.event.inputs.force_announce == true && 'true' || 'false' }}
+        run: |
+          DOW=$(TZ=Asia/Jakarta date +%u)
+          HOUR=$(TZ=Asia/Jakarta date +%H)
+          echo "WIB day=$DOW hour=$HOUR"
+          if [ "$FORCE_ANNOUNCE" = "true" ]; then
+            echo "announce=true" >> "$GITHUB_OUTPUT"
+          elif [ "$DOW" = "6" ] && [ "$HOUR" -lt 14 ]; then
+            echo "announce=true" >> "$GITHUB_OUTPUT"
+            echo "Sabtu → poll + umumkan Top 10 ke topik 65640"
+          else
+            echo "announce=false" >> "$GITHUB_OUTPUT"
+            echo "Mode poll snapshot saja"
+          fi
+
+      - name: Poll snapshot aktivitas
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ACTIVITY_ENABLED: 'true'
+          ACTIVITY_CHAT_ID: ${{ vars.ACTIVITY_CHAT_ID }}
+          ACTIVITY_THREAD_ID: ${{ vars.ACTIVITY_THREAD_ID }}
+          TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
+          CRON_TIMEZONE: Asia/Jakarta
+          ACTIVITY_WEIGHT_MESSAGE: '2'
+          ACTIVITY_WEIGHT_REACTION: '1'
+        run: node scripts/pollActivity.js
+
+      - name: Analisa snapshot & umumkan Top 10
+        if: steps.mode.outputs.announce == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ACTIVITY_ENABLED: 'true'
+          ACTIVITY_CHAT_ID: ${{ vars.ACTIVITY_CHAT_ID }}
+          ACTIVITY_THREAD_ID: ${{ vars.ACTIVITY_THREAD_ID }}
+          TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
+          CRON_TIMEZONE: Asia/Jakarta
+          FORCE_ANNOUNCE: ${{ github.event.inputs.force_announce == true && 'true' || 'false' }}
+        run: node scripts/announceWeeklyTop.js

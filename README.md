@@ -2,15 +2,13 @@
 
 Repo: https://github.com/jfautowear/AutopostTg
 
-Bot Node.js: fetch **OKX** / **Bitget** → AI (ID) → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp/80483).
+Bot Node.js: fetch **OKX** / **Bitget** / DEX → AI (ID) → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp).
 
 ## Penting: `.env` tidak ikut ke GitHub
 
 File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**, bukan di-commit.
 
 ## Admin chat bot (`@jfnetworkindo` saja)
-
-DM bot Telegram, command:
 
 | Command | Fungsi |
 |---------|--------|
@@ -19,72 +17,80 @@ DM bot Telegram, command:
 | `/jadwal_add 12:30` | Tambah jam |
 | `/jadwal_del 12:30` | Hapus jam |
 | `/jadwal_on` / `/jadwal_off` | Aktif / nonaktif |
-| `/post_sekarang` | Post sekarang |
+| `/test` / `/test_airdrop` | Preview ke `TEST_CHAT_ID` |
+| `/postnow` / `/airdrop` | Post ke channel |
 | `/sumber okx\|bitget\|auto` | Sumber data |
 | `/status` | Status |
 | `/help` | Bantuan |
 
-Akun selain `@jfnetworkindo` ditolak.
+Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json`.
 
-Jadwal tersimpan di `config/schedule.json`. Workflow **Admin Telegram Commands** poll tiap ~10 menit.
+## GitHub Actions (hemat free tier)
 
-## Uji lokal (CMD / PowerShell)
+Repo **publik** → menit Actions GitHub-hosted **gratis tanpa batas**.  
+Kalau suatu saat privat, kuota free ≈ **2.000 menit/bulan**.
 
-Buka folder project dulu:
+| Workflow | Jadwal | Run/bulan | Estimasi menit |
+|----------|--------|-----------|----------------|
+| Autopost | 2×/hari (09 & 21 WIB) | ~60 | ~120–180 |
+| Top Aktif snapshot | 2×/hari (08 & 20 WIB, digeser) | ~60 | ~60–120 |
+| Top Aktif umumkan | Sabtu pagi (ikut run 08:00) | ~4 | sudah dihitung |
+| Admin commands | manual saja | ~0 | ~0 |
+| **Total** | | **~120** | **~180–300 menit/bulan** |
 
-```bat
-cd /d "E:\AUTOPOST TELEGRAM"
-```
+→ Di akun free privat masih **aman** (~10–15% dari 2.000). Di repo publik **tidak makan kuota berbayar**.
 
-| Perintah | Fungsi |
-|----------|--------|
-| `npm start` | Bot **realtime** + jadwal lokal (chat `/help`, `/test`, dll. langsung balas) |
-| `npm run commands` | Proses command Telegram **sekali** lalu keluar |
-| `npm run post:force` | Post spot ke channel sekarang |
-| `npm run post:airdrop` | Post airdrop/DEX ke channel sekarang |
-| `npm run post:test` | Preview spot ke `TEST_CHAT_ID` |
-| `npm run post:test-airdrop` | Preview airdrop ke `TEST_CHAT_ID` |
-| `npm run post:once` | Ikuti `config/schedule.json` (skip jika di luar jam) |
+Jangan naikkan poll ke `*/5` / `*/15` — itu yang boros.
 
-Contoh uji chat:
+Pengumuman Top 10 → topik [t.me/caricuanhp/65640](https://t.me/caricuanhp/65640) (`ACTIVITY_THREAD_ID=65640`).
 
-```bat
-cd /d "E:\AUTOPOST TELEGRAM"
-npm start
-```
+**Penting:** `ACTIVITY_SOURCE=gha` (default). Jangan biarkan `npm start` ON terus bersamaan GHA.
 
-Lalu DM `@jfnetwork_bot` → `/help` / `/test` / `/airdrop`.
-Stop bot: `Ctrl+C` di jendela CMD.
-
-**GitHub Actions** hanya untuk **penjadwalan autopost** (09:00 & 21:00 WIB). Command chat tidak di-poll otomatis di Actions.
-
-### Secrets (Settings → Secrets → Actions)
+### Secrets
 
 | Secret | Wajib |
 |--------|-------|
 | `TELEGRAM_BOT_TOKEN` | ✅ |
-| `TELEGRAM_CHANNEL_ID` | ✅ (`@jfnetworknet`) |
-| `GEMINI_API_KEY` | ✅ |
-| `OPENROUTER_API_KEY` | ✅ (fallback) |
-| `TELEGRAM_FORWARD_CHAT_ID` | opsional (`@caricuanhp`) |
-| `TELEGRAM_FORWARD_THREAD_ID` | opsional (`80483`) |
+| `TELEGRAM_CHANNEL_ID` | ✅ |
+| `GROQ_API_KEY` | ✅ (utama, gratis) |
+| `OPENROUTER_API_KEY` | ✅ (fallback free) |
+| `TEST_CHAT_ID` | untuk `/test` |
+| `GEMINI_API_KEY` | hanya jika `AI_PROVIDER=auto`/`paid` |
+| `TELEGRAM_FORWARD_CHAT_ID` | opsional |
+| `TELEGRAM_FORWARD_THREAD_ID` | opsional (forward autopost) |
 
-Bot harus **admin channel** + **anggota/admin grup**.
+Repo variable opsional: `ACTIVITY_CHAT_ID`, `ACTIVITY_THREAD_ID` (default `65640`).
 
-## Format post
-
-HOOK → Info → CTA → Disclaimer NFA & DYOR + 2 tombol (affiliate + gabung grup). Caption ≤ 700 karakter.
+Repo variable `AI_PROVIDER` default **`free`** (tidak menyentuh Gemini/paid).
 
 ## AI cascade
 
-Gemini → (limit/kredit habis) → OpenRouter → fallback teks.
+- **`free`** (default): Groq → OpenRouter free → teks lokal
+- **`auto`**: free dulu, lalu paid jika gagal
+- **`paid`**: OpenRouter paid / Gemini dulu
+
+Gambar: Pollinations (gratis).
+
+## Top Aktif Mingguan (`@caricuanhp`)
+
+**PC boleh OFF.** Snapshot lewat GHA 2×/hari (08 & 20 WIB), pengumuman Sabtu pagi ke topik [65640](https://t.me/caricuanhp/65640).
+
+| Jadwal GHA | Fungsi |
+|------------|--------|
+| 08:00 & 20:00 WIB | Poll → simpan skor ke `data/activity-week.json` |
+| **Sabtu pagi** | Poll + analisa Top 10 → post ke topik 65640 |
+
+Bot API tidak bisa ambil history seminggu — poll berkala wajib. Autopost tetap 09 & 21 WIB (digeser agar tidak bentrok push).
+
+Syarat: bot **admin** + Privacy Mode **Disable**. Default `ACTIVITY_SOURCE=gha`.
 
 ## Lokal
 
 ```bash
 copy .env.example .env
 npm install
-npm run post:force    # post sekarang
-npm run commands      # proses command Telegram
-npm start             # watcher jadwal lokal
+npm start                 # bot realtime + jadwal + top aktif
+npm run post:force        # post spot sekarang
+npm run post:test-airdrop # preview airdrop
+npm run commands          # proses command sekali
 ```

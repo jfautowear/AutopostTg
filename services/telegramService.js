@@ -18,14 +18,18 @@ function pickOkxWeb3Url() {
 
 function buildAffiliateButtons() {
   return [
-    { text: 'Trade di OKX CEX', url: 'https://okx.ac/join/76785925' },
-    { text: 'OKX Web3 DEX', url: pickOkxWeb3Url() },
-    { text: 'Trade di Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
+    { text: '📈 Trade OKX', url: 'https://okx.ac/join/76785925' },
+    { text: '⚡ Trade Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
   ];
 }
 
-const AIRDROP_DISCLAIMER = '⚠️ HIGH RISK · NFA & DYOR. Bukan jaminan airdrop.';
-const DISCLAIMER = '⚠️ Disclaimer: NFA & DYOR.';
+const JOIN_GROUP_BTN = {
+  text: '💬 JOIN GROUP',
+  url: 'https://t.me/caricuanhp',
+};
+
+const AIRDROP_DISCLAIMER = '⚠️ HIGH RISK · NFA & DYOR.';
+const DISCLAIMER = '⚠️ NFA & DYOR.';
 
 let botInstance = null;
 
@@ -115,12 +119,15 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;');
 }
 
-/** Keyboard spot CEX (3 affiliate) — OKX Web3 URL diacak. */
-function buildInlineKeyboard() {
+/**
+ * Keyboard spot — 3 tombol:
+ * Baris 1: OKX | Bitget
+ * Baris 2: JOIN GROUP (caricuanhp)
+ */
+function buildInlineKeyboard(_snapshot) {
+  const [okx, bitget] = buildAffiliateButtons();
   return {
-    inline_keyboard: buildAffiliateButtons().map((btn) => [
-      { text: btn.text, url: btn.url },
-    ]),
+    inline_keyboard: [[okx, bitget], [JOIN_GROUP_BTN]],
   };
 }
 
@@ -134,36 +141,71 @@ function buildAirdropInlineKeyboard(snapshot) {
 
   console.log(`[telegram] Airdrop keyboard → OKX=${web3Url} | chart=${chartUrl}`);
 
-  // Matriks setara Markup.inlineKeyboard([[btn1, btn2], [btn3]])
   return {
     inline_keyboard: [
       [
         { text: '🌐 OKX WEB3', url: web3Url },
         { text: '📊 CHART', url: chartUrl },
       ],
-      [{ text: '💬 JOIN GROUP', url: 'https://t.me/caricuanhp' }],
+      [JOIN_GROUP_BTN],
     ],
   };
 }
 
+/** Harga ringkas untuk caption mobile. */
+function formatPriceSafe(value) {
+  if (value == null || !Number.isFinite(Number(value))) return '—';
+  const n = Number(value);
+  if (n >= 1000) return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  if (n >= 1) return n.toLocaleString('en-US', { maximumFractionDigits: 4 });
+  return n.toLocaleString('en-US', { maximumFractionDigits: 6 });
+}
+
+/**
+ * Caption spot/CEX — layout rapi + spasi lega; AI hanya isi hook/info/cta singkat.
+ */
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   if (snapshot.category === 'airdrop') {
     return formatAirdropMessage(snapshot, content, { isTest });
   }
 
-  const exchange = snapshot.primaryLabel;
+  const exchange = snapshot.primaryLabel || 'CEX';
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
-  const hotLine = hot
-    ? `🔥 Hot: <b>${escapeHtml(hot.base)}</b> ${escapeHtml(formatPctSafe(hot.changePct))}`
-    : null;
+  const gainers = (snapshot.primary?.topGainers || snapshot.primary?.gainers || []).slice(
+    0,
+    3
+  );
 
-  const build = (hook, info, cta) =>
-    [
+  const build = (hook, info, cta) => {
+    const gainerBlock = gainers.length
+      ? [
+          '<b>Top gainer:</b>',
+          ...gainers.map(
+            (g) =>
+              `• <b>${escapeHtml(g.base)}</b> ${escapeHtml(formatPctSafe(g.changePct))}`
+          ),
+          '',
+        ]
+      : [];
+
+    return [
       isTest ? '<b>🧪 [TEST PREVIEW]</b>' : null,
-      escapeHtml(hook),
-      hotLine,
+      isTest ? '' : null,
+      '<b>🔥 MARKET PULSE</b>',
       '',
-      `<b>📡 Info pasar ${escapeHtml(exchange)}</b>`,
+      hot
+        ? `Hot: <b>${escapeHtml(hot.base)}</b>`
+        : 'Hot: —',
+      `Exchange: ${escapeHtml(exchange)}`,
+      hot
+        ? `Meledak 📈: 24h ${escapeHtml(formatPctSafe(hot.changePct))} · $${escapeHtml(formatPriceSafe(hot.last))}`
+        : null,
+      '',
+      '',
+      '<b>📡 Ringkasan</b>',
+      escapeHtml(hook),
+      '',
+      ...gainerBlock,
       escapeHtml(info),
       '',
       escapeHtml(cta),
@@ -172,34 +214,71 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
     ]
       .filter((line) => line != null)
       .join('\n');
+  };
 
   return finalizeCaption(build, content);
 }
 
-function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
+/** Volume ringkas untuk mobile: $1.17M / $85.2K */
+function formatVolumeUsd(value) {
+  if (value == null || !Number.isFinite(Number(value))) return null;
+  const n = Number(value);
+  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
+  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
+  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
+  return `$${Math.round(n)}`;
+}
+
+/**
+ * Caption Airdrop — template tetap, spasi lega, enak dibaca di mobile.
+ * Data dari hotGem; tidak mengandalkan paragraf AI yang padat.
+ */
+function formatAirdropMessage(snapshot, _content, { isTest = false } = {}) {
   const gem = snapshot.hotGem;
-  const gemLine = gem
-    ? `💎 <b>${escapeHtml(gem.symbol)}</b> · ${escapeHtml(gem.chain)} · 1h ${escapeHtml(formatPctSafe(gem.change1h))}`
-    : null;
+  const token = gem?.symbol || '—';
+  const chain = gem?.chain || 'Multi-chain';
+  const ch1 = formatPctSafe(gem?.change1h);
+  const ch6 = formatPctSafe(gem?.change6h);
 
-  const build = (hook, info, cta) =>
-    [
-      isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
-      '<b>🪂 Airdrop / Early Gem</b>',
-      escapeHtml(hook),
-      gemLine,
-      '',
-      '<b>⛓ On-chain pulse</b>',
-      escapeHtml(info),
-      '',
-      escapeHtml(cta),
-      '',
-      `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
-    ]
-      .filter((line) => line != null)
-      .join('\n');
+  let volumeLine = 'Volume: —';
+  if (gem?.volume6h != null && gem.volume6h > 0) {
+    volumeLine = `Volume: 6h ${formatVolumeUsd(gem.volume6h)}.`;
+  } else if (gem?.volume1h != null && gem.volume1h > 0) {
+    volumeLine = `Volume: 1h ${formatVolumeUsd(gem.volume1h)}.`;
+  } else if (gem?.volume24h != null && gem.volume24h > 0) {
+    volumeLine = `Volume: 24h ${formatVolumeUsd(gem.volume24h)}.`;
+  }
 
-  return finalizeCaption(build, content);
+  const message = [
+    isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
+    isTest ? '' : null,
+    '<b>🪂 AIRDROP / EARLY GEM</b>',
+    '',
+    `Token: <b>${escapeHtml(token)}</b>`,
+    `Jaringan: ${escapeHtml(chain)}`,
+    `Meledak 📈: 1h ${escapeHtml(ch1)} | ${escapeHtml(ch6)} 6h`,
+    '',
+    '',
+    '<b>⛓ On-chain pulse</b>',
+    escapeHtml(volumeLine),
+    '',
+    '<b>Disclaimer:</b>',
+    '- Peluang early gem, tapi HIGH RISK.',
+    '- Bukan jaminan airdrop.',
+    '- DYOR &amp; tidak saran investasi.',
+    '- Cek likuiditas &amp; risiko rug.',
+    '',
+    'Cek chart &amp; entry di OKX Web3 DEX sekarang.',
+    'Semoga untung! 🚀',
+    '',
+    `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
+  ]
+    .filter((line) => line != null)
+    .join('\n');
+
+  // Template tetap — hanya potong jika overflow (jarang)
+  if (telegramLength(message) <= MAX_CAPTION_CHARS) return message;
+  return clip(message.replace(/\n{3,}/g, '\n\n'), MAX_CAPTION_CHARS);
 }
 
 function finalizeCaption(build, content) {
@@ -231,8 +310,12 @@ function finalizeCaption(build, content) {
 
 function formatPctSafe(value) {
   if (value == null) return '—';
-  const sign = value > 0 ? '+' : '';
-  return `${sign}${Number(value).toFixed(2)}%`;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '—';
+  const sign = n > 0 ? '+' : '';
+  // Lonjakan besar: tanpa desimal biar enak di mobile
+  if (Math.abs(n) >= 100) return `${sign}${n.toFixed(0)}%`;
+  return `${sign}${n.toFixed(2)}%`;
 }
 
 async function forwardToGroup(fromChatId, messageId) {
@@ -301,7 +384,7 @@ async function sendMarketPost({
   const reply_markup =
     snapshot.category === 'airdrop'
       ? buildAirdropInlineKeyboard(snapshot)
-      : buildInlineKeyboard();
+      : buildInlineKeyboard(snapshot);
   const len = telegramLength(caption);
 
   if (len > 1024) {

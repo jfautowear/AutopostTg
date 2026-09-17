@@ -69,9 +69,12 @@ function formatScheduleText(schedule) {
 /**
  * Cek apakah sekarang (WIB) masuk slot jadwal.
  * windowMinutes: toleransi untuk cron GHA (default 30 — cocok slot jam penuh).
+ * Selalu return object { match, slot } agar pemanggil aman.
  */
 function shouldPostNow(schedule = loadSchedule(), now = new Date(), windowMinutes = 30) {
-  if (!schedule.enabled || !schedule.times.length) return false;
+  if (!schedule.enabled || !schedule.times.length) {
+    return { match: false, slot: null };
+  }
 
   const tz = schedule.timezone || 'Asia/Jakarta';
   const parts = new Intl.DateTimeFormat('en-GB', {

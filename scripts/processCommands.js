@@ -19,6 +19,12 @@ const {
   formatScheduleText,
 } = require('../services/scheduleService');
 const { runPipeline } = require('../services/postService');
+const {
+  recordMessage,
+  recordReaction,
+  resetWeek,
+} = require('../services/activityService');
+const { postWeeklyTop, statusText } = require('../services/weeklyTopService');
 
 const OFFSET_PATH = path.join(__dirname, '..', 'config', 'telegram-offset.json');
 const RUNTIME_PATH = path.join(__dirname, '..', 'config', 'runtime.json');
@@ -60,8 +66,12 @@ function gitSync(message) {
     execSync('git config user.name "autopost-bot"');
     execSync('git config user.email "autopost-bot@users.noreply.github.com"');
     execSync('git pull --rebase origin HEAD || true', { shell: true });
-    execSync('git add config/schedule.json config/telegram-offset.json config/runtime.json');
-    const dirty = execSync('git status --porcelain config/').toString().trim();
+    execSync(
+      'git add config/schedule.json config/telegram-offset.json config/runtime.json data/activity-week.json'
+    );
+    const dirty = execSync(
+      'git status --porcelain config/ data/activity-week.json'
+    ).toString().trim();
     if (!dirty) return;
     execSync(`git commit -m "${message}"`);
     execSync('git push');
@@ -168,6 +178,43 @@ async function executePostNow(bot, msg, category = 'spot') {
   }
 }
 
+async function executeTopAktif(bot, msg, mode = 'status') {
+  try {
+    if (mode === 'status') {
+      await safeReply(bot, msg, statusText());
+      return;
+    }
+    if (mode === 'reset') {
+      resetWeek();
+      await safeReply(bot, msg, '✅ Skor Top Aktif minggu ini di-reset.');
+      return;
+    }
+    if (mode === 'test') {
+      const result = await postWeeklyTop({
+        force: true,
+        isTest: true,
+        targetChatId: msg.chat.id,
+      });
+      await safeReply(
+        bot,
+        msg,
+        `✅ Preview Top Aktif (test).\n👥 ${result.count} | minggu ${result.weekKey}`
+      );
+      return;
+    }
+    if (mode === 'post') {
+      const result = await postWeeklyTop({ force: true, isTest: false });
+      await safeReply(
+        bot,
+        msg,
+        `✅ Top Aktif dipost!\n💬 ${result.chatId}#${result.messageId}\n👥 ${result.count}`
+      );
+    }
+  } catch (err) {
+    await safeReply(bot, msg, `❌ Top Aktif gagal: ${err.message}`);
+  }
+}
+
 async function processCommands() {
   const bot = getBot();
 
@@ -184,7 +231,7 @@ async function processCommands() {
   const updates = await bot.getUpdates({
     offset: offset > 0 ? offset : undefined,
     timeout: 0,
-    allowed_updates: ['message'],
+    allowed_updates: ['message', 'message_reaction'],
   });
 
   if (!updates.length) {
@@ -200,8 +247,26 @@ async function processCommands() {
 
   for (const update of updates) {
     offset = update.update_id + 1;
+
+    if (update.message_reaction) {
+      try {
+        recordReaction(update.message_reaction);
+      } catch (err) {
+        console.warn('[commands] reaction:', err.message);
+      }
+      continue;
+    }
+
     const msg = update.message;
-    if (!msg?.text) continue;
+    if (!msg) continue;
+
+    try {
+      recordMessage(msg);
+    } catch (err) {
+      console.warn('[commands] activity:', err.message);
+    }
+
+    if (!msg.text) continue;
 
     const isPrivate = msg.chat?.type === 'private';
     const wantsCommand = String(msg.text).startsWith('/');
@@ -231,6 +296,11 @@ async function processCommands() {
       continue;
     }
 
+    if (result.runTopAktif) {
+      await executeTopAktif(bot, msg, result.runTopAktif);
+      continue;
+    }
+
     if (result.scheduleChanged) scheduleChanged = true;
     if (result.exchangeSource) {
       writeRuntime({ exchangeSource: result.exchangeSource });
@@ -250,7 +320,12 @@ async function processCommands() {
 
   writeOffset(offset);
 
-  if (scheduleChanged || runtimeChanged || process.env.GITHUB_ACTIONS === 'true') {
+  const needGit =
+    scheduleChanged ||
+    runtimeChanged ||
+    (process.env.GITHUB_ACTIONS === 'true' && updates.length > 0);
+
+  if (needGit) {
     gitSync('chore: update jadwal/config via telegram admin @jfnetworkindo');
   }
 

@@ -1,8 +1,8 @@
 name: Admin Telegram Commands
 
-# Command chat TIDAK dijalankan otomatis di Actions (hemat free tier).
-# Uji lokal: npm start  |  npm run commands
-# Workflow ini hanya untuk Run manual jika diperlukan.
+# Hemat Actions (free tier):
+# - Command realtime = npm start di PC
+# - Workflow ini HANYA Run manual (backup), tanpa cron
 on:
   workflow_dispatch:
 

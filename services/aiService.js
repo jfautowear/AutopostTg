@@ -13,13 +13,24 @@ const LIMITS = {
   cta: Number(process.env.MAX_CTA_CHARS) || 80,
 };
 
+/** Hanya model free — cegah salah isi env yang kena billing. */
 const OPENROUTER_FREE_MODELS = (
-  process.env.OPENROUTER_FREE_MODEL ||
-  'qwen/qwen3.8-27b:free,openrouter/free,google/gemma-4-26b-a4b-it:free,meta-llama/llama-3-8b-instruct:free'
+  process.env.OPENROUTER_FREE_MODEL || 'qwen/qwen3.8-27b:free,openrouter/free'
 )
   .split(',')
   .map((s) => s.trim())
-  .filter(Boolean);
+  .filter(Boolean)
+  .filter(
+    (m) =>
+      m.includes(':free') ||
+      m === 'openrouter/free' ||
+      m.endsWith('/free')
+  )
+  .slice(0, 2);
+
+if (!OPENROUTER_FREE_MODELS.length) {
+  OPENROUTER_FREE_MODELS.push('openrouter/free');
+}
 
 const OPENROUTER_PAID_MODEL =
   process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
@@ -110,24 +121,18 @@ function fallbackAirdropContent(snapshot) {
   const g = snapshot.hotGem || (snapshot.gems || [])[0];
   if (!g) {
     return {
-      hook: clip('👀 Scan early gem DEX hari ini', LIMITS.hook),
-      info: clip(
-        'Belum ada kandidat volume spike yang lolos filter Solana/Base/Arbitrum. Market sepi — tunggu setup berikutnya. High risk, DYOR.',
-        LIMITS.info
-      ),
-      cta: clip('👉 Cek peluang on-chain di OKX Web3 DEX.', LIMITS.cta),
-      provider: 'fallback-airdrop',
+      hook: 'Early gem DEX scan',
+      info: 'Belum ada kandidat volume spike. High risk, DYOR.',
+      cta: 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung!',
+      provider: 'template-airdrop',
     };
   }
 
   return {
-    hook: clip(`💎 Early gem? ${g.symbol} lagi rame di ${g.chain}`, LIMITS.hook),
-    info: clip(
-      `${g.symbol} $${formatPrice(g.priceUsd)} | 1h ${formatPct(g.change1h)} / 6h ${formatPct(g.change6h)}. Vol1h≈${Math.round(g.volume1h || 0)}. Narasi airdrop/early entry sering muncul di fase ini — HIGH RISK, bisa rugi total. DYOR.`,
-      LIMITS.info
-    ),
-    cta: clip('👉 Cek pair-nya di OKX Web3 DEX sebelum FOMO.', LIMITS.cta),
-    provider: 'fallback-airdrop',
+    hook: `${g.symbol} on ${g.chain}`,
+    info: `1h ${formatPct(g.change1h)} | 6h ${formatPct(g.change6h)} | vol6h ${Math.round(g.volume6h || g.volume1h || 0)}`,
+    cta: 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung!',
+    provider: 'template-airdrop',
   };
 }
 
@@ -144,22 +149,24 @@ function buildPostPrompt(snapshot) {
     : 'Fokus pada top gainers altcoin (bukan BTC/ETH).';
 
   return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat konten postingan singkat dari data ${exchange} di bawah.
+Buat ringkasan singkat untuk layout mobile (bukan paragraf panjang).
 
-WAJIB balas HANYA JSON valid (tanpa markdown, tanpa penjelasan), format:
+WAJIB balas HANYA JSON valid (tanpa markdown), format:
 {"hook":"...","info":"...","cta":"..."}
 
-Aturan bahasa:
-- Bahasa Indonesia natural, santai-profesional, bukan kaku.
-- Emoji secukupnya (1–3 per bagian), jangan berlebihan.
+Aturan:
+- Bahasa Indonesia natural, santai-profesional.
+- Emoji minimal (0–1 per field).
 - Bukan saran investasi.
 - ${hotHint}
-- Sebutkan singkat TOP gainers / unusual volume jika relevan.
+- JANGAN ulangi nama token + % 24h di info (sudah ada di header template).
+- info: 1–2 kalimat pendek soal konteks volume/momentum saja.
+- cta: 1 kalimat ajak cek di ${exchange}, tanpa link.
 
-Aturan panjang (ketat):
-- hook: maksimal ${LIMITS.hook} karakter (1 kalimat pembuka menarik soal koin hot)
-- info: maksimal ${LIMITS.info} karakter (hot coin + 1–2 gainer, boleh sebut BTC/ETH singkat)
-- cta: maksimal ${LIMITS.cta} karakter (ajak cek peluang di ${exchange}, tanpa link)
+Panjang ketat:
+- hook: maks ${LIMITS.hook} karakter (1 kalimat pembuka)
+- info: maks ${LIMITS.info} karakter
+- cta: maks ${LIMITS.cta} karakter
 
 DATA ${exchange}:
 ${summary}`;
@@ -172,26 +179,19 @@ function fallbackPostContent(snapshot) {
 
   const { primary, primaryLabel, hotCoin } = snapshot;
   const hot = hotCoin || primary.hotCoin;
-  const btc = primary.majors.find((t) => t.base === 'BTC');
-  const gainers = (primary.topGainers || primary.gainers || [])
-    .slice(0, 2)
-    .map((t) => `${t.base} ${formatPct(t.changePct)}`)
-    .join(', ');
 
   return {
     hook: clip(
       hot
-        ? `🚀 ${hot.base} lagi panas di ${primaryLabel}!`
-        : `🚀 Altcoin move di ${primaryLabel}`,
+        ? `${hot.base} lagi ramai dipantau di ${primaryLabel}.`
+        : `Altcoin move terpantau di ${primaryLabel}.`,
       LIMITS.hook
     ),
     info: clip(
-      hot
-        ? `${hot.base} $${formatPrice(hot.last)} (${formatPct(hot.changePct)}). Top gainer: ${gainers || '—'}. BTC $${formatPrice(btc?.last)} (${formatPct(btc?.changePct)}). Pantau volume, jangan FOMO.`
-        : `Top gainer: ${gainers || '—'}. BTC $${formatPrice(btc?.last)} (${formatPct(btc?.changePct)}). Pantau volume, jangan FOMO.`,
+      'Volume & momentum naik — pantau likuiditas, jangan FOMO.',
       LIMITS.info
     ),
-    cta: clip(`👉 Cek peluang di ${primaryLabel} sekarang.`, LIMITS.cta),
+    cta: clip(`Cek peluang di ${primaryLabel} sekarang. Semoga untung! 🚀`, LIMITS.cta),
     provider: 'fallback',
   };
 }
@@ -230,15 +230,15 @@ async function generateWithGroq(prompt) {
         { role: 'system', content: SYSTEM_JSON },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.7,
-      max_tokens: 280,
+      temperature: 0.65,
+      max_tokens: 220,
     },
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      timeout: 30000,
+      timeout: 25000,
     }
   );
 
@@ -269,8 +269,8 @@ async function generateWithOpenRouter(prompt, { free = true } = {}) {
           { role: 'system', content: SYSTEM_JSON },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.7,
-        max_tokens: 280,
+        temperature: 0.65,
+        max_tokens: 220,
       };
 
       if (!free) {
@@ -288,7 +288,7 @@ async function generateWithOpenRouter(prompt, { free = true } = {}) {
             'HTTP-Referer': 'https://t.me/jfnetworknet',
             'X-Title': 'JF Network AutoPost',
           },
-          timeout: 45000,
+          timeout: 35000,
         }
       );
 
@@ -323,12 +323,12 @@ async function generateWithGemini(prompt) {
     {
       contents: [{ parts: [{ text: `${SYSTEM_JSON}\n\n${prompt}` }] }],
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 280,
+        temperature: 0.65,
+        maxOutputTokens: 220,
         responseMimeType: 'application/json',
       },
     },
-    { timeout: 30000 }
+    { timeout: 25000 }
   );
 
   if (data?.error) {
@@ -352,15 +352,22 @@ async function generateWithGemini(prompt) {
 }
 
 /**
- * Cascade hemat kredit:
- * 1) Groq (gratis)
- * 2) OpenRouter free model
- * 3) OpenRouter paid / Gemini (berbayar) — hanya jika gratis habis/gagal
- * 4) Fallback teks lokal
+ * Cascade hemat kredit (AI_PROVIDER):
+ * - free  → Groq → OpenRouter free → fallback lokal (TIDAK sentuh berbayar)
+ * - auto  → free dulu, lalu paid jika gratis gagal
+ * - paid  → OpenRouter paid / Gemini dulu, lalu free
  */
 async function generatePostContent(snapshot) {
+  // Caption airdrop pakai template tetap di telegramService (rapi + hemat kredit AI)
+  if (snapshot.category === 'airdrop') {
+    console.log('[aiService] Airdrop → template lokal (skip LLM teks)');
+    return fallbackAirdropContent(snapshot);
+  }
+
   const prompt = buildPostPrompt(snapshot);
-  const preferPaidFirst = (process.env.AI_PROVIDER || '').toLowerCase() === 'paid';
+  const mode = (process.env.AI_PROVIDER || 'free').toLowerCase();
+  const allowPaid = mode === 'auto' || mode === 'paid';
+  const preferPaidFirst = mode === 'paid';
 
   const freeChain = [
     {
@@ -392,9 +399,15 @@ async function generatePostContent(snapshot) {
     },
   ];
 
-  const chain = preferPaidFirst
-    ? [...paidChain, ...freeChain]
-    : [...freeChain, ...paidChain];
+  let chain;
+  if (preferPaidFirst) {
+    chain = [...paidChain, ...freeChain];
+  } else if (allowPaid) {
+    chain = [...freeChain, ...paidChain];
+  } else {
+    chain = freeChain;
+    console.log('[aiService] Mode free — skip provider berbayar (hemat kredit)');
+  }
 
   let lastError = null;
 
@@ -416,7 +429,11 @@ async function generatePostContent(snapshot) {
         `[aiService] ${step.name} gagal${quota ? ' [limit/kredit]' : ''}: ${errorPayload(err)}`
       );
       if (quota && step.tier === 'free') {
-        console.warn('[aiService] Kredit gratis habis/limit → lanjut provider berikutnya');
+        console.warn(
+          allowPaid
+            ? '[aiService] Limit gratis → lanjut provider berikutnya'
+            : '[aiService] Limit gratis → fallback lokal (mode free)'
+        );
       }
     }
   }
@@ -466,12 +483,13 @@ function buildImagePromptFromContent(snapshot, content) {
 async function generateImageWithPollinations(prompt) {
   const encoded = encodeURIComponent(prompt);
   const seed = Math.floor(Math.random() * 1_000_000);
-  const url = `https://image.pollinations.ai/prompt/${encoded}?width=1280&height=720&seed=${seed}&nologo=true&model=flux`;
+  // 1024x576 cukup untuk Telegram, lebih cepat & hemat bandwidth Actions
+  const url = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=576&seed=${seed}&nologo=true&model=flux`;
 
   console.log('[aiService] Pollinations image…');
   const { data } = await axios.get(url, {
     responseType: 'arraybuffer',
-    timeout: 90000,
+    timeout: 60000,
   });
 
   return Buffer.from(data);
