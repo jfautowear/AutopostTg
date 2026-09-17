@@ -8,3 +8,8 @@ temp/
 output/
 *.pem
 credentials*.json
+
+# Panduan lokal — jangan upload ke GitHub
+PANDUAN-UJI-LOKAL.md
+PANDUAN*.md
+!README.md
