@@ -1,9 +1,13 @@
 name: Admin Telegram Commands
 
-# Poll command dari @jfnetworkindo untuk atur jadwal / force post
+# Hemat Actions (free tier):
+# - Command realtime = npm start di PC
+# - GHA hanya backup 2x/hari + Run manual
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    # 10:00 & 22:00 WIB (= 03:00 & 15:00 UTC)
+    - cron: '0 3 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +15,7 @@ permissions:
 
 concurrency:
   group: admin-telegram-commands
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   commands:
@@ -52,6 +56,9 @@ jobs:
           MAX_CTA_CHARS: '80'
           GROQ_MODEL: ${{ vars.GROQ_MODEL || 'qwen/qwen3.8-27b' }}
           OPENROUTER_FREE_MODEL: ${{ vars.OPENROUTER_FREE_MODEL || 'qwen/qwen3.8-27b:free,openrouter/free' }}
+          TELEGRAM_FORWARD_ENABLED: 'true'
+          TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
+          TELEGRAM_FORWARD_THREAD_ID: ${{ secrets.TELEGRAM_FORWARD_THREAD_ID }}
         run: node scripts/processCommands.js
 
       - name: Force post jika diminta admin

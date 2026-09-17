@@ -1,9 +1,14 @@
 name: Autopost Telegram Crypto
 
+# Hemat Actions (free tier):
+# - Hanya 2 slot default (09:00 & 21:00 WIB) + Run manual
+# - Skip cepat jika di luar jadwal schedule.json
 on:
   schedule:
-    # Tiap 15 menit — post hanya jika jam cocok dengan config/schedule.json (WIB)
-    - cron: '*/15 * * * *'
+    # 09:00 WIB = 02:00 UTC
+    - cron: '0 2 * * *'
+    # 21:00 WIB = 14:00 UTC
+    - cron: '0 14 * * *'
   workflow_dispatch:
     inputs:
       force_post:
@@ -20,14 +25,27 @@ on:
           - auto
           - okx
           - bitget
+      category:
+        description: 'spot | airdrop | auto'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - spot
+          - airdrop
 
 permissions:
   contents: write
 
+concurrency:
+  group: autopost-telegram
+  cancel-in-progress: true
+
 jobs:
   autopost:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
 
     steps:
       - name: Checkout
@@ -58,6 +76,7 @@ jobs:
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'free' }}
           EXCHANGE_SOURCE: ${{ github.event.inputs.exchange_source || 'auto' }}
           EXCHANGE_SOURCE_OVERRIDE: ${{ github.event.inputs.exchange_source && '1' || '' }}
+          POST_CATEGORY: ${{ github.event.inputs.category || 'auto' }}
           FORCE_POST: ${{ github.event.inputs.force_post == true && 'true' || 'false' }}
           POST_LANGUAGE: id
           POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}

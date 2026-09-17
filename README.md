@@ -28,12 +28,15 @@ Akun selain `@jfnetworkindo` ditolak.
 
 Jadwal tersimpan di `config/schedule.json`. Workflow **Admin Telegram Commands** poll tiap ~10 menit.
 
-## GitHub Actions
+## GitHub Actions (hemat free tier)
 
-| Workflow | Jadwal | Fungsi |
-|----------|--------|--------|
-| `autopost.yml` | tiap 15 menit | Post jika jam cocok `schedule.json` |
-| `admin-commands.yml` | tiap 10 menit | Proses command admin |
+| Workflow | Jadwal | Estimasi |
+|----------|--------|----------|
+| Autopost | **2x/hari** (09:00 & 21:00 WIB) + Run manual | ~2–4 menit/hari |
+| Admin commands | **2x/hari** backup + Run manual | ~1–2 menit/hari |
+
+Command **realtime** pakai `npm start` di PC (tidak makan kuota Actions).
+Jangan set cron `*/5` atau `*/15` — boros menit gratis.
 
 ### Secrets (Settings → Secrets → Actions)
 
