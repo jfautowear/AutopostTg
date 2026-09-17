@@ -20,6 +20,7 @@ const {
   isAdmin,
   denyText,
   parseCommand,
+  replyOpts,
 } = require('./services/adminBotService');
 
 async function runAutoPost(slot = null, category = null) {
@@ -34,8 +35,9 @@ async function runTestCommand(msg, category = 'spot') {
     category === 'airdrop'
       ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
       : '⏳ Sedang mengambil data market terbaru & generate konten AI...',
-    { reply_to_message_id: msg.message_id }
+    { ...replyOpts(msg) }
   );
+
 
   try {
     if (!getTestChatId()) {
@@ -65,9 +67,7 @@ async function runTestCommand(msg, category = 'spot') {
         message_id: statusMsg.message_id,
       });
     } catch {
-      await bot.sendMessage(chatId, `❌ Tes gagal: ${err.message}`, {
-        reply_to_message_id: msg.message_id,
-      });
+      await bot.sendMessage(chatId, `❌ Tes gagal: ${err.message}`, replyOpts(msg));
     }
     throw err;
   }
@@ -81,8 +81,9 @@ async function runPostNowCommand(msg, category = 'spot') {
     category === 'airdrop'
       ? '⏳ Posting Airdrop/DEX ke channel...'
       : '⏳ Posting ke channel utama...',
-    { reply_to_message_id: msg.message_id }
+    { ...replyOpts(msg) }
   );
+
 
   try {
     const result = await runPipeline({
@@ -103,9 +104,7 @@ async function runPostNowCommand(msg, category = 'spot') {
         message_id: statusMsg.message_id,
       });
     } catch {
-      await bot.sendMessage(chatId, `❌ Post gagal: ${err.message}`, {
-        reply_to_message_id: msg.message_id,
-      });
+      await bot.sendMessage(chatId, `❌ Post gagal: ${err.message}`, replyOpts(msg));
     }
     throw err;
   }
@@ -122,9 +121,7 @@ async function handleIncomingMessage(msg) {
       msg.chat?.type === 'private' ||
       ['/test', '/postnow', '/test_airdrop', '/airdrop'].includes(parsed.cmd)
     ) {
-      await getBot().sendMessage(msg.chat.id, denyText(), {
-        reply_to_message_id: msg.message_id,
-      });
+      await getBot().sendMessage(msg.chat.id, denyText(), replyOpts(msg));
     }
     return;
   }
@@ -155,10 +152,11 @@ async function handleIncomingMessage(msg) {
 
   const result = handleAdminCommand(msg);
   if (result.reply) {
-    await getBot().sendMessage(msg.chat.id, result.reply, {
-      reply_to_message_id: msg.message_id,
-      parse_mode: result.parseMode || undefined,
-    });
+    await getBot().sendMessage(
+      msg.chat.id,
+      result.reply,
+      replyOpts(msg, { parse_mode: result.parseMode || undefined })
+    );
   }
 
   if (result.exchangeSource || result.postCategory) {

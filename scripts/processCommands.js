@@ -1,6 +1,6 @@
 /**
  * Poll Telegram updates → command admin (@jfnetworkindo).
- * Mendukung /test (ke TEST_CHAT_ID) dan /postnow (channel).
+ * Mendukung /test, /test_airdrop, /postnow, /airdrop.
  */
 require('dotenv').config();
 
@@ -12,6 +12,7 @@ const {
   handleAdminCommand,
   isAdmin,
   denyText,
+  replyOpts,
 } = require('../services/adminBotService');
 const {
   loadSchedule,
@@ -79,14 +80,29 @@ function setOutput(forcePost) {
   }
 }
 
+async function safeReply(bot, msg, text, extra = {}) {
+  try {
+    return await bot.sendMessage(msg.chat.id, text, replyOpts(msg, extra));
+  } catch (err) {
+    console.warn('[commands] safeReply retry plain:', err.message);
+    return bot.sendMessage(msg.chat.id, text, extra);
+  }
+}
+
 async function executeTest(bot, msg, category = 'spot') {
-  const statusMsg = await bot.sendMessage(
-    msg.chat.id,
-    category === 'airdrop'
-      ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-      : '⏳ Sedang mengambil data market terbaru & generate konten AI...',
-    { reply_to_message_id: msg.message_id }
-  );
+  let statusMsg;
+  try {
+    statusMsg = await safeReply(
+      bot,
+      msg,
+      category === 'airdrop'
+        ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
+        : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
+    );
+  } catch (err) {
+    console.error('[commands] gagal kirim status:', err.message);
+    return;
+  }
 
   try {
     if (!getTestChatId()) {
@@ -104,21 +120,31 @@ async function executeTest(bot, msg, category = 'spot') {
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {
-    await bot.editMessageText(`❌ Tes gagal: ${err.message}`, {
-      chat_id: msg.chat.id,
-      message_id: statusMsg.message_id,
-    });
+    try {
+      await bot.editMessageText(`❌ Tes gagal: ${err.message}`, {
+        chat_id: msg.chat.id,
+        message_id: statusMsg.message_id,
+      });
+    } catch {
+      await safeReply(bot, msg, `❌ Tes gagal: ${err.message}`);
+    }
   }
 }
 
 async function executePostNow(bot, msg, category = 'spot') {
-  const statusMsg = await bot.sendMessage(
-    msg.chat.id,
-    category === 'airdrop'
-      ? '⏳ Posting Airdrop/DEX ke channel...'
-      : '⏳ Posting ke channel utama...',
-    { reply_to_message_id: msg.message_id }
-  );
+  let statusMsg;
+  try {
+    statusMsg = await safeReply(
+      bot,
+      msg,
+      category === 'airdrop'
+        ? '⏳ Posting Airdrop/DEX ke channel...'
+        : '⏳ Posting ke channel utama...'
+    );
+  } catch (err) {
+    console.error('[commands] gagal kirim status:', err.message);
+    return;
+  }
 
   try {
     const result = await runPipeline({
@@ -131,17 +157,20 @@ async function executePostNow(bot, msg, category = 'spot') {
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {
-    await bot.editMessageText(`❌ Post gagal: ${err.message}`, {
-      chat_id: msg.chat.id,
-      message_id: statusMsg.message_id,
-    });
+    try {
+      await bot.editMessageText(`❌ Post gagal: ${err.message}`, {
+        chat_id: msg.chat.id,
+        message_id: statusMsg.message_id,
+      });
+    } catch {
+      await safeReply(bot, msg, `❌ Post gagal: ${err.message}`);
+    }
   }
 }
 
 async function processCommands() {
   const bot = getBot();
 
-  // Bot yang pernah pakai webhook tidak bisa getUpdates sampai webhook dihapus
   try {
     await bot.deleteWebHook({ drop_pending_updates: false });
     console.log('[commands] Webhook dihapus (siap polling getUpdates)');
@@ -178,14 +207,16 @@ async function processCommands() {
     const wantsCommand = String(msg.text).startsWith('/');
 
     if (!isAdmin(msg)) {
+      console.warn(
+        `[commands] Skip non-admin @${msg.from?.username || '?'} id=${msg.from?.id}`
+      );
       if (isPrivate && wantsCommand) {
-        await bot.sendMessage(msg.chat.id, denyText(), {
-          reply_to_message_id: msg.message_id,
-        });
+        await safeReply(bot, msg, denyText());
       }
       continue;
     }
 
+    console.log(`[commands] Admin cmd from @${msg.from?.username}: ${msg.text}`);
     const result = handleAdminCommand(msg);
     processed += 1;
 
@@ -211,8 +242,7 @@ async function processCommands() {
     }
 
     if (result.reply) {
-      await bot.sendMessage(msg.chat.id, result.reply, {
-        reply_to_message_id: msg.message_id,
+      await safeReply(bot, msg, result.reply, {
         parse_mode: result.parseMode || undefined,
       });
     }

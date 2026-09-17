@@ -39,7 +39,30 @@ Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.`;
 
 function isAdmin(msg) {
   const username = (msg?.from?.username || '').toLowerCase();
-  return Boolean(username) && username === ADMIN_USERNAME;
+  if (username && username === ADMIN_USERNAME) return true;
+
+  // Opsional: izinkan juga lewat user id numerik (ADMIN_TELEGRAM_USER_IDS=123,456)
+  const ids = String(process.env.ADMIN_TELEGRAM_USER_IDS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const uid = msg?.from?.id != null ? String(msg.from.id) : '';
+  return Boolean(uid && ids.includes(uid));
+}
+
+/** Opsi balasan aman untuk forum topic (supergroup). Private topic sering invalid. */
+function replyOpts(msg, extra = {}) {
+  const opts = {
+    ...extra,
+  };
+  if (msg?.message_id) {
+    opts.reply_to_message_id = msg.message_id;
+  }
+  // Jangan kirim message_thread_id di private — Bot API sering error "thread not found"
+  if (msg?.message_thread_id && msg.chat?.type && msg.chat.type !== 'private') {
+    opts.message_thread_id = msg.message_thread_id;
+  }
+  return opts;
 }
 
 function denyText() {
@@ -265,4 +288,5 @@ module.exports = {
   denyText,
   handleAdminCommand,
   parseCommand,
+  replyOpts,
 };
