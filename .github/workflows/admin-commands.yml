@@ -1,0 +1,68 @@
+name: Admin Telegram Commands
+
+# Poll command dari @jfnetworkindo untuk atur jadwal / force post
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: admin-telegram-commands
+  cancel-in-progress: false
+
+jobs:
+  commands:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Process admin commands
+        id: cmds
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ADMIN_TELEGRAM_USERNAME: jfnetworkindo
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          EXCHANGE_SOURCE: auto
+        run: node scripts/processCommands.js
+
+      - name: Force post jika diminta admin
+        if: steps.cmds.outputs.force_post == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          TELEGRAM_FORWARD_ENABLED: 'true'
+          TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
+          TELEGRAM_FORWARD_THREAD_ID: ${{ secrets.TELEGRAM_FORWARD_THREAD_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          FORCE_POST: 'true'
+          POST_LANGUAGE: id
+          POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}
+          CRON_TIMEZONE: Asia/Jakarta
+          MAX_CAPTION_CHARS: '700'
+          MAX_HOOK_CHARS: '60'
+          MAX_INFO_CHARS: '220'
+          MAX_CTA_CHARS: '80'
+          ADMIN_TELEGRAM_USERNAME: jfnetworkindo
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash' }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001' }}
+        run: npm run post:once -- --force

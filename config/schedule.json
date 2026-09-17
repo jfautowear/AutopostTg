@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "timezone": "Asia/Jakarta",
+  "times": ["09:00", "21:00"],
+  "updatedAt": null,
+  "updatedBy": null
+}
