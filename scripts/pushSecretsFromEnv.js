@@ -1,7 +1,7 @@
-# Set GitHub Actions secrets dari file .env lokal (tanpa menampilkan nilai).
-# Jalankan SETELAH login sebagai pemilik repo jfautowear:
-#   gh auth login
-#   node scripts/pushSecretsFromEnv.js
+// Set GitHub Actions secrets dari file .env lokal (tanpa menampilkan nilai).
+// Jalankan SETELAH login sebagai pemilik repo jfautowear:
+//   gh auth login
+//   node scripts/pushSecretsFromEnv.js
 
 const fs = require('fs');
 const path = require('path');
@@ -18,6 +18,7 @@ const SECRET_KEYS = [
   'OPENROUTER_API_KEY',
   'TELEGRAM_FORWARD_CHAT_ID',
   'TELEGRAM_FORWARD_THREAD_ID',
+  'TEST_CHAT_ID',
 ];
 
 function parseEnv(filePath) {
@@ -47,6 +48,7 @@ function looksLikePlaceholder(value) {
   return (
     v.includes('your_') ||
     v.includes('changeme') ||
+    v.includes('+xqvu') ||
     v === 'xxx' ||
     v === 'todo'
   );
@@ -78,7 +80,6 @@ function main() {
     ok += 1;
   }
 
-  // Default forward jika belum di .env
   if (looksLikePlaceholder(env.TELEGRAM_FORWARD_CHAT_ID)) {
     execFileSync('gh', ['secret', 'set', 'TELEGRAM_FORWARD_CHAT_ID', '--repo', REPO], {
       input: '@caricuanhp',
