@@ -1,14 +1,13 @@
 /**
- * Poll Telegram updates → command admin (@jfnetworkindo) → update jadwal.
- * Lokal: node scripts/processCommands.js
- * GHA: workflow admin-commands.yml
+ * Poll Telegram updates → command admin (@jfnetworkindo).
+ * Mendukung /test (ke TEST_CHAT_ID) dan /postnow (channel).
  */
 require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { getBot } = require('../services/telegramService');
+const { getBot, getTestChatId } = require('../services/telegramService');
 const {
   handleAdminCommand,
   isAdmin,
@@ -18,6 +17,7 @@ const {
   loadSchedule,
   formatScheduleText,
 } = require('../services/scheduleService');
+const { runPipeline } = require('../services/postService');
 
 const OFFSET_PATH = path.join(__dirname, '..', 'config', 'telegram-offset.json');
 const RUNTIME_PATH = path.join(__dirname, '..', 'config', 'runtime.json');
@@ -61,10 +61,7 @@ function gitSync(message) {
     execSync('git pull --rebase origin HEAD || true', { shell: true });
     execSync('git add config/schedule.json config/telegram-offset.json config/runtime.json');
     const dirty = execSync('git status --porcelain config/').toString().trim();
-    if (!dirty) {
-      console.log('[commands] Tidak ada perubahan config untuk di-commit');
-      return;
-    }
+    if (!dirty) return;
     execSync(`git commit -m "${message}"`);
     execSync('git push');
     console.log('[commands] Config di-push ke repo');
@@ -79,6 +76,55 @@ function setOutput(forcePost) {
       process.env.GITHUB_OUTPUT,
       `force_post=${forcePost ? 'true' : 'false'}\n`
     );
+  }
+}
+
+async function executeTest(bot, msg) {
+  const statusMsg = await bot.sendMessage(
+    msg.chat.id,
+    '⏳ Sedang mengambil data market terbaru & generate konten AI...',
+    { reply_to_message_id: msg.message_id }
+  );
+
+  try {
+    if (!getTestChatId()) {
+      throw new Error('TEST_CHAT_ID belum di-set (ID numerik grup private).');
+    }
+    const result = await runPipeline({ target: 'test' });
+    const hot = result.snapshot?.hotCoin?.base || '—';
+    await bot.editMessageText(
+      `✅ Tes berhasil!\n📦 Preview → grup private testing\n🔥 Hot: ${hot}\n📝 ${result.captionLength} karakter`,
+      { chat_id: msg.chat.id, message_id: statusMsg.message_id }
+    );
+  } catch (err) {
+    await bot.editMessageText(`❌ Tes gagal: ${err.message}`, {
+      chat_id: msg.chat.id,
+      message_id: statusMsg.message_id,
+    });
+  }
+}
+
+async function executePostNow(bot, msg) {
+  const statusMsg = await bot.sendMessage(
+    msg.chat.id,
+    '⏳ Posting ke channel utama...',
+    { reply_to_message_id: msg.message_id }
+  );
+
+  try {
+    const result = await runPipeline({
+      target: 'channel',
+      slot: `cmd-${Date.now()}`,
+    });
+    await bot.editMessageText(
+      `✅ Post berhasil!\n🆔 ${result.chatId}#${result.messageId}`,
+      { chat_id: msg.chat.id, message_id: statusMsg.message_id }
+    );
+  } catch (err) {
+    await bot.editMessageText(`❌ Post gagal: ${err.message}`, {
+      chat_id: msg.chat.id,
+      message_id: statusMsg.message_id,
+    });
   }
 }
 
@@ -124,8 +170,19 @@ async function processCommands() {
     const result = handleAdminCommand(msg);
     processed += 1;
 
+    if (result.runTest) {
+      await executeTest(bot, msg);
+      continue;
+    }
+
+    if (result.runPostNow || result.forcePost) {
+      // Jalankan langsung (bukan cuma flag GHA) agar UX sama dengan /test
+      await executePostNow(bot, msg);
+      forcePost = false;
+      continue;
+    }
+
     if (result.scheduleChanged) scheduleChanged = true;
-    if (result.forcePost) forcePost = true;
     if (result.exchangeSource) {
       writeRuntime({ exchangeSource: result.exchangeSource });
       runtimeChanged = true;
@@ -146,7 +203,7 @@ async function processCommands() {
   }
 
   console.log(
-    `[commands] processed=${processed} forcePost=${forcePost}\n${formatScheduleText(loadSchedule())}`
+    `[commands] processed=${processed}\n${formatScheduleText(loadSchedule())}`
   );
   setOutput(forcePost);
   return { processed, forcePost, schedule: loadSchedule() };

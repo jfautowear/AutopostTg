@@ -15,6 +15,10 @@ const ADMIN_USERNAME = (
 
 const HELP_TEXT = `🛠 *Admin Autopost* (@${ADMIN_USERNAME})
 
+Test & post:
+/test — preview ke grup private (TEST\\_CHAT\\_ID)
+/postnow — post ke channel utama
+
 Jadwal:
 /jadwal — lihat jadwal
 /jadwal\\_set 09:00,21:00 — ganti semua jam
@@ -24,7 +28,6 @@ Jadwal:
 /jadwal\\_off — nonaktifkan
 
 Lainnya:
-/post\\_sekarang — post sekarang
 /sumber okx|bitget|auto — sumber data
 /status — status bot
 /help — bantuan
@@ -160,10 +163,19 @@ function handleAdminCommand(msg) {
 
     case '/post_sekarang':
     case '/post_now':
+    case '/postnow':
       return {
-        reply: '🚀 Menjalankan autopost sekarang...',
+        reply: null,
         allowed: true,
         forcePost: true,
+        runPostNow: true,
+      };
+
+    case '/test':
+      return {
+        reply: null,
+        allowed: true,
+        runTest: true,
       };
 
     case '/sumber':

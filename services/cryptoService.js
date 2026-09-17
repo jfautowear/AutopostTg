@@ -4,6 +4,10 @@ const OKX_BASE = 'https://www.okx.com';
 const BITGET_BASE = 'https://api.bitget.com';
 
 const MAJOR_PAIRS = ['BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'BNB-USDT', 'XRP-USDT'];
+const EXCLUDED_FROM_GAINERS = new Set(['BTC', 'ETH']);
+const STABLE_BASES = new Set([
+  'USDT', 'USDC', 'USD', 'DAI', 'FDUSD', 'TUSD', 'USDE', 'USDD', 'BUSD',
+]);
 
 function toNumber(value) {
   const n = Number(value);
@@ -21,6 +25,14 @@ function formatPrice(value) {
   if (value >= 1000) return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
   if (value >= 1) return value.toLocaleString('en-US', { maximumFractionDigits: 4 });
   return value.toLocaleString('en-US', { maximumFractionDigits: 6 });
+}
+
+function isTradableAlt(t) {
+  if (!t?.base || EXCLUDED_FROM_GAINERS.has(t.base)) return false;
+  if (STABLE_BASES.has(t.base)) return false;
+  if (t.changePct == null || t.volume24h == null) return false;
+  if (t.last == null || t.last <= 0) return false;
+  return t.volume24h >= 100000;
 }
 
 async function fetchOkxTickers() {
@@ -96,16 +108,64 @@ function pickMajors(tickers, exchangeLabel) {
   }).filter(Boolean);
 }
 
-function topGainers(tickers, limit = 3) {
+/** TOP 3 GAINERS — abaikan BTC & ETH. */
+function getTopGainers(tickers, limit = 3) {
   return [...tickers]
-    .filter((t) => t.changePct != null && t.volume24h != null && t.volume24h > 100000)
+    .filter((t) => isTradableAlt(t) && t.changePct > 0)
     .sort((a, b) => b.changePct - a.changePct)
-    .slice(0, limit);
+    .slice(0, limit)
+    .map((t) => ({ ...t, tag: 'gainer' }));
 }
 
 /**
- * okx | bitget — auto bergantian tiap hari (WIB).
+ * UNUSUAL VOLUME — volume terbesar + lonjakan harga positif.
+ * Skor: volume * (1 + change%/100) agar harga naik + volume besar menonjol.
  */
+function getUnusualVolume(tickers, limit = 3) {
+  return [...tickers]
+    .filter((t) => isTradableAlt(t) && t.changePct > 0)
+    .map((t) => ({
+      ...t,
+      volumeScore: t.volume24h * (1 + Math.max(0, t.changePct) / 100),
+      tag: 'unusual_volume',
+    }))
+    .sort((a, b) => b.volumeScore - a.volumeScore)
+    .slice(0, limit);
+}
+
+/** Skor viral/hot untuk prioritas caption. */
+function viralScore(t) {
+  const vol = Math.max(1, t.volume24h || 1);
+  const pct = Math.max(0, t.changePct || 0);
+  return pct * Math.log10(vol + 10) + Math.log10(vol + 10);
+}
+
+/**
+ * Pilih koin paling viral/hot dari gabungan gainers + unusual volume.
+ * Mode: priority (default) | random (acak dari top kandidat).
+ */
+function pickHotCoin(candidates, mode = process.env.HOT_PICK_MODE || 'priority') {
+  const unique = new Map();
+  for (const c of candidates) {
+    const key = `${c.exchange}:${c.symbol}`;
+    const prev = unique.get(key);
+    if (!prev || viralScore(c) > viralScore(prev)) unique.set(key, c);
+  }
+
+  const ranked = [...unique.values()]
+    .map((t) => ({ ...t, viralScore: viralScore(t) }))
+    .sort((a, b) => b.viralScore - a.viralScore);
+
+  if (!ranked.length) return null;
+
+  if (String(mode).toLowerCase() === 'random') {
+    const pool = ranked.slice(0, Math.min(3, ranked.length));
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  return ranked[0];
+}
+
 function resolvePrimarySource() {
   const raw = (process.env.EXCHANGE_SOURCE || 'auto').toLowerCase();
   if (raw === 'okx' || raw === 'bitget') return raw;
@@ -117,8 +177,22 @@ function resolvePrimarySource() {
   return dayNum % 2 === 0 ? 'okx' : 'bitget';
 }
 
+function buildExchangeBundle(tickers, exchangeLabel) {
+  const topGainers = getTopGainers(tickers, 3);
+  const unusualVolume = getUnusualVolume(tickers, 3);
+  const hotCoin = pickHotCoin([...topGainers, ...unusualVolume]);
+
+  return {
+    majors: pickMajors(tickers, exchangeLabel),
+    gainers: topGainers,
+    topGainers,
+    unusualVolume,
+    hotCoin,
+  };
+}
+
 /**
- * Ambil ringkasan pasar; primarySource menentukan fokus konten + tombol affiliate.
+ * Ambil ringkasan pasar + top gainers + unusual volume + hot coin.
  */
 async function getMarketSnapshot() {
   const primarySource = resolvePrimarySource();
@@ -127,15 +201,8 @@ async function getMarketSnapshot() {
     fetchBitgetTickers(),
   ]);
 
-  const okx = {
-    majors: pickMajors(okxTickers, 'OKX'),
-    gainers: topGainers(okxTickers, 3),
-  };
-  const bitget = {
-    majors: pickMajors(bitgetTickers, 'Bitget'),
-    gainers: topGainers(bitgetTickers, 3),
-  };
-
+  const okx = buildExchangeBundle(okxTickers, 'OKX');
+  const bitget = buildExchangeBundle(bitgetTickers, 'Bitget');
   const primary = primarySource === 'okx' ? okx : bitget;
   const primaryLabel = primarySource === 'okx' ? 'OKX' : 'Bitget';
 
@@ -144,16 +211,14 @@ async function getMarketSnapshot() {
     primarySource,
     primaryLabel,
     primary,
+    hotCoin: primary.hotCoin,
     okx,
     bitget,
   };
 }
 
-/**
- * Ringkasan teks fokus ke exchange utama (untuk prompt AI).
- */
 function buildMarketSummaryText(snapshot) {
-  const { primary, primaryLabel, fetchedAt } = snapshot;
+  const { primary, primaryLabel, fetchedAt, hotCoin } = snapshot;
   const lines = [
     `Sumber data: ${primaryLabel}`,
     `Waktu data: ${fetchedAt}`,
@@ -161,14 +226,32 @@ function buildMarketSummaryText(snapshot) {
     `Major (${primaryLabel}):`,
   ];
 
-  for (const t of primary.majors) {
+  for (const t of primary.majors.slice(0, 5)) {
     lines.push(`- ${t.base}: $${formatPrice(t.last)} (${formatPct(t.changePct)})`);
   }
 
   lines.push('');
-  lines.push(`Top Gainers 24h (${primaryLabel}):`);
-  for (const t of primary.gainers) {
-    lines.push(`- ${t.base}: $${formatPrice(t.last)} (${formatPct(t.changePct)})`);
+  lines.push(`TOP 3 GAINERS 24h (${primaryLabel}, tanpa BTC/ETH):`);
+  for (const t of primary.topGainers || primary.gainers || []) {
+    lines.push(
+      `- ${t.base}: $${formatPrice(t.last)} (${formatPct(t.changePct)}) vol≈${Math.round(t.volume24h || 0)}`
+    );
+  }
+
+  lines.push('');
+  lines.push(`UNUSUAL VOLUME (${primaryLabel}, harga positif):`);
+  for (const t of primary.unusualVolume || []) {
+    lines.push(
+      `- ${t.base}: $${formatPrice(t.last)} (${formatPct(t.changePct)}) vol≈${Math.round(t.volume24h || 0)}`
+    );
+  }
+
+  const hot = hotCoin || primary.hotCoin;
+  if (hot) {
+    lines.push('');
+    lines.push(
+      `HOT/VIRAL PICK: ${hot.base} @ $${formatPrice(hot.last)} (${formatPct(hot.changePct)}) — fokus analisis caption`
+    );
   }
 
   return lines.join('\n');
@@ -178,6 +261,10 @@ module.exports = {
   getMarketSnapshot,
   buildMarketSummaryText,
   resolvePrimarySource,
+  getTopGainers,
+  getUnusualVolume,
+  pickHotCoin,
+  viralScore,
   formatPrice,
   formatPct,
 };

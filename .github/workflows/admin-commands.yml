@@ -38,9 +38,17 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           ADMIN_TELEGRAM_USERNAME: jfnetworkindo
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
           EXCHANGE_SOURCE: auto
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}
+          MAX_CAPTION_CHARS: '700'
+          MAX_HOOK_CHARS: '60'
+          MAX_INFO_CHARS: '220'
+          MAX_CTA_CHARS: '80'
         run: node scripts/processCommands.js
 
       - name: Force post jika diminta admin
@@ -51,6 +59,7 @@ jobs:
           TELEGRAM_FORWARD_ENABLED: 'true'
           TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
           TELEGRAM_FORWARD_THREAD_ID: ${{ secrets.TELEGRAM_FORWARD_THREAD_ID }}
+          TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}

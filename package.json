@@ -8,6 +8,7 @@
     "start": "node index.js",
     "post:once": "node index.js --once",
     "post:force": "node index.js --once --force",
+    "post:test": "node index.js --once --test",
     "commands": "node scripts/processCommands.js"
   },
   "engines": {

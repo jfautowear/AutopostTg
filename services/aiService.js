@@ -61,6 +61,10 @@ function isQuotaOrLimitError(err) {
 function buildPostPrompt(snapshot) {
   const summary = buildMarketSummaryText(snapshot);
   const exchange = snapshot.primaryLabel;
+  const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
+  const hotHint = hot
+    ? `Fokus utama caption pada koin HOT/VIRAL: ${hot.base} (${hot.changePct?.toFixed?.(2)}%).`
+    : 'Fokus pada top gainers altcoin (bukan BTC/ETH).';
 
   return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
 Buat konten postingan singkat dari data ${exchange} di bawah.
@@ -72,32 +76,38 @@ Aturan bahasa:
 - Bahasa Indonesia natural, santai-profesional, bukan kaku.
 - Emoji secukupnya (1–3 per bagian), jangan berlebihan.
 - Bukan saran investasi.
+- ${hotHint}
+- Sebutkan singkat TOP gainers / unusual volume jika relevan.
 
 Aturan panjang (ketat):
-- hook: maksimal ${LIMITS.hook} karakter (1 kalimat pembuka menarik)
-- info: maksimal ${LIMITS.info} karakter (rangkuman BTC/ETH + top gainer ${exchange})
-- cta: maksimal ${LIMITS.cta} karakter (ajak cek peluang / trade di ${exchange}, tanpa link)
+- hook: maksimal ${LIMITS.hook} karakter (1 kalimat pembuka menarik soal koin hot)
+- info: maksimal ${LIMITS.info} karakter (hot coin + 1–2 gainer, boleh sebut BTC/ETH singkat)
+- cta: maksimal ${LIMITS.cta} karakter (ajak cek peluang di ${exchange}, tanpa link)
 
 DATA ${exchange}:
 ${summary}`;
 }
 
 function fallbackPostContent(snapshot) {
-  const { primary, primaryLabel } = snapshot;
+  const { primary, primaryLabel, hotCoin } = snapshot;
+  const hot = hotCoin || primary.hotCoin;
   const btc = primary.majors.find((t) => t.base === 'BTC');
-  const eth = primary.majors.find((t) => t.base === 'ETH');
-  const gainers = primary.gainers
+  const gainers = (primary.topGainers || primary.gainers || [])
     .slice(0, 2)
     .map((t) => `${t.base} ${formatPct(t.changePct)}`)
     .join(', ');
 
-  const mood =
-    btc?.changePct != null && btc.changePct >= 0 ? 'hijau' : 'merah';
-
   return {
-    hook: clip(`🚀 Pasar ${mood} — update ${primaryLabel}`, LIMITS.hook),
+    hook: clip(
+      hot
+        ? `🚀 ${hot.base} lagi panas di ${primaryLabel}!`
+        : `🚀 Altcoin move di ${primaryLabel}`,
+      LIMITS.hook
+    ),
     info: clip(
-      `BTC $${formatPrice(btc?.last)} (${formatPct(btc?.changePct)}), ETH $${formatPrice(eth?.last)} (${formatPct(eth?.changePct)}). Top gainer: ${gainers || '—'}. Pantau volume, jangan FOMO.`,
+      hot
+        ? `${hot.base} $${formatPrice(hot.last)} (${formatPct(hot.changePct)}). Top gainer: ${gainers || '—'}. BTC $${formatPrice(btc?.last)} (${formatPct(btc?.changePct)}). Pantau volume, jangan FOMO.`
+        : `Top gainer: ${gainers || '—'}. BTC $${formatPrice(btc?.last)} (${formatPct(btc?.changePct)}). Pantau volume, jangan FOMO.`,
       LIMITS.info
     ),
     cta: clip(`👉 Cek peluang di ${primaryLabel} sekarang.`, LIMITS.cta),

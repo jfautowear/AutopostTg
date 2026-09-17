@@ -51,6 +51,7 @@ jobs:
           TELEGRAM_FORWARD_ENABLED: 'true'
           TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
           TELEGRAM_FORWARD_THREAD_ID: ${{ secrets.TELEGRAM_FORWARD_THREAD_ID }}
+          TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}

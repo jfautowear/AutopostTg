@@ -2,40 +2,42 @@ const TelegramBot = require('node-telegram-bot-api');
 
 /**
  * Channel gratis = limit API Telegram standar.
- * Caption foto max 1024 (UTF-16). Kita pakai default lebih ketat
- * karena emoji (2 unit) + tag HTML ikut dihitung.
+ * Caption foto max 1024 (UTF-16). Default lebih ketat karena emoji + HTML.
  */
 const MAX_CAPTION_CHARS = Number(process.env.MAX_CAPTION_CHARS) || 700;
 
-const AFFILIATES = {
-  okx: {
-    text: '💰 Trade di OKX',
-    url: 'https://okx.ac/join/76785925',
-  },
-  bitget: {
-    text: '💰 Trade di Bitget',
-    url: 'https://partner.bitgetapp.com/bg/CSGH1P',
-  },
-};
-
-const GROUP_BUTTON = {
-  text: '👥 Gabung Grup',
-  url: 'https://t.me/caricuanhp',
-};
+const AFFILIATE_BUTTONS = [
+  { text: 'Trade di OKX CEX', url: 'https://okx.ac/join/76785925' },
+  { text: 'OKX Web3 DEX', url: 'https://web3.okx.ac/join/JFNETWORK' },
+  { text: 'Trade di Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
+];
 
 const DISCLAIMER = '⚠️ Disclaimer: NFA & DYOR.';
 
 let botInstance = null;
 
-function getBot() {
-  if (botInstance) return botInstance;
-
+function getBot(options = {}) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token || token.includes('your_bot_token')) {
     throw new Error('TELEGRAM_BOT_TOKEN belum di-set di .env / secrets');
   }
 
-  botInstance = new TelegramBot(token, { polling: false });
+  if (botInstance && !options.forceNew) {
+    return botInstance;
+  }
+
+  if (botInstance && options.forceNew) {
+    try {
+      botInstance.stopPolling?.();
+    } catch {
+      // ignore
+    }
+    botInstance = null;
+  }
+
+  botInstance = new TelegramBot(token, {
+    polling: Boolean(options.polling),
+  });
   return botInstance;
 }
 
@@ -43,15 +45,23 @@ function getChannelId() {
   return process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet';
 }
 
-/** Grup tujuan forward — default @caricuanhp (https://t.me/caricuanhp/80483) */
+/**
+ * Grup private testing.
+ * Catatan: link invite t.me/+... TIDAK bisa dipakai langsung —
+ * isi TEST_CHAT_ID dengan ID numerik (contoh -100xxxxxxxxxx).
+ */
+function getTestChatId() {
+  const id = (process.env.TEST_CHAT_ID || '').trim();
+  if (!id || id.includes('your_') || id.includes('+xqVu')) {
+    return null;
+  }
+  return id;
+}
+
 function getForwardChatId() {
   return process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp';
 }
 
-/**
- * Topic / thread forum (opsional).
- * Dari link https://t.me/caricuanhp/80483 → thread id = 80483
- */
 function getForwardThreadId() {
   const raw =
     process.env.TELEGRAM_FORWARD_THREAD_ID ||
@@ -65,7 +75,6 @@ function getForwardThreadId() {
 }
 
 function telegramLength(text) {
-  // Telegram menghitung UTF-16 code units (= String.length di JS)
   return String(text || '').length;
 }
 
@@ -93,26 +102,25 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;');
 }
 
-function buildInlineKeyboard(primarySource) {
-  const affiliate = AFFILIATES[primarySource] || AFFILIATES.okx;
+/** 3 tombol affiliate — dipakai test & auto-post. */
+function buildInlineKeyboard() {
   return {
-    inline_keyboard: [
-      [{ text: affiliate.text, url: affiliate.url }],
-      [{ text: GROUP_BUTTON.text, url: GROUP_BUTTON.url }],
-    ],
+    inline_keyboard: AFFILIATE_BUTTONS.map((btn) => [{ text: btn.text, url: btn.url }]),
   };
 }
 
-/**
- * Format: HOOK → Informasi → CTA → Disclaimer
- * Selalu dipotong agar ≤ MAX_CAPTION_CHARS (aman channel gratis).
- */
-function formatMarketMessage(snapshot, content) {
+function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   const exchange = snapshot.primaryLabel;
+  const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
+  const hotLine = hot
+    ? `🔥 Hot: <b>${escapeHtml(hot.base)}</b> ${escapeHtml(formatPctSafe(hot.changePct))}`
+    : null;
 
   const build = (hook, info, cta) =>
     [
+      isTest ? '<b>🧪 [TEST PREVIEW]</b>' : null,
       escapeHtml(hook),
+      hotLine,
       '',
       `<b>📡 Info pasar ${escapeHtml(exchange)}</b>`,
       escapeHtml(info),
@@ -120,14 +128,14 @@ function formatMarketMessage(snapshot, content) {
       escapeHtml(cta),
       '',
       `<i>${escapeHtml(DISCLAIMER)}</i>`,
-    ].join('\n');
+    ]
+      .filter((line) => line != null)
+      .join('\n');
 
   let message = build(content.hook, content.info, content.cta);
 
   if (telegramLength(message) > MAX_CAPTION_CHARS) {
-    const templateOverhead = telegramLength(
-      build('', '', '')
-    );
+    const templateOverhead = telegramLength(build('', '', ''));
     const budget = Math.max(120, MAX_CAPTION_CHARS - templateOverhead - 8);
     const hookBudget = Math.min(60, Math.floor(budget * 0.18));
     const ctaBudget = Math.min(80, Math.floor(budget * 0.18));
@@ -140,7 +148,6 @@ function formatMarketMessage(snapshot, content) {
     );
   }
 
-  // Hard cap terakhir (emoji + HTML)
   while (telegramLength(message) > MAX_CAPTION_CHARS) {
     message = message.slice(0, -2);
   }
@@ -151,11 +158,12 @@ function formatMarketMessage(snapshot, content) {
   return message;
 }
 
-/**
- * Forward post channel → grup (opsional ke topic forum).
- * Link acuan: https://t.me/caricuanhp/80483
- * Bot harus admin di channel & anggota/admin di grup.
- */
+function formatPctSafe(value) {
+  if (value == null) return '—';
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${Number(value).toFixed(2)}%`;
+}
+
 async function forwardToGroup(fromChatId, messageId) {
   const enabled = process.env.TELEGRAM_FORWARD_ENABLED !== 'false';
   if (!enabled) {
@@ -174,14 +182,10 @@ async function forwardToGroup(fromChatId, messageId) {
 
   try {
     if (threadId) {
-      return await tryForward(
-        { message_thread_id: threadId },
-        ` topic/${threadId}`
-      );
+      return await tryForward({ message_thread_id: threadId }, ` topic/${threadId}`);
     }
     return await tryForward({}, '');
   } catch (err) {
-    // Jika 80483 bukan forum topic, coba forward biasa ke grup
     if (threadId) {
       console.warn(
         `[telegram] Forward ke topic ${threadId} gagal (${err.message}), coba tanpa topic...`
@@ -192,18 +196,47 @@ async function forwardToGroup(fromChatId, messageId) {
   }
 }
 
-async function postToChannel({ snapshot, content, imageBuffer }) {
+/**
+ * Kirim post ke target chat.
+ * @param {'channel'|'test'|string} target
+ */
+async function sendMarketPost({
+  snapshot,
+  content,
+  imageBuffer,
+  target = 'channel',
+  forward = true,
+  isTest = false,
+}) {
   const bot = getBot();
-  const chatId = getChannelId();
-  const caption = formatMarketMessage(snapshot, content);
-  const reply_markup = buildInlineKeyboard(snapshot.primarySource);
+  let chatId;
+
+  if (target === 'channel') {
+    chatId = getChannelId();
+  } else if (target === 'test') {
+    chatId = getTestChatId();
+    if (!chatId) {
+      throw new Error(
+        'TEST_CHAT_ID belum di-set. Isi ID numerik grup private (bukan link t.me/+...). Tambahkan bot ke grup & jadikan admin.'
+      );
+    }
+    isTest = true;
+    forward = false;
+  } else {
+    chatId = target;
+  }
+
+  const caption = formatMarketMessage(snapshot, content, { isTest });
+  const reply_markup = buildInlineKeyboard();
   const len = telegramLength(caption);
 
   if (len > 1024) {
     throw new Error(`Caption terlalu panjang (${len} > 1024) — cek MAX_CAPTION_CHARS`);
   }
 
-  console.log(`[telegram] Caption ${len}/${MAX_CAPTION_CHARS} chars (limit aman channel gratis)`);
+  console.log(
+    `[telegram] → ${chatId} | ${len}/${MAX_CAPTION_CHARS} chars | test=${isTest}`
+  );
 
   let sent;
   if (imageBuffer && imageBuffer.length > 0) {
@@ -221,14 +254,12 @@ async function postToChannel({ snapshot, content, imageBuffer }) {
   }
 
   let forwarded = null;
-  try {
-    forwarded = await forwardToGroup(chatId, sent.message_id);
-  } catch (err) {
-    // Post channel tetap sukses meski forward gagal
-    console.error('[telegram] Forward ke grup gagal:', err.message);
-    console.error(
-      '[telegram] Pastikan bot admin channel + anggota grup, dan TELEGRAM_FORWARD_THREAD_ID benar jika forum topic.'
-    );
+  if (forward && target === 'channel') {
+    try {
+      forwarded = await forwardToGroup(chatId, sent.message_id);
+    } catch (err) {
+      console.error('[telegram] Forward ke grup gagal:', err.message);
+    }
   }
 
   return {
@@ -237,24 +268,35 @@ async function postToChannel({ snapshot, content, imageBuffer }) {
     hasImage: Boolean(imageBuffer),
     captionLength: len,
     source: snapshot.primarySource,
+    isTest,
     forwarded: Boolean(forwarded),
     forwardChatId: getForwardChatId(),
     forwardThreadId: getForwardThreadId(),
   };
 }
 
+async function postToChannel(payload) {
+  return sendMarketPost({ ...payload, target: 'channel', forward: true, isTest: false });
+}
+
+async function postToTestChat(payload) {
+  return sendMarketPost({ ...payload, target: 'test', forward: false, isTest: true });
+}
+
 module.exports = {
   getBot,
   getChannelId,
+  getTestChatId,
   getForwardChatId,
   getForwardThreadId,
   formatMarketMessage,
   buildInlineKeyboard,
   forwardToGroup,
+  sendMarketPost,
   postToChannel,
+  postToTestChat,
   telegramLength,
   clip,
   MAX_CAPTION_CHARS,
-  AFFILIATES,
-  GROUP_BUTTON,
+  AFFILIATE_BUTTONS,
 };
