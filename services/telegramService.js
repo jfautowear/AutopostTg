@@ -124,16 +124,26 @@ function buildInlineKeyboard() {
   };
 }
 
-/** Keyboard airdrop/DEX — tombol OKX Web3 diacak antar referral. */
+/** Keyboard airdrop/DEX — 2 baris: [OKX WEB3 | CHART] lalu [JOIN GROUP]. */
 function buildAirdropInlineKeyboard(snapshot) {
   const web3Url = pickOkxWeb3Url();
-  console.log(`[telegram] OKX Web3 button → ${web3Url}`);
-  const rows = [[{ text: '🔍 Cek di OKX Web3 DEX', url: web3Url }]];
-  const url = snapshot?.hotGem?.url;
-  if (url && /^https?:\/\//i.test(url)) {
-    rows.push([{ text: '📊 Lihat chart', url }]);
-  }
-  return { inline_keyboard: rows };
+  const chartUrl =
+    snapshot?.hotGem?.url && /^https?:\/\//i.test(snapshot.hotGem.url)
+      ? snapshot.hotGem.url
+      : 'https://dexscreener.com';
+
+  console.log(`[telegram] Airdrop keyboard → OKX=${web3Url} | chart=${chartUrl}`);
+
+  // Matriks setara Markup.inlineKeyboard([[btn1, btn2], [btn3]])
+  return {
+    inline_keyboard: [
+      [
+        { text: '🌐 OKX WEB3', url: web3Url },
+        { text: '📊 CHART', url: chartUrl },
+      ],
+      [{ text: '💬 JOIN GROUP', url: 'https://t.me/caricuanhp' }],
+    ],
+  };
 }
 
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
