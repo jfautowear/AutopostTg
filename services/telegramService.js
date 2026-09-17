@@ -12,6 +12,12 @@ const AFFILIATE_BUTTONS = [
   { text: 'Trade di Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
 ];
 
+const OKX_WEB3_DEX = {
+  text: '🔍 Cek di OKX Web3 DEX',
+  url: 'https://web3.okx.ac/join/JFNETWORK',
+};
+
+const AIRDROP_DISCLAIMER = '⚠️ HIGH RISK · NFA & DYOR. Bukan jaminan airdrop.';
 const DISCLAIMER = '⚠️ Disclaimer: NFA & DYOR.';
 
 let botInstance = null;
@@ -102,14 +108,28 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;');
 }
 
-/** 3 tombol affiliate — dipakai test & auto-post. */
+/** Keyboard spot CEX (3 affiliate). */
 function buildInlineKeyboard() {
   return {
     inline_keyboard: AFFILIATE_BUTTONS.map((btn) => [{ text: btn.text, url: btn.url }]),
   };
 }
 
+/** Keyboard khusus kategori airdrop/DEX — fokus OKX Web3 DEX. */
+function buildAirdropInlineKeyboard(snapshot) {
+  const rows = [[{ text: OKX_WEB3_DEX.text, url: OKX_WEB3_DEX.url }]];
+  const url = snapshot?.hotGem?.url;
+  if (url && /^https?:\/\//i.test(url)) {
+    rows.push([{ text: '📊 Lihat chart', url }]);
+  }
+  return { inline_keyboard: rows };
+}
+
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
+  if (snapshot.category === 'airdrop') {
+    return formatAirdropMessage(snapshot, content, { isTest });
+  }
+
   const exchange = snapshot.primaryLabel;
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
   const hotLine = hot
@@ -132,6 +152,36 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
       .filter((line) => line != null)
       .join('\n');
 
+  return finalizeCaption(build, content);
+}
+
+function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
+  const gem = snapshot.hotGem;
+  const gemLine = gem
+    ? `💎 <b>${escapeHtml(gem.symbol)}</b> · ${escapeHtml(gem.chain)} · 1h ${escapeHtml(formatPctSafe(gem.change1h))}`
+    : null;
+
+  const build = (hook, info, cta) =>
+    [
+      isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
+      '<b>🪂 Airdrop / Early Gem</b>',
+      escapeHtml(hook),
+      gemLine,
+      '',
+      '<b>⛓ On-chain pulse</b>',
+      escapeHtml(info),
+      '',
+      escapeHtml(cta),
+      '',
+      `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
+    ]
+      .filter((line) => line != null)
+      .join('\n');
+
+  return finalizeCaption(build, content);
+}
+
+function finalizeCaption(build, content) {
   let message = build(content.hook, content.info, content.cta);
 
   if (telegramLength(message) > MAX_CAPTION_CHARS) {
@@ -227,7 +277,10 @@ async function sendMarketPost({
   }
 
   const caption = formatMarketMessage(snapshot, content, { isTest });
-  const reply_markup = buildInlineKeyboard();
+  const reply_markup =
+    snapshot.category === 'airdrop'
+      ? buildAirdropInlineKeyboard(snapshot)
+      : buildInlineKeyboard();
   const len = telegramLength(caption);
 
   if (len > 1024) {
@@ -290,7 +343,9 @@ module.exports = {
   getForwardChatId,
   getForwardThreadId,
   formatMarketMessage,
+  formatAirdropMessage,
   buildInlineKeyboard,
+  buildAirdropInlineKeyboard,
   forwardToGroup,
   sendMarketPost,
   postToChannel,
@@ -299,4 +354,5 @@ module.exports = {
   clip,
   MAX_CAPTION_CHARS,
   AFFILIATE_BUTTONS,
+  OKX_WEB3_DEX,
 };

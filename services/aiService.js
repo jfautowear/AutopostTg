@@ -1,5 +1,10 @@
 const axios = require('axios');
-const { buildMarketSummaryText, formatPrice, formatPct } = require('./cryptoService');
+const {
+  buildMarketSummaryText,
+  buildAirdropSummaryText,
+  formatPrice,
+  formatPct,
+} = require('./cryptoService');
 
 /** Batas ketat agar total caption (HTML+emoji) aman di channel gratis. */
 const LIMITS = {
@@ -73,7 +78,64 @@ function isQuotaOrLimitError(err) {
   );
 }
 
+function buildAirdropPrompt(snapshot) {
+  const summary = buildAirdropSummaryText(snapshot);
+  const gem = snapshot.hotGem;
+
+  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
+Buat konten bertema "Airdrop / Early Gem Opportunity" dari data DEX trending di bawah.
+
+WAJIB balas HANYA JSON valid (tanpa markdown), format:
+{"hook":"...","info":"...","cta":"..."}
+
+Aturan:
+- Bahasa Indonesia natural, santai-profesional.
+- Nada: peluang early / narasi airdrop atau gem on-chain, tapi JUJUR soal risiko.
+- Wajib sebutkan ini HIGH RISK & DYOR (bukan saran investasi / bukan jaminan airdrop).
+- Emoji secukupnya (1–3 per bagian).
+- Fokus ke gem utama: ${gem ? `${gem.symbol} di ${gem.chain}` : 'token trending DEX'}.
+- Sebut chain (Solana/Base/Arbitrum) + lonjakan volume singkat 1h/6h.
+- Jangan klaim "pasti airdrop" atau "safe entry".
+
+Panjang ketat:
+- hook: maks ${LIMITS.hook} karakter
+- info: maks ${LIMITS.info} karakter
+- cta: maks ${LIMITS.cta} karakter (ajak cek di OKX Web3 DEX, tanpa link)
+
+DATA:
+${summary}`;
+}
+
+function fallbackAirdropContent(snapshot) {
+  const g = snapshot.hotGem || (snapshot.gems || [])[0];
+  if (!g) {
+    return {
+      hook: clip('👀 Scan early gem DEX hari ini', LIMITS.hook),
+      info: clip(
+        'Belum ada kandidat volume spike yang lolos filter Solana/Base/Arbitrum. Market sepi — tunggu setup berikutnya. High risk, DYOR.',
+        LIMITS.info
+      ),
+      cta: clip('👉 Cek peluang on-chain di OKX Web3 DEX.', LIMITS.cta),
+      provider: 'fallback-airdrop',
+    };
+  }
+
+  return {
+    hook: clip(`💎 Early gem? ${g.symbol} lagi rame di ${g.chain}`, LIMITS.hook),
+    info: clip(
+      `${g.symbol} $${formatPrice(g.priceUsd)} | 1h ${formatPct(g.change1h)} / 6h ${formatPct(g.change6h)}. Vol1h≈${Math.round(g.volume1h || 0)}. Narasi airdrop/early entry sering muncul di fase ini — HIGH RISK, bisa rugi total. DYOR.`,
+      LIMITS.info
+    ),
+    cta: clip('👉 Cek pair-nya di OKX Web3 DEX sebelum FOMO.', LIMITS.cta),
+    provider: 'fallback-airdrop',
+  };
+}
+
 function buildPostPrompt(snapshot) {
+  if (snapshot.category === 'airdrop') {
+    return buildAirdropPrompt(snapshot);
+  }
+
   const summary = buildMarketSummaryText(snapshot);
   const exchange = snapshot.primaryLabel;
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
@@ -104,6 +166,10 @@ ${summary}`;
 }
 
 function fallbackPostContent(snapshot) {
+  if (snapshot.category === 'airdrop') {
+    return fallbackAirdropContent(snapshot);
+  }
+
   const { primary, primaryLabel, hotCoin } = snapshot;
   const hot = hotCoin || primary.hotCoin;
   const btc = primary.majors.find((t) => t.base === 'BTC');
@@ -366,20 +432,29 @@ async function generatePostContent(snapshot) {
  * Prompt gambar dari teks AI + data hot coin (Pollinations gratis).
  */
 function buildImagePromptFromContent(snapshot, content) {
-  const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
-  const exchange = snapshot.primaryLabel;
-  const mood =
-    hot?.changePct != null && hot.changePct >= 0
+  const isAirdrop = snapshot.category === 'airdrop';
+  const hot = isAirdrop
+    ? snapshot.hotGem
+    : snapshot.hotCoin || snapshot.primary?.hotCoin;
+  const label = isAirdrop
+    ? hot?.chain || 'multi-chain DEX'
+    : snapshot.primaryLabel;
+  const symbol = isAirdrop ? hot?.symbol : hot?.base;
+  const mood = isAirdrop
+    ? 'mysterious early gem discovery, purple cyan neon portals'
+    : hot?.changePct != null && hot.changePct >= 0
       ? 'bullish neon green glow'
       : 'dramatic red market tension';
 
   const narrative = [content?.hook, content?.info].filter(Boolean).join('. ');
 
   return [
-    'Cinematic crypto trading illustration, ultra detailed,',
+    isAirdrop
+      ? 'Cinematic crypto airdrop early gem illustration, ultra detailed,'
+      : 'Cinematic crypto trading illustration, ultra detailed,',
     `${mood}, dark premium fintech aesthetic,`,
-    hot ? `spotlight on ${hot.base} cryptocurrency price surge,` : 'altcoin market heat map,',
-    `${exchange} style HUD dashboard, candlestick charts, holographic UI,`,
+    symbol ? `spotlight on ${symbol} token,` : 'altcoin heat map,',
+    `${label} on-chain HUD, liquidity pools, holographic UI,`,
     narrative ? `visual mood inspired by: ${clip(narrative, 160)},` : '',
     'no readable logos, no watermark, 16:9',
   ]
@@ -440,6 +515,8 @@ module.exports = {
   generatePostContent,
   generateMarketImage,
   fallbackPostContent,
+  fallbackAirdropContent,
+  buildAirdropPrompt,
   isQuotaOrLimitError,
   clip,
   getGroqKey,

@@ -9,6 +9,8 @@
     "post:once": "node index.js --once",
     "post:force": "node index.js --once --force",
     "post:test": "node index.js --once --test",
+    "post:airdrop": "node index.js --once --force --airdrop",
+    "post:test-airdrop": "node index.js --once --test --airdrop",
     "commands": "node scripts/processCommands.js"
   },
   "engines": {

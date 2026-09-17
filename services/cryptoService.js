@@ -257,9 +257,277 @@ function buildMarketSummaryText(snapshot) {
   return lines.join('\n');
 }
 
+/** Chain populer untuk narasi airdrop / early gem. */
+const DEX_CHAINS = new Set(['solana', 'base', 'arbitrum']);
+const DEXSCREENER_BASE = 'https://api.dexscreener.com';
+const GECKO_BASE = 'https://api.geckoterminal.com/api/v2';
+
+function chainLabel(chainId) {
+  const map = { solana: 'Solana', base: 'Base', arbitrum: 'Arbitrum' };
+  return map[String(chainId || '').toLowerCase()] || chainId;
+}
+
+function mapDexScreenerPair(pair) {
+  if (!pair?.chainId || !DEX_CHAINS.has(String(pair.chainId).toLowerCase())) return null;
+
+  const vol1 = toNumber(pair.volume?.h1);
+  const vol6 = toNumber(pair.volume?.h6);
+  const vol24 = toNumber(pair.volume?.h24);
+  const ch1 = toNumber(pair.priceChange?.h1);
+  const ch6 = toNumber(pair.priceChange?.h6);
+  const liq = toNumber(pair.liquidity?.usd);
+  const price = toNumber(pair.priceUsd);
+  const base = pair.baseToken?.symbol || pair.baseToken?.name;
+  if (!base || !price) return null;
+
+  // Lonjakan volume khas early gem: vol 1h atau 6h signifikan vs likuiditas
+  const spikeVol = Math.max(vol1 || 0, (vol6 || 0) / 4);
+  const liqSafe = Math.max(liq || 1, 1);
+  const volumeSpikeRatio = spikeVol / liqSafe;
+
+  return {
+    source: 'dexscreener',
+    chainId: String(pair.chainId).toLowerCase(),
+    chain: chainLabel(pair.chainId),
+    symbol: base,
+    name: pair.baseToken?.name || base,
+    address: pair.baseToken?.address || null,
+    pairAddress: pair.pairAddress || null,
+    priceUsd: price,
+    change1h: ch1,
+    change6h: ch6,
+    change24h: toNumber(pair.priceChange?.h24),
+    volume1h: vol1,
+    volume6h: vol6,
+    volume24h: vol24,
+    liquidityUsd: liq,
+    volumeSpikeRatio,
+    dexId: pair.dexId || null,
+    url: pair.url || `https://dexscreener.com/${pair.chainId}/${pair.pairAddress}`,
+    txns1h: (toNumber(pair.txns?.h1?.buys) || 0) + (toNumber(pair.txns?.h1?.sells) || 0),
+  };
+}
+
+function isEarlyGemCandidate(t) {
+  if (!t || !DEX_CHAINS.has(t.chainId)) return false;
+  const vol1 = t.volume1h || 0;
+  const vol6 = t.volume6h || 0;
+  const liq = t.liquidityUsd || 0;
+  // Minimal aktivitas + lonjakan pendek (1–6 jam)
+  if (vol1 < 15000 && vol6 < 80000) return false;
+  if (liq > 0 && liq < 5000) return false; // terlalu tipis / mungkin honeypot noise
+  // Prefer naik di window pendek ATAU volume spike tinggi
+  const shortPump = (t.change1h != null && t.change1h >= 8) || (t.change6h != null && t.change6h >= 15);
+  const hotVol = t.volumeSpikeRatio >= 0.35 || vol1 >= 80000 || vol6 >= 400000;
+  return shortPump || hotVol;
+}
+
+function gemScore(t) {
+  const vol = Math.max(t.volume1h || 0, (t.volume6h || 0) / 3, 1);
+  const ch = Math.max(t.change1h || 0, (t.change6h || 0) / 2, 0);
+  return ch * Math.log10(vol + 10) + Math.log10(vol + 10) * (t.volumeSpikeRatio || 0) * 10;
+}
+
+async function fetchDexScreenerBoostAddresses() {
+  const urls = [
+    `${DEXSCREENER_BASE}/token-boosts/top/v1`,
+    `${DEXSCREENER_BASE}/token-boosts/latest/v1`,
+  ];
+  const items = [];
+  for (const url of urls) {
+    try {
+      const { data } = await axios.get(url, { timeout: 15000 });
+      if (Array.isArray(data)) items.push(...data);
+    } catch (err) {
+      console.warn('[cryptoService] DexScreener boosts gagal:', err.message);
+    }
+  }
+
+  const seen = new Set();
+  const out = [];
+  for (const item of items) {
+    const chainId = String(item.chainId || '').toLowerCase();
+    if (!DEX_CHAINS.has(chainId)) continue;
+    const key = `${chainId}:${item.tokenAddress}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ chainId, tokenAddress: item.tokenAddress, url: item.url });
+  }
+  return out.slice(0, 40);
+}
+
+async function fetchDexScreenerPairsByTokens(boosts) {
+  const pairs = [];
+  // Batch ~5 address agar tidak spam API
+  const chunkSize = 5;
+  for (let i = 0; i < boosts.length; i += chunkSize) {
+    const chunk = boosts.slice(i, i + chunkSize);
+    await Promise.all(
+      chunk.map(async (b) => {
+        try {
+          const { data } = await axios.get(
+            `${DEXSCREENER_BASE}/latest/dex/tokens/${b.tokenAddress}`,
+            { timeout: 15000 }
+          );
+          const list = Array.isArray(data?.pairs) ? data.pairs : [];
+          for (const p of list) {
+            if (String(p.chainId).toLowerCase() !== b.chainId) continue;
+            const mapped = mapDexScreenerPair(p);
+            if (mapped) pairs.push(mapped);
+          }
+        } catch {
+          // skip token
+        }
+      })
+    );
+  }
+  return pairs;
+}
+
+async function fetchGeckoTrendingPools() {
+  const networks = ['solana', 'base', 'arbitrum'];
+  const gems = [];
+
+  await Promise.all(
+    networks.map(async (network) => {
+      try {
+        const { data } = await axios.get(
+          `${GECKO_BASE}/networks/${network}/trending_pools`,
+          {
+            timeout: 15000,
+            headers: { Accept: 'application/json' },
+            params: { include: 'base_token', page: 1 },
+          }
+        );
+        const rows = Array.isArray(data?.data) ? data.data : [];
+        for (const row of rows) {
+          const a = row.attributes || {};
+          const vol = a.volume_usd || {};
+          const priceChange = a.price_change_percentage || {};
+          const name = a.name || '';
+          const symbol = String(name).split('/')[0].trim() || name;
+          const mapped = {
+            source: 'geckoterminal',
+            chainId: network,
+            chain: chainLabel(network),
+            symbol,
+            name,
+            address: a.address || null,
+            pairAddress: a.address || null,
+            priceUsd: toNumber(a.base_token_price_usd),
+            change1h: toNumber(priceChange.h1),
+            change6h: toNumber(priceChange.h6),
+            change24h: toNumber(priceChange.h24),
+            volume1h: toNumber(vol.h1),
+            volume6h: toNumber(vol.h6),
+            volume24h: toNumber(vol.h24),
+            liquidityUsd: toNumber(a.reserve_in_usd),
+            volumeSpikeRatio:
+              (toNumber(vol.h1) || 0) / Math.max(toNumber(a.reserve_in_usd) || 1, 1),
+            dexId: a.dex_id || null,
+            url: a.address
+              ? `https://www.geckoterminal.com/${network}/pools/${a.address}`
+              : `https://www.geckoterminal.com/${network}`,
+            txns1h: toNumber(a.transactions?.h1?.buys) || 0,
+          };
+          gems.push(mapped);
+        }
+      } catch (err) {
+        console.warn(`[cryptoService] GeckoTerminal ${network} gagal:`, err.message);
+      }
+    })
+  );
+
+  return gems;
+}
+
+/**
+ * Ambil token trending DEX/on-chain (DexScreener + GeckoTerminal),
+ * saring Solana/Base/Arbitrum dengan lonjakan volume 1–6 jam.
+ */
+async function getDexAirdropSnapshot(limit = 5) {
+  const boosts = await fetchDexScreenerBoostAddresses();
+  const [dexPairs, geckoPools] = await Promise.all([
+    fetchDexScreenerPairsByTokens(boosts),
+    fetchGeckoTrendingPools(),
+  ]);
+
+  const merged = new Map();
+  for (const t of [...dexPairs, ...geckoPools]) {
+    if (!isEarlyGemCandidate(t)) continue;
+    const key = `${t.chainId}:${(t.symbol || '').toUpperCase()}:${t.pairAddress || t.address}`;
+    const prev = merged.get(key);
+    if (!prev || gemScore(t) > gemScore(prev)) merged.set(key, t);
+  }
+
+  const ranked = [...merged.values()]
+    .map((t) => ({ ...t, gemScore: gemScore(t) }))
+    .sort((a, b) => b.gemScore - a.gemScore)
+    .slice(0, limit);
+
+  const pick =
+    ranked[0] ||
+    null;
+
+  return {
+    category: 'airdrop',
+    fetchedAt: new Date().toISOString(),
+    primarySource: 'dex',
+    primaryLabel: 'DEX / On-chain',
+    chains: ['solana', 'base', 'arbitrum'],
+    gems: ranked,
+    hotGem: pick,
+    hotCoin: pick
+      ? {
+          base: pick.symbol,
+          last: pick.priceUsd,
+          changePct: pick.change1h ?? pick.change6h,
+          exchange: pick.chain,
+        }
+      : null,
+  };
+}
+
+function buildAirdropSummaryText(snapshot) {
+  const lines = [
+    'Kategori: Airdrop / Early Gem Opportunity (DEX)',
+    `Waktu data: ${snapshot.fetchedAt}`,
+    `Chain fokus: ${(snapshot.chains || []).join(', ')}`,
+    '',
+  ];
+
+  if (snapshot.hotGem) {
+    const g = snapshot.hotGem;
+    lines.push('HOT GEM PICK:');
+    lines.push(
+      `- ${g.symbol} (${g.chain}) $${formatPrice(g.priceUsd)} | 1h ${formatPct(g.change1h)} | 6h ${formatPct(g.change6h)}`
+    );
+    lines.push(
+      `  vol1h≈${Math.round(g.volume1h || 0)} | vol6h≈${Math.round(g.volume6h || 0)} | liq≈${Math.round(g.liquidityUsd || 0)}`
+    );
+    lines.push(`  url: ${g.url}`);
+    lines.push('');
+  }
+
+  lines.push('Watchlist trending (volume spike 1–6h):');
+  for (const g of snapshot.gems || []) {
+    lines.push(
+      `- ${g.symbol} @ ${g.chain}: $${formatPrice(g.priceUsd)} (1h ${formatPct(g.change1h)}, 6h ${formatPct(g.change6h)}) vol1h≈${Math.round(g.volume1h || 0)}`
+    );
+  }
+
+  if (!(snapshot.gems || []).length) {
+    lines.push('- (tidak ada kandidat yang lolos filter saat ini)');
+  }
+
+  return lines.join('\n');
+}
+
 module.exports = {
   getMarketSnapshot,
   buildMarketSummaryText,
+  getDexAirdropSnapshot,
+  buildAirdropSummaryText,
   resolvePrimarySource,
   getTopGainers,
   getUnusualVolume,
@@ -267,4 +535,5 @@ module.exports = {
   viralScore,
   formatPrice,
   formatPct,
+  DEX_CHAINS,
 };

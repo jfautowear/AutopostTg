@@ -79,10 +79,12 @@ function setOutput(forcePost) {
   }
 }
 
-async function executeTest(bot, msg) {
+async function executeTest(bot, msg, category = 'spot') {
   const statusMsg = await bot.sendMessage(
     msg.chat.id,
-    '⏳ Sedang mengambil data market terbaru & generate konten AI...',
+    category === 'airdrop'
+      ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
+      : '⏳ Sedang mengambil data market terbaru & generate konten AI...',
     { reply_to_message_id: msg.message_id }
   );
 
@@ -90,10 +92,15 @@ async function executeTest(bot, msg) {
     if (!getTestChatId()) {
       throw new Error('TEST_CHAT_ID belum di-set (ID numerik grup private).');
     }
-    const result = await runPipeline({ target: 'test' });
-    const hot = result.snapshot?.hotCoin?.base || '—';
+    const result = await runPipeline({ target: 'test', category });
+    const label =
+      category === 'airdrop'
+        ? result.snapshot?.hotGem
+          ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
+          : '—'
+        : result.snapshot?.hotCoin?.base || '—';
     await bot.editMessageText(
-      `✅ Tes berhasil!\n📦 Preview → grup private testing\n🔥 Hot: ${hot}\n📝 ${result.captionLength} karakter`,
+      `✅ Tes berhasil (${category})!\n📦 Preview → grup private\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {
@@ -104,10 +111,12 @@ async function executeTest(bot, msg) {
   }
 }
 
-async function executePostNow(bot, msg) {
+async function executePostNow(bot, msg, category = 'spot') {
   const statusMsg = await bot.sendMessage(
     msg.chat.id,
-    '⏳ Posting ke channel utama...',
+    category === 'airdrop'
+      ? '⏳ Posting Airdrop/DEX ke channel...'
+      : '⏳ Posting ke channel utama...',
     { reply_to_message_id: msg.message_id }
   );
 
@@ -115,9 +124,10 @@ async function executePostNow(bot, msg) {
     const result = await runPipeline({
       target: 'channel',
       slot: `cmd-${Date.now()}`,
+      category,
     });
     await bot.editMessageText(
-      `✅ Post berhasil!\n🆔 ${result.chatId}#${result.messageId}`,
+      `✅ Post berhasil (${result.category})!\n🆔 ${result.chatId}#${result.messageId}`,
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {
@@ -171,13 +181,12 @@ async function processCommands() {
     processed += 1;
 
     if (result.runTest) {
-      await executeTest(bot, msg);
+      await executeTest(bot, msg, result.category || 'spot');
       continue;
     }
 
     if (result.runPostNow || result.forcePost) {
-      // Jalankan langsung (bukan cuma flag GHA) agar UX sama dengan /test
-      await executePostNow(bot, msg);
+      await executePostNow(bot, msg, result.category || 'spot');
       forcePost = false;
       continue;
     }
@@ -185,6 +194,10 @@ async function processCommands() {
     if (result.scheduleChanged) scheduleChanged = true;
     if (result.exchangeSource) {
       writeRuntime({ exchangeSource: result.exchangeSource });
+      runtimeChanged = true;
+    }
+    if (result.postCategory) {
+      writeRuntime({ postCategory: result.postCategory });
       runtimeChanged = true;
     }
 

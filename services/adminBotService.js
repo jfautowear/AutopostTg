@@ -16,8 +16,10 @@ const ADMIN_USERNAME = (
 const HELP_TEXT = `🛠 *Admin Autopost* (@${ADMIN_USERNAME})
 
 Test & post:
-/test — preview ke grup private (TEST\\_CHAT\\_ID)
-/postnow — post ke channel utama
+/test — preview spot CEX ke grup private
+/test\\_airdrop — preview Airdrop/DEX ke grup private
+/postnow — post spot ke channel
+/airdrop — post Airdrop/DEX ke channel
 
 Jadwal:
 /jadwal — lihat jadwal
@@ -28,7 +30,8 @@ Jadwal:
 /jadwal\\_off — nonaktifkan
 
 Lainnya:
-/sumber okx|bitget|auto — sumber data
+/sumber okx|bitget|auto — sumber CEX
+/kategori spot|airdrop|auto — jenis konten
 /status — status bot
 /help — bantuan
 
@@ -169,6 +172,7 @@ function handleAdminCommand(msg) {
         allowed: true,
         forcePost: true,
         runPostNow: true,
+        category: 'spot',
       };
 
     case '/test':
@@ -176,7 +180,44 @@ function handleAdminCommand(msg) {
         reply: null,
         allowed: true,
         runTest: true,
+        category: 'spot',
       };
+
+    case '/test_airdrop':
+    case '/testairdrop':
+      return {
+        reply: null,
+        allowed: true,
+        runTest: true,
+        category: 'airdrop',
+      };
+
+    case '/airdrop':
+    case '/post_airdrop':
+      return {
+        reply: null,
+        allowed: true,
+        runPostNow: true,
+        category: 'airdrop',
+      };
+
+    case '/kategori':
+    case '/category': {
+      const val = String(args || '').toLowerCase().trim();
+      if (!['spot', 'airdrop', 'auto', 'dex', 'cex'].includes(val)) {
+        return {
+          reply: 'Format: /kategori spot | airdrop | auto',
+          allowed: true,
+        };
+      }
+      const normalized = val === 'dex' ? 'airdrop' : val === 'cex' ? 'spot' : val;
+      return {
+        reply: `✅ Kategori konten → *${normalized}*`,
+        allowed: true,
+        parseMode: 'Markdown',
+        postCategory: normalized,
+      };
+    }
 
     case '/sumber':
     case '/source': {
@@ -204,8 +245,9 @@ function handleAdminCommand(msg) {
           '',
           formatScheduleText(schedule),
           '',
-          `AI_PROVIDER: ${process.env.AI_PROVIDER || 'gemini'}`,
+          `AI_PROVIDER: ${process.env.AI_PROVIDER || 'free'}`,
           `EXCHANGE_SOURCE: ${process.env.EXCHANGE_SOURCE || 'auto'}`,
+          `POST_CATEGORY: ${process.env.POST_CATEGORY || 'auto'}`,
           `Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,
         ].join('\n'),
         allowed: true,

@@ -22,16 +22,18 @@ const {
   parseCommand,
 } = require('./services/adminBotService');
 
-async function runAutoPost(slot = null) {
-  return runPipeline({ target: 'channel', slot });
+async function runAutoPost(slot = null, category = null) {
+  return runPipeline({ target: 'channel', slot, category });
 }
 
-async function runTestCommand(msg) {
+async function runTestCommand(msg, category = 'spot') {
   const bot = getBot();
   const chatId = msg.chat.id;
   const statusMsg = await bot.sendMessage(
     chatId,
-    '⏳ Sedang mengambil data market terbaru & generate konten AI...',
+    category === 'airdrop'
+      ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
+      : '⏳ Sedang mengambil data market terbaru & generate konten AI...',
     { reply_to_message_id: msg.message_id }
   );
 
@@ -42,11 +44,16 @@ async function runTestCommand(msg) {
       );
     }
 
-    const result = await runPipeline({ target: 'test' });
-    const hot = result.snapshot?.hotCoin?.base || '—';
+    const result = await runPipeline({ target: 'test', category });
+    const label =
+      category === 'airdrop'
+        ? result.snapshot?.hotGem
+          ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
+          : '—'
+        : result.snapshot?.hotCoin?.base || '—';
 
     await bot.editMessageText(
-      `✅ Tes berhasil!\n📦 Preview dikirim ke grup private testing.\n🔥 Hot coin: ${hot}\n📝 ${result.captionLength} karakter`,
+      `✅ Tes berhasil (${category})!\n📦 Preview dikirim ke grup private testing.\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
       { chat_id: chatId, message_id: statusMsg.message_id }
     );
     return result;
@@ -66,12 +73,14 @@ async function runTestCommand(msg) {
   }
 }
 
-async function runPostNowCommand(msg) {
+async function runPostNowCommand(msg, category = 'spot') {
   const bot = getBot();
   const chatId = msg.chat.id;
   const statusMsg = await bot.sendMessage(
     chatId,
-    '⏳ Posting ke channel utama...',
+    category === 'airdrop'
+      ? '⏳ Posting Airdrop/DEX ke channel...'
+      : '⏳ Posting ke channel utama...',
     { reply_to_message_id: msg.message_id }
   );
 
@@ -79,9 +88,10 @@ async function runPostNowCommand(msg) {
     const result = await runPipeline({
       target: 'channel',
       slot: `manual-${Date.now()}`,
+      category,
     });
     await bot.editMessageText(
-      `✅ Post berhasil ke channel!\n🆔 ${result.chatId}#${result.messageId}`,
+      `✅ Post berhasil (${result.category})!\n🆔 ${result.chatId}#${result.messageId}`,
       { chat_id: chatId, message_id: statusMsg.message_id }
     );
     return result;
@@ -110,8 +120,7 @@ async function handleIncomingMessage(msg) {
   if (!isAdmin(msg)) {
     if (
       msg.chat?.type === 'private' ||
-      parsed.cmd === '/test' ||
-      parsed.cmd === '/postnow'
+      ['/test', '/postnow', '/test_airdrop', '/airdrop'].includes(parsed.cmd)
     ) {
       await getBot().sendMessage(msg.chat.id, denyText(), {
         reply_to_message_id: msg.message_id,
@@ -121,7 +130,12 @@ async function handleIncomingMessage(msg) {
   }
 
   if (parsed.cmd === '/test') {
-    await runTestCommand(msg);
+    await runTestCommand(msg, 'spot');
+    return;
+  }
+
+  if (parsed.cmd === '/test_airdrop' || parsed.cmd === '/testairdrop') {
+    await runTestCommand(msg, 'airdrop');
     return;
   }
 
@@ -130,7 +144,12 @@ async function handleIncomingMessage(msg) {
     parsed.cmd === '/post_sekarang' ||
     parsed.cmd === '/post_now'
   ) {
-    await runPostNowCommand(msg);
+    await runPostNowCommand(msg, 'spot');
+    return;
+  }
+
+  if (parsed.cmd === '/airdrop' || parsed.cmd === '/post_airdrop') {
+    await runPostNowCommand(msg, 'airdrop');
     return;
   }
 
@@ -142,7 +161,7 @@ async function handleIncomingMessage(msg) {
     });
   }
 
-  if (result.exchangeSource) {
+  if (result.exchangeSource || result.postCategory) {
     const runtimePath = path.join(__dirname, 'config', 'runtime.json');
     let data = {};
     try {
@@ -150,7 +169,8 @@ async function handleIncomingMessage(msg) {
     } catch {
       data = {};
     }
-    data.exchangeSource = result.exchangeSource;
+    if (result.exchangeSource) data.exchangeSource = result.exchangeSource;
+    if (result.postCategory) data.postCategory = result.postCategory;
     data.updatedAt = new Date().toISOString();
     fs.writeFileSync(runtimePath, `${JSON.stringify(data, null, 2)}\n`);
   }
@@ -188,13 +208,24 @@ async function runOnceRespectingSchedule() {
   console.log(`[autopost] Waktu sekarang: ${currentTimeLabel(schedule.timezone)}`);
 
   if (force) {
-    console.log('[autopost] FORCE_POST aktif');
-    return runAutoPost(`force-${Date.now()}`);
+    const cat = process.argv.includes('--airdrop') ? 'airdrop' : null;
+    console.log(`[autopost] FORCE_POST aktif${cat ? ` (${cat})` : ''}`);
+    return runAutoPost(`force-${Date.now()}`, cat);
   }
 
   if (process.argv.includes('--test')) {
-    console.log('[autopost] Mode --test → kirim ke TEST_CHAT_ID');
-    return runPipeline({ target: 'test' });
+    const cat = process.argv.includes('--airdrop') ? 'airdrop' : 'spot';
+    console.log(`[autopost] Mode --test → TEST_CHAT_ID (${cat})`);
+    return runPipeline({ target: 'test', category: cat });
+  }
+
+  if (process.argv.includes('--airdrop')) {
+    console.log('[autopost] Mode --airdrop → channel');
+    return runPipeline({
+      target: 'channel',
+      slot: `airdrop-${Date.now()}`,
+      category: 'airdrop',
+    });
   }
 
   const check = shouldPostNow(schedule);
