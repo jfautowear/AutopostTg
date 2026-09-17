@@ -40,15 +40,18 @@ jobs:
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           ADMIN_TELEGRAM_USERNAME: jfnetworkindo
-          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'free' }}
           EXCHANGE_SOURCE: auto
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}
           MAX_CAPTION_CHARS: '700'
           MAX_HOOK_CHARS: '60'
           MAX_INFO_CHARS: '220'
           MAX_CTA_CHARS: '80'
+          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'qwen/qwen3.8-27b' }}
+          OPENROUTER_FREE_MODEL: ${{ vars.OPENROUTER_FREE_MODEL || 'qwen/qwen3.8-27b:free,openrouter/free' }}
         run: node scripts/processCommands.js
 
       - name: Force post jika diminta admin
@@ -62,7 +65,8 @@ jobs:
           TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'free' }}
           FORCE_POST: 'true'
           POST_LANGUAGE: id
           POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}
@@ -72,6 +76,8 @@ jobs:
           MAX_INFO_CHARS: '220'
           MAX_CTA_CHARS: '80'
           ADMIN_TELEGRAM_USERNAME: jfnetworkindo
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash' }}
-          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001' }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'qwen/qwen3.8-27b' }}
+          OPENROUTER_FREE_MODEL: ${{ vars.OPENROUTER_FREE_MODEL || 'qwen/qwen3.8-27b:free,openrouter/free' }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.5-flash' }}
         run: npm run post:once -- --force

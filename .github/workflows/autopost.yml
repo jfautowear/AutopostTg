@@ -54,7 +54,8 @@ jobs:
           TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'free' }}
           EXCHANGE_SOURCE: ${{ github.event.inputs.exchange_source || 'auto' }}
           EXCHANGE_SOURCE_OVERRIDE: ${{ github.event.inputs.exchange_source && '1' || '' }}
           FORCE_POST: ${{ github.event.inputs.force_post == true && 'true' || 'false' }}
@@ -66,8 +67,10 @@ jobs:
           MAX_INFO_CHARS: '220'
           MAX_CTA_CHARS: '80'
           ADMIN_TELEGRAM_USERNAME: jfnetworkindo
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash' }}
-          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001' }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'qwen/qwen3.8-27b' }}
+          OPENROUTER_FREE_MODEL: ${{ vars.OPENROUTER_FREE_MODEL || 'qwen/qwen3.8-27b:free,openrouter/free' }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.5-flash' }}
         run: npm run post:once
 
       - name: Persist last posted slot

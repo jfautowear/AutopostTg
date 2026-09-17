@@ -8,8 +8,21 @@ const LIMITS = {
   cta: Number(process.env.MAX_CTA_CHARS) || 80,
 };
 
-function getProvider() {
-  return (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+const OPENROUTER_FREE_MODELS = (
+  process.env.OPENROUTER_FREE_MODEL ||
+  'qwen/qwen3.8-27b:free,openrouter/free,google/gemma-4-26b-a4b-it:free,meta-llama/llama-3-8b-instruct:free'
+)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const OPENROUTER_PAID_MODEL =
+  process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+function getGroqKey() {
+  return process.env.GROQ_API_KEY || process.env.QROQ_API_KEY || '';
 }
 
 function clip(text, max) {
@@ -54,7 +67,9 @@ function isQuotaOrLimitError(err) {
     raw.includes('exceeded') ||
     raw.includes('limit: 0') ||
     raw.includes('free_tier') ||
-    raw.includes('payment required')
+    raw.includes('payment required') ||
+    raw.includes('no endpoints found') ||
+    raw.includes('provider returned error')
   );
 }
 
@@ -133,19 +148,116 @@ function parsePostJson(raw, provider) {
   };
 }
 
+const SYSTEM_JSON =
+  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} dalam Bahasa Indonesia. Tanpa markdown, tanpa penjelasan lain.';
+
+/** Groq — gratis (rate-limit harian). */
+async function generateWithGroq(prompt) {
+  const apiKey = getGroqKey();
+  if (!apiKey) throw new Error('GROQ_API_KEY belum di-set');
+
+  const { data } = await axios.post(
+    'https://api.groq.com/openai/v1/chat/completions',
+    {
+      model: GROQ_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_JSON },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 280,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      timeout: 30000,
+    }
+  );
+
+  if (data?.error) {
+    const err = new Error(data.error.message || 'Groq API error');
+    err.response = { status: data.error.code || 400, data: data.error };
+    throw err;
+  }
+
+  const text = data?.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error('Groq tidak mengembalikan konten');
+  return parsePostJson(text, 'groq');
+}
+
+/** OpenRouter — coba beberapa model gratis berurutan, lalu opsi berbayar. */
+async function generateWithOpenRouter(prompt, { free = true } = {}) {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY belum di-set');
+
+  const models = free ? OPENROUTER_FREE_MODELS : [OPENROUTER_PAID_MODEL];
+  let lastErr = null;
+
+  for (const model of models) {
+    try {
+      const body = {
+        model,
+        messages: [
+          { role: 'system', content: SYSTEM_JSON },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 280,
+      };
+
+      if (!free) {
+        body.response_format = { type: 'json_object' };
+      }
+
+      console.log(`[aiService] OpenRouter model: ${model}`);
+      const { data } = await axios.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://t.me/jfnetworknet',
+            'X-Title': 'JF Network AutoPost',
+          },
+          timeout: 45000,
+        }
+      );
+
+      if (data?.error) {
+        const err = new Error(data.error.message || 'OpenRouter API error');
+        err.response = { status: data.error.code || 400, data: data.error };
+        throw err;
+      }
+
+      const text = data?.choices?.[0]?.message?.content?.trim();
+      if (!text) throw new Error('OpenRouter tidak mengembalikan konten');
+      return parsePostJson(text, free ? `openrouter-free:${model}` : `openrouter-paid:${model}`);
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[aiService] OpenRouter ${model} gagal: ${errorPayload(err)}`);
+    }
+  }
+
+  throw lastErr || new Error('OpenRouter gagal semua model');
+}
+
+/** Gemini — dianggap berbayar / last resort. */
 async function generateWithGemini(prompt) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY belum di-set');
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const model = process.env.GEMINI_MODEL || GEMINI_MODEL;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const { data } = await axios.post(
     url,
     {
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts: [{ text: `${SYSTEM_JSON}\n\n${prompt}` }] }],
       generationConfig: {
-        temperature: 0.75,
+        temperature: 0.7,
         maxOutputTokens: 280,
         responseMimeType: 'application/json',
       },
@@ -153,7 +265,6 @@ async function generateWithGemini(prompt) {
     { timeout: 30000 }
   );
 
-  // Gemini kadang balas error di body tanpa throw HTTP
   if (data?.error) {
     const err = new Error(data.error.message || 'Gemini API error');
     err.response = { status: data.error.code || 400, data: data.error };
@@ -174,82 +285,61 @@ async function generateWithGemini(prompt) {
   return parsePostJson(text, 'gemini');
 }
 
-async function generateWithOpenRouter(prompt) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY belum di-set');
-
-  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001';
-  const { data } = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    {
-      model,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Balas hanya JSON {"hook","info","cta"} dalam Bahasa Indonesia. Tanpa markdown.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.75,
-      max_tokens: 280,
-      response_format: { type: 'json_object' },
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://t.me/jfnetworknet',
-        'X-Title': 'JF Network AutoPost',
-      },
-      timeout: 30000,
-    }
-  );
-
-  if (data?.error) {
-    const err = new Error(data.error.message || 'OpenRouter API error');
-    err.response = { status: data.error.code || 400, data: data.error };
-    throw err;
-  }
-
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error('OpenRouter tidak mengembalikan konten');
-  return parsePostJson(text, 'openrouter');
-}
-
 /**
- * Cascade: primary → secondary (Gemini habis/limit → OpenRouter) → teks fallback.
+ * Cascade hemat kredit:
+ * 1) Groq (gratis)
+ * 2) OpenRouter free model
+ * 3) OpenRouter paid / Gemini (berbayar) — hanya jika gratis habis/gagal
+ * 4) Fallback teks lokal
  */
 async function generatePostContent(snapshot) {
   const prompt = buildPostPrompt(snapshot);
-  const preferred = getProvider();
+  const preferPaidFirst = (process.env.AI_PROVIDER || '').toLowerCase() === 'paid';
 
-  const chain =
-    preferred === 'openrouter'
-      ? [
-          { name: 'openrouter', run: () => generateWithOpenRouter(prompt) },
-          { name: 'gemini', run: () => generateWithGemini(prompt) },
-        ]
-      : [
-          { name: 'gemini', run: () => generateWithGemini(prompt) },
-          { name: 'openrouter', run: () => generateWithOpenRouter(prompt) },
-        ];
+  const freeChain = [
+    {
+      name: 'groq',
+      tier: 'free',
+      ready: () => Boolean(getGroqKey()),
+      run: () => generateWithGroq(prompt),
+    },
+    {
+      name: 'openrouter-free',
+      tier: 'free',
+      ready: () => Boolean(process.env.OPENROUTER_API_KEY),
+      run: () => generateWithOpenRouter(prompt, { free: true }),
+    },
+  ];
+
+  const paidChain = [
+    {
+      name: 'openrouter-paid',
+      tier: 'paid',
+      ready: () => Boolean(process.env.OPENROUTER_API_KEY),
+      run: () => generateWithOpenRouter(prompt, { free: false }),
+    },
+    {
+      name: 'gemini',
+      tier: 'paid',
+      ready: () => Boolean(process.env.GEMINI_API_KEY),
+      run: () => generateWithGemini(prompt),
+    },
+  ];
+
+  const chain = preferPaidFirst
+    ? [...paidChain, ...freeChain]
+    : [...freeChain, ...paidChain];
 
   let lastError = null;
 
   for (const step of chain) {
-    const hasKey =
-      step.name === 'gemini'
-        ? Boolean(process.env.GEMINI_API_KEY)
-        : Boolean(process.env.OPENROUTER_API_KEY);
-
-    if (!hasKey) {
-      console.warn(`[aiService] Skip ${step.name}: API key belum di-set`);
+    if (!step.ready()) {
+      console.warn(`[aiService] Skip ${step.name}: key belum di-set`);
       continue;
     }
 
     try {
-      console.log(`[aiService] Coba provider: ${step.name}`);
+      console.log(`[aiService] Coba ${step.name} (${step.tier})`);
       const result = await step.run();
       console.log(`[aiService] Sukses pakai ${step.name}`);
       return result;
@@ -257,10 +347,10 @@ async function generatePostContent(snapshot) {
       lastError = err;
       const quota = isQuotaOrLimitError(err);
       console.warn(
-        `[aiService] ${step.name} gagal${quota ? ' (kuota/kredit/limit)' : ''}: ${errorPayload(err)}`
+        `[aiService] ${step.name} gagal${quota ? ' [limit/kredit]' : ''}: ${errorPayload(err)}`
       );
-      if (quota) {
-        console.warn(`[aiService] Ganti provider berikutnya karena limit kredit LLM`);
+      if (quota && step.tier === 'free') {
+        console.warn('[aiService] Kredit gratis habis/limit → lanjut provider berikutnya');
       }
     }
   }
@@ -272,114 +362,69 @@ async function generatePostContent(snapshot) {
   return fallbackPostContent(snapshot);
 }
 
-function buildImagePrompt(snapshot) {
-  const btc = snapshot.primary.majors.find((t) => t.base === 'BTC');
-  const top = snapshot.primary.gainers[0];
+/**
+ * Prompt gambar dari teks AI + data hot coin (Pollinations gratis).
+ */
+function buildImagePromptFromContent(snapshot, content) {
+  const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
+  const exchange = snapshot.primaryLabel;
   const mood =
-    btc?.changePct != null && btc.changePct >= 0 ? 'bullish green neon' : 'bearish red neon';
+    hot?.changePct != null && hot.changePct >= 0
+      ? 'bullish neon green glow'
+      : 'dramatic red market tension';
+
+  const narrative = [content?.hook, content?.info].filter(Boolean).join('. ');
 
   return [
-    'Cinematic crypto market dashboard illustration,',
-    `${mood} lighting, dark premium fintech aesthetic,`,
-    `${snapshot.primaryLabel} market board,`,
-    `Bitcoin ${btc ? `$${btc.last}` : ''},`,
-    top ? `spotlight on ${top.base} gainer,` : '',
-    'candlestick charts, holographic HUD, no watermark, 16:9',
+    'Cinematic crypto trading illustration, ultra detailed,',
+    `${mood}, dark premium fintech aesthetic,`,
+    hot ? `spotlight on ${hot.base} cryptocurrency price surge,` : 'altcoin market heat map,',
+    `${exchange} style HUD dashboard, candlestick charts, holographic UI,`,
+    narrative ? `visual mood inspired by: ${clip(narrative, 160)},` : '',
+    'no readable logos, no watermark, 16:9',
   ]
     .filter(Boolean)
     .join(' ');
 }
 
+/** Gambar gratis via Pollinations — tanpa API key. */
 async function generateImageWithPollinations(prompt) {
   const encoded = encodeURIComponent(prompt);
   const seed = Math.floor(Math.random() * 1_000_000);
   const url = `https://image.pollinations.ai/prompt/${encoded}?width=1280&height=720&seed=${seed}&nologo=true&model=flux`;
 
+  console.log('[aiService] Pollinations image…');
   const { data } = await axios.get(url, {
     responseType: 'arraybuffer',
-    timeout: 60000,
+    timeout: 90000,
   });
 
   return Buffer.from(data);
 }
 
-async function generateImageWithOpenRouter(prompt) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY belum di-set');
+async function generateMarketImage(snapshot, content) {
+  const prompt = buildImagePromptFromContent(snapshot, content);
 
-  const model =
-    process.env.OPENROUTER_IMAGE_MODEL || 'black-forest-labs/flux-1-schnell';
-
-  const { data } = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    {
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      modalities: ['image', 'text'],
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://t.me/jfnetworknet',
-        'X-Title': 'JF Network AutoPost',
-      },
-      timeout: 90000,
-    }
-  );
-
-  const message = data?.choices?.[0]?.message;
-  const imagePart =
-    message?.images?.[0] ||
-    message?.content?.find?.((c) => c.type === 'image_url' || c.image_url);
-
-  const dataUrl =
-    imagePart?.image_url?.url ||
-    imagePart?.imageUrl ||
-    (typeof message?.content === 'string' && message.content.startsWith('data:image')
-      ? message.content
-      : null);
-
-  if (!dataUrl || !String(dataUrl).startsWith('data:image')) {
-    throw new Error('OpenRouter tidak mengembalikan gambar');
+  if (process.env.POLLINATIONS_ENABLED === 'false') {
+    console.warn('[aiService] Pollinations dimatikan');
+    return { buffer: null, prompt, provider: null };
   }
 
-  return Buffer.from(String(dataUrl).split(',')[1], 'base64');
+  try {
+    const buffer = await generateImageWithPollinations(prompt);
+    return { buffer, prompt, provider: 'pollinations' };
+  } catch (err) {
+    console.warn('[aiService] Pollinations gagal:', err.message);
+    return { buffer: null, prompt, provider: null };
+  }
 }
 
-async function generateMarketImage(snapshot) {
-  const prompt = buildImagePrompt(snapshot);
-  const pollinationsEnabled = process.env.POLLINATIONS_ENABLED !== 'false';
-
-  // Gambar: Pollinations dulu (gratis), lalu OpenRouter jika perlu
-  if (pollinationsEnabled) {
-    try {
-      return { buffer: await generateImageWithPollinations(prompt), prompt, provider: 'pollinations' };
-    } catch (err) {
-      console.warn('[aiService] Pollinations gagal:', err.message);
-    }
-  }
-
-  if (process.env.OPENROUTER_API_KEY) {
-    try {
-      return {
-        buffer: await generateImageWithOpenRouter(prompt),
-        prompt,
-        provider: 'openrouter',
-      };
-    } catch (err) {
-      console.warn('[aiService] OpenRouter image gagal:', errorPayload(err));
-    }
-  }
-
-  return { buffer: null, prompt, provider: null };
-}
-
+/**
+ * Teks dulu (hemat kredit gratis), lalu gambar dari hasil teks (Pollinations gratis).
+ */
 async function generatePostAssets(snapshot) {
-  const [content, imageResult] = await Promise.all([
-    generatePostContent(snapshot),
-    generateMarketImage(snapshot),
-  ]);
+  const content = await generatePostContent(snapshot);
+  const imageResult = await generateMarketImage(snapshot, content);
 
   return {
     content,
@@ -397,4 +442,5 @@ module.exports = {
   fallbackPostContent,
   isQuotaOrLimitError,
   clip,
+  getGroqKey,
 };
