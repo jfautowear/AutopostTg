@@ -84,7 +84,23 @@ Repo variable `AI_PROVIDER` default **`free`** (tidak menyentuh Gemini/paid).
 - **`auto`**: free dulu, lalu paid jika gagal
 - **`paid`**: OpenRouter paid / Gemini dulu
 
-Gambar: Pollinations (gratis).
+## Editorial policy
+
+### Konten vs gambar (aturan jelas)
+
+| Situasi | Caption | Logo di gambar |
+|---------|---------|----------------|
+| Spot fokus 1 koin (hot) | Hook/info fokus ke koin itu | **1 logo** hot saja |
+| Hook sengaja sebut ≥2 peer (mis. "G dan ONE") | Bandingkan peer | Logo koin yang disebut di **hook** |
+| Info menyebut BTC/SOL sebagai konteks | Hindari (prompt melarang) | **Tidak** menambah logo |
+| News sebut BTC, ETH, SOL di judul resmi | Rangkum sesuai judul | Multi-logo dari judul/hook |
+| Airdrop | Fokus hot gem | 1 logo (kecuali hook sebut ≥2 gem) |
+
+- **Fakta & logo:** harga/%, volume, judul promo, logo koin dari sumber asli (OKX/Bitget, DexScreener, CoinGecko). Tanpa logo/angka karangan.
+- **AI:** variasi hook/ringkasan/CTA saja — wajib sesuai DATA, satu fokus per post.
+- **Goal:** akurat & up-to-date → CTA (Trade / Baca Info / Chart / Join) → NFA & DYOR.
+
+Gambar: Pollinations (background) + compose lokal. Layout divariasikan (`hero`/`stack`/`center`/`bottom`).
 
 ## Top Aktif Mingguan (`@caricuanhp`)
 

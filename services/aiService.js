@@ -6,6 +6,7 @@ const {
   formatPrice,
   formatPct,
 } = require('./cryptoService');
+const { composePromoImage } = require('./imageComposeService');
 
 /** Batas ketat agar total caption (HTML+emoji) aman di channel gratis. */
 const LIMITS = {
@@ -90,31 +91,64 @@ function isQuotaOrLimitError(err) {
   );
 }
 
+/** Prinsip editorial: akurat, kontekstual, CTA jelas — AI hanya variasi wording. */
+const ACCURACY_RULES = `
+PRINSIP (WAJIB):
+1) Hanya pakai fakta dari blok DATA di bawah. Dilarang mengarang harga, %, volume, reward, tanggal, atau nama token.
+2) AI boleh memvariasikan gaya bahasa, hook, saran hati-hati, dan CTA — tapi HARUS sesuai konteks DATA.
+3) Bukan saran investasi. Jangan jamin profit / "aman" / "pasti cuan".
+4) CTA harus actionable (ajak cek chart / baca info resmi / buka app) tanpa menulis URL.
+5) Bahasa Indonesia natural; emoji 1–3 per bagian; bedakan wording tiap kali (jangan template kaku).
+6) Satu post = satu fokus. Jangan campur banyak ticker di hook kecuali memang bandingkan 2 peer secara sengaja.
+`.trim();
+
+const CTA_POOL = {
+  spot: (ex) => [
+    `Cek pair-nya di ${ex} sekarang — pantau dulu sebelum masuk! 📊`,
+    `Bandingkan orderbook di ${ex}, jangan FOMO ya. ⚡`,
+    `Lihat depth & volume di ${ex} dulu. Semoga untung! 🚀`,
+    `Masuk ${ex}, cek likuiditas hot coin ini sekarang. 👀`,
+  ],
+  news: [
+    'Daftar OKX & cek detail eventnya sekarang! 📱',
+    'Gabung OKX dulu, lalu ikut eventnya — baca syarat ya. ✅',
+    'Buka OKX, daftar kalau belum, cek promo resminya. 🚀',
+    'Siap ikut? Daftar OKX & baca info lengkapnya! 🔍',
+  ],
+  airdrop: [
+    'Cek chart & likuiditas di OKX Web3 DEX sekarang. 🌐',
+    'Buka chart dulu di OKX Web3 — high risk, pantau masuk! ⚡',
+    'Verifikasi kontrak & volume di OKX Web3 sebelum entry. 🔎',
+    'Lihat pair-nya di OKX Web3 DEX. Semoga untung! 🚀',
+  ],
+};
+
+function pickCta(pool) {
+  const list = Array.isArray(pool) ? pool : [];
+  if (!list.length) return 'Cek detailnya sekarang. DYOR!';
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 function buildAirdropPrompt(snapshot) {
   const summary = buildAirdropSummaryText(snapshot);
   const gem = snapshot.hotGem;
 
   return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat konten bertema "Airdrop / Early Gem Opportunity" dari data DEX trending di bawah.
+Buat konten "Airdrop / Early Gem" dari data DEX real-time di bawah.
 
-WAJIB balas HANYA JSON valid (tanpa markdown), format:
+WAJIB balas HANYA JSON valid (tanpa markdown):
 {"hook":"...","info":"...","cta":"..."}
 
-Aturan:
-- Bahasa Indonesia natural, santai-profesional.
-- Nada: peluang early / narasi airdrop atau gem on-chain, tapi JUJUR soal risiko.
-- Wajib sebutkan ini HIGH RISK & DYOR (bukan saran investasi / bukan jaminan airdrop).
-- Emoji secukupnya (1–3 per bagian).
-- Fokus ke gem utama: ${gem ? `${gem.symbol} di ${gem.chain}` : 'token trending DEX'}.
-- Sebut chain (Solana/Base/Arbitrum) + lonjakan volume singkat 1h/6h.
-- Jangan klaim "pasti airdrop" atau "safe entry".
+${ACCURACY_RULES}
+- Nada: peluang early / gem on-chain, JUJUR soal risiko.
+- Wajib nuansa HIGH RISK & DYOR di info (bukan jaminan airdrop).
+- Fokus gem: ${gem ? `${gem.symbol} @ ${gem.chain}` : 'token trending DEX'}.
+- Boleh sebut chain + lonjakan 1h/6h HANYA jika ada di DATA.
+- Jangan klaim "pasti airdrop" / "safe entry" / rug-proof.
 
-Panjang ketat:
-- hook: maks ${LIMITS.hook} karakter
-- info: maks ${LIMITS.info} karakter
-- cta: maks ${LIMITS.cta} karakter (ajak cek di OKX Web3 DEX, tanpa link)
+Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta} (ajak OKX Web3, tanpa URL)
 
-DATA:
+DATA (sumber: DexScreener / GeckoTerminal):
 ${summary}`;
 }
 
@@ -122,17 +156,23 @@ function fallbackAirdropContent(snapshot) {
   const g = snapshot.hotGem || (snapshot.gems || [])[0];
   if (!g) {
     return {
-      hook: 'Early gem DEX scan',
-      info: 'Belum ada kandidat volume spike. High risk, DYOR.',
-      cta: 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung!',
+      hook: clip('📡 Scan DEX: belum ada spike jelas', LIMITS.hook),
+      info: clip(
+        'Tidak ada kandidat volume spike yang lolos filter. High risk kalau dipaksa entry — DYOR.',
+        LIMITS.info
+      ),
+      cta: clip(pickCta(CTA_POOL.airdrop), LIMITS.cta),
       provider: 'template-airdrop',
     };
   }
 
   return {
-    hook: `${g.symbol} on ${g.chain}`,
-    info: `1h ${formatPct(g.change1h)} | 6h ${formatPct(g.change6h)} | vol6h ${Math.round(g.volume6h || g.volume1h || 0)}`,
-    cta: 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung!',
+    hook: clip(`⚡ ${g.symbol} ramai di ${g.chain}`, LIMITS.hook),
+    info: clip(
+      `Data on-chain: 1h ${formatPct(g.change1h)} · 6h ${formatPct(g.change6h)}. Early gem = HIGH RISK, bukan jaminan airdrop. DYOR.`,
+      LIMITS.info
+    ),
+    cta: clip(pickCta(CTA_POOL.airdrop), LIMITS.cta),
     provider: 'template-airdrop',
   };
 }
@@ -141,22 +181,22 @@ function fallbackNewsContent(snapshot) {
   const n = snapshot.hotNews || (snapshot.items || [])[0];
   if (!n) {
     return {
-      hook: clip('📰 Belum ada promo OKX yang menonjol hari ini', LIMITS.hook),
+      hook: clip('📰 Belum ada promo OKX yang menonjol', LIMITS.hook),
       info: clip(
-        'Pantau terus listing, event, Jumpstart, dan Earn di OKX. Selalu baca aturan resmi sebelum ikut. 💡',
+        'Belum ada pengumuman segar dari feed OKX. Pantau listing, event, Jumpstart, dan Earn — selalu baca syarat resmi.',
         LIMITS.info
       ),
-      cta: clip('👉 Cek peluang terbaru di OKX sekarang! 🚀', LIMITS.cta),
+      cta: clip(pickCta(CTA_POOL.news), LIMITS.cta),
       provider: 'fallback-news',
     };
   }
   return {
-    hook: clip(`✨ ${n.typeLabel} OKX nih!`, LIMITS.hook),
+    hook: clip(`✨ Ada ${n.typeLabel} seru di OKX`, LIMITS.hook),
     info: clip(
-      `📌 ${n.title} — peluang menarik, tapi baca syarat resmi dulu ya. Bukan saran investasi, DYOR. 🔍`,
+      `OKX baru update soal ${n.typeLabel.toLowerCase()}. Intinya: ${clip(n.title, 100)}. Baca syarat dulu sebelum ikut ya.`,
       LIMITS.info
     ),
-    cta: clip('👉 Baca detail & cek di OKX sekarang! Semoga untung 🚀', LIMITS.cta),
+    cta: clip(pickCta(CTA_POOL.news), LIMITS.cta),
     provider: 'fallback-news',
   };
 }
@@ -164,28 +204,25 @@ function fallbackNewsContent(snapshot) {
 function buildNewsPrompt(snapshot) {
   const summary = buildNewsSummaryText(snapshot);
   const n = snapshot.hotNews;
+  const exchange = n?.exchange || snapshot.primaryLabel || 'OKX';
 
-  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat rangkuman singkat pengumuman/promo OKX untuk mobile.
+  return `Kamu copywriter marketing channel Telegram kripto Indonesia (@jfnetworknet).
+Tulis promo/news ${exchange} yang natural — seperti manusia, bukan template bot.
 
-WAJIB balas HANYA JSON valid (tanpa markdown), format:
+WAJIB balas HANYA JSON valid (tanpa markdown):
 {"hook":"...","info":"...","cta":"..."}
 
-Aturan WAJIB:
-- Bahasa Indonesia 100% (jangan campur Inggris kecuali nama produk/token).
-- Natural, santai-profesional, mudah dibaca.
-- Emoji 1–3 per bagian (hook, info, cta) — jangan berlebihan.
-- Bukan saran investasi; boleh sebut DYOR singkat di info.
-- Jangan buat-buat angka reward jika tidak ada di data.
-- Fokus jenis: ${n ? n.typeLabel : 'Update OKX'}.
-- info = rangkuman isi pengumuman (bukan copy-paste judul mentah saja).
+${ACCURACY_RULES}
+- Nada: marketing santai, ramah, persuasif — JANGAN kaku ("Judul resmi", "Jenis:", "Sumber data").
+- Fokus: ${n ? n.typeLabel : 'Update'} di ${exchange}.
+- hook: 1 kalimat pembuka menarik (boleh pakai fakta inti dari judul, diparafase Bahasa Indonesia).
+- info: jelaskan inti promo/event dengan bahasa natural. Angka reward HANYA jika ada di DATA. Ajak baca syarat, jangan overpromise.
+- cta: ajak daftar / buka app ${exchange} & cek detail (tanpa URL). Contoh vibe: "Daftar ${exchange} & cek eventnya sekarang".
+- Jangan copy-paste judul Inggris mentah; parafrase natural tetap akurat.
 
-Panjang ketat (aman caption Telegram):
-- hook: maks ${LIMITS.hook} karakter (1 kalimat pembuka menarik)
-- info: maks ${LIMITS.info} karakter (rangkuman news/promo)
-- cta: maks ${LIMITS.cta} karakter (ajak cek di OKX, tanpa URL)
+Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
 
-DATA:
+DATA (sumber: ${exchange} Announcements — fakta wajib dihormati):
 ${summary}`;
 }
 
@@ -201,30 +238,25 @@ function buildPostPrompt(snapshot) {
   const exchange = snapshot.primaryLabel;
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
   const hotHint = hot
-    ? `Fokus utama caption pada koin HOT/VIRAL: ${hot.base} (${hot.changePct?.toFixed?.(2)}%).`
-    : 'Fokus pada top gainers altcoin (bukan BTC/ETH).';
+    ? `Fokus HOT: ${hot.base} (24h ${Number(hot.changePct).toFixed(2)}% — angka ini sudah di header, jangan diulang di info).`
+    : 'Fokus top gainers / volume dari DATA.';
 
   return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat ringkasan singkat untuk layout mobile (bukan paragraf panjang).
+Buat ringkasan market pulse singkat (mobile).
 
-WAJIB balas HANYA JSON valid (tanpa markdown), format:
+WAJIB balas HANYA JSON valid (tanpa markdown):
 {"hook":"...","info":"...","cta":"..."}
 
-Aturan:
-- Bahasa Indonesia 100% natural, santai-profesional.
-- Emoji 1–2 per bagian.
-- Bukan saran investasi.
+${ACCURACY_RULES}
 - ${hotHint}
-- JANGAN ulangi nama token + % 24h di info (sudah ada di header template).
-- info: 1–2 kalimat pendek soal konteks volume/momentum saja.
-- cta: 1 kalimat ajak cek di ${exchange}, tanpa link.
+- info: 1–2 kalimat soal volume/momentum TOKEN FOKUS saja.
+- JANGAN name-drop BTC/ETH/SOL/ZEC atau koin lain sebagai “konteks pasar” di info — itu mengaburkan fokus.
+- Boleh bandingkan 1 peer gainer HANYA jika disebut juga di hook (contoh hook: "G dan ONE ramai").
+- cta: ajak cek chart token fokus di ${exchange}, tanpa URL.
 
-Panjang ketat:
-- hook: maks ${LIMITS.hook} karakter (1 kalimat pembuka)
-- info: maks ${LIMITS.info} karakter
-- cta: maks ${LIMITS.cta} karakter
+Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
 
-DATA ${exchange}:
+DATA ${exchange} (ticker live):
 ${summary}`;
 }
 
@@ -237,20 +269,23 @@ function fallbackPostContent(snapshot) {
   }
 
   const { primary, primaryLabel, hotCoin } = snapshot;
-  const hot = hotCoin || primary.hotCoin;
+  const hot = hotCoin || primary?.hotCoin;
+  const gainer = (primary?.topGainers || primary?.gainers || [])[0];
 
   return {
     hook: clip(
       hot
-        ? `${hot.base} lagi ramai dipantau di ${primaryLabel}.`
-        : `Altcoin move terpantau di ${primaryLabel}.`,
+        ? `🔥 ${hot.base} lagi ramai di ${primaryLabel}`
+        : `📡 Move altcoin terpantau di ${primaryLabel}`,
       LIMITS.hook
     ),
     info: clip(
-      'Volume & momentum naik — pantau likuiditas, jangan FOMO.',
+      gainer
+        ? `Top gainer: ${gainer.base} ${formatPct(gainer.changePct)}. Pantau volume & likuiditas — jangan FOMO.`
+        : 'Volume & momentum berubah — pantau likuiditas, jangan FOMO.',
       LIMITS.info
     ),
-    cta: clip(`Cek peluang di ${primaryLabel} sekarang. Semoga untung! 🚀`, LIMITS.cta),
+    cta: clip(pickCta(CTA_POOL.spot(primaryLabel || 'OKX')), LIMITS.cta),
     provider: 'fallback',
   };
 }
@@ -274,7 +309,7 @@ function parsePostJson(raw, provider) {
 }
 
 const SYSTEM_JSON =
-  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} dalam Bahasa Indonesia. Wajib pakai beberapa emoji. Tanpa markdown, tanpa penjelasan lain.';
+  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} Bahasa Indonesia. Fakta HANYA dari DATA user — dilarang mengarang angka/reward/token. Variasikan wording, CTA actionable, NFA. Emoji secukupnya. Tanpa markdown.';
 
 /** Groq — gratis (rate-limit harian). */
 async function generateWithGroq(prompt) {
@@ -289,8 +324,8 @@ async function generateWithGroq(prompt) {
         { role: 'system', content: SYSTEM_JSON },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.65,
-      max_tokens: 220,
+      temperature: 0.7,
+      max_tokens: 260,
     },
     {
       headers: {
@@ -328,8 +363,8 @@ async function generateWithOpenRouter(prompt, { free = true } = {}) {
           { role: 'system', content: SYSTEM_JSON },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.65,
-        max_tokens: 220,
+        temperature: 0.7,
+        max_tokens: 260,
       };
 
       if (!free) {
@@ -382,8 +417,8 @@ async function generateWithGemini(prompt) {
     {
       contents: [{ parts: [{ text: `${SYSTEM_JSON}\n\n${prompt}` }] }],
       generationConfig: {
-        temperature: 0.65,
-        maxOutputTokens: 220,
+        temperature: 0.7,
+        maxOutputTokens: 260,
         responseMimeType: 'application/json',
       },
     },
@@ -545,11 +580,12 @@ function visualThemeFromSymbol(symbol, chain) {
  * Ambil ticker koin dari judul/teks (untuk logo di gambar).
  */
 function extractTickersFromText(...parts) {
+  const { isRenderableTicker, normalizeTicker } = require('./imageComposeService');
   const text = parts.filter(Boolean).join(' ');
   const known = [
     'BTC', 'ETH', 'SOL', 'OKB', 'BNB', 'XRP', 'DOGE', 'PEPE', 'WIF', 'ADA',
     'AVAX', 'DOT', 'LINK', 'MATIC', 'POL', 'ATOM', 'UNI', 'APT', 'SUI', 'TIA',
-    'USDT', 'USDC', 'CP', 'OKX',
+    'USDT', 'USDC', 'TRX', 'LTC', 'BCH', 'NEAR', 'ARB', 'OP', 'SHIB', 'TON', 'BGB',
   ];
   const found = [];
   for (const t of known) {
@@ -559,10 +595,11 @@ function extractTickersFromText(...parts) {
   }
   const dollars = text.match(/\$([A-Z][A-Z0-9]{1,9})/gi) || [];
   for (const d of dollars) {
-    const sym = d.replace('$', '').toUpperCase();
-    if (sym && !found.includes(sym)) found.push(sym);
+    const sym = normalizeTicker(d.replace('$', ''));
+    if (sym && isRenderableTicker(sym) && !found.includes(sym)) found.push(sym);
   }
-  return [...new Set(found)].slice(0, 6);
+  // Filter poin internal (CP dll) — tidak ada logo resmi
+  return [...new Set(found)].filter((t) => isRenderableTicker(t)).slice(0, 6);
 }
 
 /** Teks overlay gambar — Latin bersih, tanpa emoji (model sering gagal render emoji). */
@@ -577,41 +614,224 @@ function cleanOverlayText(text, max = 48) {
   );
 }
 
+/** Token major — boleh disebut di teks pasar, tapi JANGAN jadi logo tambahan di gambar spot. */
+const MAJOR_CONTEXT_TICKERS = new Set([
+  'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'USDT', 'USDC', 'OKB', 'BGB',
+]);
+
 /**
- * Prompt gambar: judul + logo ticker + hook terbaca (hindari teks acak/abstrak).
+ * Cari simbol dari universe yang disebut di teks.
+ */
+function findMentionedSymbols(text, universe) {
+  const { normalizeTicker } = require('./imageComposeService');
+  const body = String(text || '');
+  const found = [];
+  const sorted = [...new Set(universe.map((s) => normalizeTicker(s)).filter(Boolean))].sort(
+    (a, b) => b.length - a.length
+  );
+  for (const sym of sorted) {
+    const re = new RegExp(`(^|[^A-Za-z0-9])${sym}([^A-Za-z0-9]|$)`, 'i');
+    if (re.test(body) && !found.includes(sym)) found.push(sym);
+  }
+  return found;
+}
+
+/**
+ * Aturan logo gambar (WAJIB):
+ * 1) Default = HANYA token fokus (hot / judul utama).
+ * 2) Multi-logo HANYA jika HOOK menyebut ≥2 token fokus (bukan sekadar konteks di info).
+ * 3) Spot: sebutan BTC/ETH/SOL di info = konteks pasar, BUKAN alasan multi-logo.
+ * 4) News: multi jika judul/hook resmi menyebut ≥2 koin event.
+ */
+function resolveFocusLogoEntries({
+  focus,
+  universe = [],
+  content,
+  imageUrlBySymbol = {},
+  mode = 'spot',
+} = {}) {
+  const { normalizeTicker } = require('./imageComposeService');
+  const focusSym = normalizeTicker(focus);
+  let uni = universe.map((s) => normalizeTicker(s)).filter(Boolean);
+  if (focusSym && !uni.includes(focusSym)) uni.unshift(focusSym);
+
+  // Spot: universe logo = fokus + peer gainers saja (bukan majors/volume konteks)
+  if (mode === 'spot') {
+    uni = uni.filter(
+      (s) => s === focusSym || !MAJOR_CONTEXT_TICKERS.has(s)
+    );
+  }
+
+  // Multi hanya dari HOOK — info sering name-drop SOL/BTC sebagai konteks
+  const hookMentions = findMentionedSymbols(content?.hook || '', uni).filter(
+    (s) => mode !== 'spot' || s === focusSym || !MAJOR_CONTEXT_TICKERS.has(s)
+  );
+
+  let symbols;
+  if (hookMentions.length >= 2) {
+    symbols = hookMentions.slice(0, 5);
+    if (focusSym) {
+      symbols = [focusSym, ...symbols.filter((s) => s !== focusSym)].slice(0, 5);
+    }
+  } else if (focusSym) {
+    symbols = [focusSym];
+  } else if (hookMentions.length === 1) {
+    symbols = hookMentions;
+  } else {
+    symbols = uni.slice(0, 1);
+  }
+
+  return symbols.map((symbol) => ({
+    symbol,
+    imageUrl: imageUrlBySymbol[symbol] || null,
+  }));
+}
+
+/**
+ * Meta overlay (judul, hook, logo) — teks/logo ditempel di Node, bukan di AI.
+ */
+function buildImageOverlayMeta(snapshot, content) {
+  const { pickLayout } = require('./imageComposeService');
+
+  if (snapshot.category === 'news') {
+    const n = snapshot.hotNews;
+    const kind = n?.typeLabel || 'NEWS / PROMO';
+    const tickers = extractTickersFromText(n?.title, content?.hook, content?.info);
+    // News: multi logo hanya jika teks resmi/AI menyebut ≥2 token
+    const logoEntries =
+      tickers.length >= 2
+        ? tickers.map((symbol) => ({ symbol }))
+        : tickers.slice(0, 1).map((symbol) => ({ symbol }));
+    const meta = {
+      title: cleanOverlayText(n?.title || 'OKX News', 64),
+      hook: cleanOverlayText(content?.hook || kind, 56),
+      tickers: logoEntries.map((e) => e.symbol),
+      logoEntries,
+      exchange: 'OKX',
+      badge: cleanOverlayText(kind, 22),
+    };
+    meta.layout = pickLayout(meta);
+    return meta;
+  }
+
+  const isAirdrop = snapshot.category === 'airdrop';
+
+  if (isAirdrop) {
+    const gems = Array.isArray(snapshot.gems) ? snapshot.gems : [];
+    const hot = snapshot.hotGem || gems[0];
+    const imageUrlBySymbol = {};
+    const universe = [];
+    for (const g of gems) {
+      const sym = String(g?.symbol || '').toUpperCase();
+      if (!sym) continue;
+      universe.push(sym);
+      if (g.imageUrl) imageUrlBySymbol[sym] = g.imageUrl;
+    }
+    const focus = hot?.symbol;
+    if (hot?.imageUrl && focus) {
+      imageUrlBySymbol[String(focus).toUpperCase()] = hot.imageUrl;
+    }
+    const logoEntries = resolveFocusLogoEntries({
+      focus,
+      universe,
+      content,
+      imageUrlBySymbol,
+      mode: 'airdrop',
+    });
+    const symbol = String(hot?.symbol || logoEntries[0]?.symbol || '').toUpperCase();
+    const meta = {
+      title: cleanOverlayText(
+        symbol ? `${symbol} · ${hot?.chain || 'DEX'}` : 'DEX Trending',
+        48
+      ),
+      hook: cleanOverlayText(content?.hook || 'Early gem / airdrop radar', 56),
+      tickers: logoEntries.map((e) => e.symbol),
+      logoEntries,
+      exchange: 'OKX',
+      badge: 'AIRDROP / DEX',
+    };
+    meta.layout = pickLayout(meta);
+    return meta;
+  }
+
+  // SPOT: default 1 logo (hot). Multi HANYA jika HOOK sebut ≥2 peer (bukan konteks BTC/SOL di info).
+  const primary = snapshot.primary || {};
+  const hot = snapshot.hotCoin || primary.hotCoin;
+  const universe = [];
+  const pushBase = (base) => {
+    const symbol = String(base || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
+    if (symbol && !universe.includes(symbol)) universe.push(symbol);
+  };
+  if (hot?.base) pushBase(hot.base);
+  // Peer untuk multi-logo: top gainers saja (bukan unusual volume / majors)
+  for (const t of primary.topGainers || primary.gainers || []) pushBase(t.base);
+
+  const logoEntries = resolveFocusLogoEntries({
+    focus: hot?.base,
+    universe,
+    content,
+    mode: 'spot',
+  });
+
+  const exchange = String(snapshot.primaryLabel || 'OKX')
+    .toUpperCase()
+    .includes('BITGET')
+    ? 'BITGET'
+    : 'OKX';
+  const lead = hot?.base || logoEntries[0]?.symbol || '';
+  const multi = logoEntries.length > 1;
+  const peer = logoEntries.filter((e) => e.symbol !== String(lead).toUpperCase())[0];
+
+  const meta = {
+    title: cleanOverlayText(
+      lead
+        ? multi && peer
+          ? `${lead} · ${peer.symbol}`
+          : `${lead} · Top Move`
+        : content?.hook || 'Market Pulse',
+      48
+    ),
+    hook: cleanOverlayText(content?.hook || 'Spot gainers & volume', 56),
+    tickers: logoEntries.map((e) => e.symbol),
+    logoEntries,
+    exchange,
+    badge: 'SPOT',
+  };
+  meta.layout = pickLayout(meta);
+  return meta;
+}
+
+/**
+ * Prompt background SAJA — tanpa teks/logo (supaya AI tidak bikin tulisan acak).
  */
 function buildImagePromptFromContent(snapshot, content) {
   if (snapshot.category === 'news') {
     const n = snapshot.hotNews;
     const kind = n?.typeLabel || 'Promo';
-    const titleOverlay = cleanOverlayText(n?.title || 'OKX News', 52);
-    const hookOverlay = cleanOverlayText(content?.hook || kind, 40);
-    const tickers = extractTickersFromText(n?.title, content?.hook, content?.info);
-    const logoLine = tickers.length
-      ? `row of clear circular coin logos labeled ${tickers.join(', ')},`
-      : 'OKX coin and crypto coin logos,';
+    const titleHint = cleanOverlayText(n?.title || '', 40);
 
     const motif =
-      /jumpstart/i.test(kind) || /jumpstart/i.test(titleOverlay)
-        ? 'launchpad stage with rocket'
-        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleOverlay)
-          ? 'new listing announcement board'
-          : /earn|loan|reward|flash/i.test(kind) || /earn|reward|subscribe|flash/i.test(titleOverlay)
-            ? 'reward vault with golden coins and gift boxes'
+      /jumpstart/i.test(kind) || /jumpstart/i.test(titleHint)
+        ? 'blurred launchpad stage lights and rocket trail bokeh'
+        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleHint)
+          ? 'abstract neon trading floor lights, blue gold glow'
+          : /earn|loan|reward|flash/i.test(kind) ||
+              /earn|reward|subscribe|flash/i.test(titleHint)
+            ? 'soft golden coin bokeh vault atmosphere, dark navy'
             : /web3|dex/i.test(kind)
-              ? 'Web3 wallet and DEX interface'
-              : 'OKX promo campaign podium';
+              ? 'abstract Web3 network nodes, purple blue glow'
+              : 'premium dark fintech gradient, blue and gold light streaks';
 
     return [
-      'Clean professional OKX crypto marketing poster, photorealistic UI style,',
-      `TOP banner with large sharp readable Latin text exactly: "${titleOverlay}",`,
-      `BOTTOM subtitle with readable Latin text exactly: "${hookOverlay}",`,
-      logoLine,
+      'Abstract crypto background only, no text, no letters, no logos, no watermark,',
       `${motif},`,
-      'OKX blue and black brand colors, gold accents,',
-      'centered composition, high contrast typography,',
-      'NO gibberish text, NO alien script, NO surreal letters, NO watermark,',
-      'NO pollinations branding, NO website URL, 16:9 landscape',
+      'cinematic lighting, shallow depth of field, 16:9 landscape,',
+      Math.random() > 0.5
+        ? 'empty left third for logo placement,'
+        : 'empty center space for overlay,',
+      'professional marketing backdrop',
     ].join(' ');
   }
 
@@ -619,43 +839,33 @@ function buildImagePromptFromContent(snapshot, content) {
   const hot = isAirdrop
     ? snapshot.hotGem
     : snapshot.hotCoin || snapshot.primary?.hotCoin;
-  const chainOrExchange = isAirdrop
-    ? hot?.chain || 'DEX'
-    : snapshot.primaryLabel || 'CEX';
   const symbol = String(isAirdrop ? hot?.symbol : hot?.base || '')
     .trim()
     .slice(0, 24);
   const theme = symbol
     ? visualThemeFromSymbol(symbol, isAirdrop ? hot?.chain : null)
     : 'crypto market heat map';
-  const hookOverlay = cleanOverlayText(content?.hook || symbol || 'Market Pulse', 40);
 
   const change = isAirdrop
     ? hot?.change1h ?? hot?.change6h
     : hot?.changePct;
   const mood =
     change != null && Number(change) >= 0
-      ? 'bullish green neon pump energy, rising candlesticks'
-      : 'dramatic red market tension, falling candles';
+      ? 'bullish green neon energy, rising light trails'
+      : 'dramatic red market tension, cool dark tones';
 
-  if (!symbol) {
-    return [
-      'Clean crypto trading poster,',
-      `readable Latin headline: "${hookOverlay}",`,
-      `${mood}, dark premium fintech aesthetic,`,
-      `${chainOrExchange} HUD, no gibberish text, no watermark, 16:9`,
-    ].join(' ');
-  }
+  const spaceHint =
+    ['empty left third for hero logo,', 'empty center for logo,', 'soft blur upper half for title,'][
+      Math.abs(String(symbol || 'x').charCodeAt(0)) % 3
+    ];
 
   return [
-    `Clean crypto promotional poster for token ${symbol},`,
-    `huge centered 3D coin logo with sharp readable ticker text "${symbol}",`,
-    `subtitle readable Latin text: "${hookOverlay}",`,
+    'Abstract crypto background only, no text, no letters, no logos, no watermark,',
     `visual theme: ${theme},`,
     `${mood},`,
-    `${chainOrExchange} neon HUD background,`,
-    isAirdrop ? 'early gem discovery vibe,' : 'spot trading heat map accents,',
-    'NO gibberish text, NO alien script, NO watermark, NO pollinations branding, 16:9 landscape',
+    isAirdrop ? 'early gem discovery atmosphere,' : 'spot trading heat map glow,',
+    spaceHint,
+    'cinematic bokeh, 16:9 landscape',
   ].join(' ');
 }
 
@@ -681,20 +891,64 @@ async function generateImageWithPollinations(prompt) {
   return Buffer.from(data);
 }
 
+/** Background solid jika Pollinations gagal — overlay tetap jalan. */
+async function solidFallbackBackground(snapshot) {
+  const isAirdrop = snapshot.category === 'airdrop';
+  const isNews = snapshot.category === 'news';
+  const color = isNews
+    ? { r: 12, g: 24, b: 56 }
+    : isAirdrop
+      ? { r: 20, g: 16, b: 48 }
+      : { r: 10, g: 28, b: 40 };
+  const sharp = require('sharp');
+  return sharp({
+    create: {
+      width: 1024,
+      height: 576,
+      channels: 3,
+      background: color,
+    },
+  })
+    .jpeg()
+    .toBuffer();
+}
+
 async function generateMarketImage(snapshot, content) {
   const prompt = buildImagePromptFromContent(snapshot, content);
+  const overlayMeta = buildImageOverlayMeta(snapshot, content);
+
+  let bgBuffer = null;
+  let provider = null;
 
   if (process.env.POLLINATIONS_ENABLED === 'false') {
-    console.warn('[aiService] Pollinations dimatikan');
-    return { buffer: null, prompt, provider: null };
+    console.warn('[aiService] Pollinations dimatikan — pakai background solid');
+    bgBuffer = await solidFallbackBackground(snapshot);
+    provider = 'solid';
+  } else {
+    try {
+      bgBuffer = await generateImageWithPollinations(prompt);
+      provider = 'pollinations';
+    } catch (err) {
+      console.warn('[aiService] Pollinations gagal:', err.message);
+      bgBuffer = await solidFallbackBackground(snapshot);
+      provider = 'solid-fallback';
+    }
   }
 
   try {
-    const buffer = await generateImageWithPollinations(prompt);
-    return { buffer, prompt, provider: 'pollinations' };
+    console.log(
+      `[aiService] Compose overlay: title="${clip(overlayMeta.title, 40)}" tickers=${(overlayMeta.tickers || []).join(',') || '-'}`
+    );
+    const buffer = await composePromoImage(bgBuffer, overlayMeta);
+    return {
+      buffer,
+      prompt,
+      provider: `${provider}+compose`,
+      overlayMeta,
+    };
   } catch (err) {
-    console.warn('[aiService] Pollinations gagal:', err.message);
-    return { buffer: null, prompt, provider: null };
+    console.warn('[aiService] Compose gagal:', err.message);
+    return { buffer: bgBuffer, prompt, provider, overlayMeta };
   }
 }
 
@@ -719,6 +973,7 @@ module.exports = {
   generatePostContent,
   generateMarketImage,
   buildImagePromptFromContent,
+  buildImageOverlayMeta,
   visualThemeFromSymbol,
   extractTickersFromText,
   cleanOverlayText,

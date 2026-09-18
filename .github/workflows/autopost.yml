@@ -1,8 +1,9 @@
 name: Autopost Telegram Crypto
 
 # Hemat Actions (free tier):
-# - Hanya 2 slot default (09:00 & 21:00 WIB) + Run manual
+# - 3 slot (09:00, 13:00, 19:00 WIB) + Run manual
 # - Early schedule check SEBELUM npm ci (hemat menit jika skip)
+# - AI_PROVIDER=free default; sharp (compose logo) butuh npm ci di Ubuntu
 on:
   schedule:
     # Sesuai config/schedule.json default/admin: 09:00, 13:00, 19:00 WIB
@@ -49,7 +50,7 @@ concurrency:
 jobs:
   autopost:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
 
     steps:
       - name: Checkout

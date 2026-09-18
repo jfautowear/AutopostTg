@@ -307,6 +307,7 @@ function mapDexScreenerPair(pair) {
     name: pair.baseToken?.name || base,
     address: pair.baseToken?.address || null,
     pairAddress: pair.pairAddress || null,
+    imageUrl: pair.info?.imageUrl || null,
     priceUsd: price,
     change1h: ch1,
     change6h: ch6,

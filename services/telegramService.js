@@ -23,6 +23,21 @@ function buildAffiliateButtons() {
   ];
 }
 
+/** Tombol daftar untuk news/promo (CTA registrasi). */
+function buildRegisterButton(source = 'OKX') {
+  const isBitget = String(source || '').toUpperCase().includes('BITGET');
+  if (isBitget) {
+    return {
+      text: '✨ Daftar Bitget',
+      url: 'https://partner.bitgetapp.com/bg/CSGH1P',
+    };
+  }
+  return {
+    text: '✨ Daftar OKX',
+    url: 'https://okx.ac/join/76785925',
+  };
+}
+
 const JOIN_GROUP_BTN = {
   text: '💬 JOIN GROUP',
   url: 'https://t.me/caricuanhp',
@@ -153,22 +168,23 @@ function buildAirdropInlineKeyboard(snapshot) {
 }
 
 /**
- * Keyboard berita/promo — Trade OKX | Baca Info, lalu JOIN GROUP.
+ * Keyboard berita/promo — Daftar OKX/Bitget | Baca Info | JOIN GROUP.
  */
 function buildNewsInlineKeyboard(snapshot) {
-  const [okx] = buildAffiliateButtons();
+  const source =
+    snapshot?.hotNews?.exchange || snapshot?.primaryLabel || 'OKX';
+  const daftar = buildRegisterButton(source);
   const rawUrl =
     snapshot?.hotNews?.url && /^https?:\/\//i.test(snapshot.hotNews.url)
       ? snapshot.hotNews.url
       : 'https://www.okx.ac/help/section/announcements-latest-announcements';
-  // Pastikan domain .ac (okx.com sering diblokir di Indonesia)
   const infoUrl = String(rawUrl)
     .replace(/https?:\/\/(www\.)?okx\.com/gi, 'https://www.okx.ac')
     .replace(/https?:\/\/(www\.)?okx\.cc/gi, 'https://www.okx.ac');
 
   return {
     inline_keyboard: [
-      [okx, { text: '📄 Baca Info', url: infoUrl }],
+      [daftar, { text: '📄 Baca Info', url: infoUrl }],
       [JOIN_GROUP_BTN],
     ],
   };
@@ -183,8 +199,24 @@ function formatPriceSafe(value) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 6 });
 }
 
+function formatShortTime(iso) {
+  if (!iso) return null;
+  try {
+    return new Intl.DateTimeFormat('id-ID', {
+      timeZone: process.env.CRON_TIMEZONE || 'Asia/Jakarta',
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(new Date(iso));
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Caption spot/CEX — layout rapi + spasi lega; AI hanya isi hook/info/cta singkat.
+ * Caption spot/CEX — angka dari API live; AI hanya hook/info/cta kontekstual.
  */
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   if (snapshot.category === 'airdrop') {
@@ -200,6 +232,7 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
     0,
     3
   );
+  const when = formatShortTime(snapshot.fetchedAt);
 
   const build = (hook, info, cta) => {
     const gainerBlock = gainers.length
@@ -225,6 +258,7 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
       hot
         ? `Meledak 📈: 24h ${escapeHtml(formatPctSafe(hot.changePct))} · $${escapeHtml(formatPriceSafe(hot.last))}`
         : null,
+      when ? `<i>Data: ${escapeHtml(exchange)} · ${escapeHtml(when)} WIB</i>` : null,
       '',
       '',
       '<b>📡 Ringkasan</b>',
@@ -245,12 +279,14 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
 }
 
 /**
- * Caption berita/promo OKX — HOOK → News/Promo → CTA (+ emoji, AI rangkuman).
+ * Caption berita/promo — marketing natural; fakta dari pengumuman, tanpa label kaku.
  */
 function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
   const n = snapshot.hotNews;
-  const emoji = n?.emoji || '📰';
+  const emoji = n?.emoji || '🎁';
   const typeLabel = n?.typeLabel || 'Update';
+  const exchange = n?.exchange || snapshot.primaryLabel || 'OKX';
+  const when = formatShortTime(n?.publishedAt || snapshot.fetchedAt);
 
   const build = (hook, info, cta) =>
     [
@@ -258,12 +294,10 @@ function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
       isTest ? '' : null,
       escapeHtml(hook),
       '',
-      '',
-      `<b>${emoji} NEWS / PROMO</b>`,
-      `Jenis: <b>${escapeHtml(typeLabel)}</b> · OKX`,
+      `<b>${emoji} ${escapeHtml(typeLabel)}</b> · ${escapeHtml(exchange)}`,
+      when ? `<i>${escapeHtml(exchange)} · ${escapeHtml(when)} WIB</i>` : null,
       '',
       escapeHtml(info),
-      '',
       '',
       escapeHtml(cta),
       '',
@@ -286,15 +320,16 @@ function formatVolumeUsd(value) {
 }
 
 /**
- * Caption Airdrop — template tetap, spasi lega, enak dibaca di mobile.
- * Data dari hotGem; tidak mengandalkan paragraf AI yang padat.
+ * Caption Airdrop — metrik dari DEX; hook/info/cta AI (variatif, tetap kontekstual).
  */
-function formatAirdropMessage(snapshot, _content, { isTest = false } = {}) {
+function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
   const gem = snapshot.hotGem;
   const token = gem?.symbol || '—';
   const chain = gem?.chain || 'Multi-chain';
   const ch1 = formatPctSafe(gem?.change1h);
   const ch6 = formatPctSafe(gem?.change6h);
+  const when = formatShortTime(snapshot.fetchedAt);
+  const src = gem?.source === 'geckoterminal' ? 'GeckoTerminal' : 'DexScreener';
 
   let volumeLine = 'Volume: —';
   if (gem?.volume6h != null && gem.volume6h > 0) {
@@ -305,36 +340,45 @@ function formatAirdropMessage(snapshot, _content, { isTest = false } = {}) {
     volumeLine = `Volume: 24h ${formatVolumeUsd(gem.volume24h)}.`;
   }
 
-  const message = [
-    isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
-    isTest ? '' : null,
-    '<b>🪂 AIRDROP / EARLY GEM</b>',
-    '',
-    `Token: <b>${escapeHtml(token)}</b>`,
-    `Jaringan: ${escapeHtml(chain)}`,
-    `Meledak 📈: 1h ${escapeHtml(ch1)} | ${escapeHtml(ch6)} 6h`,
-    '',
-    '',
-    '<b>⛓ On-chain pulse</b>',
-    escapeHtml(volumeLine),
-    '',
-    '<b>Disclaimer:</b>',
-    '- Peluang early gem, tapi HIGH RISK.',
-    '- Bukan jaminan airdrop.',
-    '- DYOR &amp; tidak saran investasi.',
-    '- Cek likuiditas &amp; risiko rug.',
-    '',
-    'Cek chart &amp; entry di OKX Web3 DEX sekarang.',
-    'Semoga untung! 🚀',
-    '',
-    `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
-  ]
-    .filter((line) => line != null)
-    .join('\n');
+  const hook = content?.hook || `${token} on ${chain}`;
+  const info =
+    content?.info ||
+    'Early gem = HIGH RISK. Bukan jaminan airdrop. DYOR.';
+  const cta =
+    content?.cta || 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung! 🚀';
 
-  // Template tetap — hanya potong jika overflow (jarang)
-  if (telegramLength(message) <= MAX_CAPTION_CHARS) return message;
-  return clip(message.replace(/\n{3,}/g, '\n\n'), MAX_CAPTION_CHARS);
+  const build = (h, i, c) =>
+    [
+      isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
+      isTest ? '' : null,
+      '<b>🪂 AIRDROP / EARLY GEM</b>',
+      '',
+      `Token: <b>${escapeHtml(token)}</b>`,
+      `Jaringan: ${escapeHtml(chain)}`,
+      `Meledak 📈: 1h ${escapeHtml(ch1)} | ${escapeHtml(ch6)} 6h`,
+      escapeHtml(volumeLine),
+      when
+        ? `<i>Data: ${escapeHtml(src)} · ${escapeHtml(when)} WIB</i>`
+        : `<i>Data: ${escapeHtml(src)}</i>`,
+      '',
+      '',
+      '<b>📡 Ringkasan</b>',
+      escapeHtml(h),
+      '',
+      escapeHtml(i),
+      '',
+      escapeHtml(c),
+      '',
+      '<b>Disclaimer:</b>',
+      '- HIGH RISK · bukan jaminan airdrop.',
+      '- DYOR &amp; bukan saran investasi.',
+      '',
+      `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
+    ]
+      .filter((line) => line != null)
+      .join('\n');
+
+  return finalizeCaption(build, { hook, info, cta });
 }
 
 function finalizeCaption(build, content) {
@@ -522,4 +566,5 @@ module.exports = {
   OKX_WEB3_URLS,
   pickOkxWeb3Url,
   buildAffiliateButtons,
+  buildRegisterButton,
 };
