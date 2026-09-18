@@ -144,4 +144,8 @@ module.exports = {
   runDexScreenAndAlert,
   getDexScreenChatId,
   THRESHOLDS,
+  getSafeDexAutopostSnapshot: (...args) =>
+    require('./autopostSnapshot').getSafeDexAutopostSnapshot(...args),
+  markSafeDexPosted: (...args) =>
+    require('./autopostSnapshot').markSafeDexPosted(...args),
 };

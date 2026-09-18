@@ -159,7 +159,7 @@ function buildAirdropInlineKeyboard(snapshot) {
   return {
     inline_keyboard: [
       [
-        { text: '🌐 OKX WEB3', url: web3Url },
+        { text: '🌐 Trade OKX Web3', url: web3Url },
         { text: '📊 CHART', url: chartUrl },
       ],
       [JOIN_GROUP_BTN],
@@ -320,47 +320,72 @@ function formatVolumeUsd(value) {
 }
 
 /**
- * Caption Airdrop — metrik dari DEX; hook/info/cta AI (variatif, tetap kontekstual).
+ * Caption DEX aman (lolos filter) — CTA OKX Web3.
  */
 function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
   const gem = snapshot.hotGem;
   const token = gem?.symbol || '—';
   const chain = gem?.chain || 'Multi-chain';
-  const ch1 = formatPctSafe(gem?.change1h);
-  const ch6 = formatPctSafe(gem?.change6h);
+  const screened = Boolean(snapshot.screened || gem?.screened);
+  const sec = gem?.security || {};
   const when = formatShortTime(snapshot.fetchedAt);
-  const src = gem?.source === 'geckoterminal' ? 'GeckoTerminal' : 'DexScreener';
 
-  let volumeLine = 'Volume: —';
-  if (gem?.volume6h != null && gem.volume6h > 0) {
-    volumeLine = `Volume: 6h ${formatVolumeUsd(gem.volume6h)}.`;
+  let volumeLine = 'Volume 24h: —';
+  if (gem?.volume24h != null && gem.volume24h > 0) {
+    volumeLine = `Volume 24h: ${formatVolumeUsd(gem.volume24h)}`;
+  } else if (gem?.volume6h != null && gem.volume6h > 0) {
+    volumeLine = `Volume 6h: ${formatVolumeUsd(gem.volume6h)}`;
   } else if (gem?.volume1h != null && gem.volume1h > 0) {
-    volumeLine = `Volume: 1h ${formatVolumeUsd(gem.volume1h)}.`;
-  } else if (gem?.volume24h != null && gem.volume24h > 0) {
-    volumeLine = `Volume: 24h ${formatVolumeUsd(gem.volume24h)}.`;
+    volumeLine = `Volume 1h: ${formatVolumeUsd(gem.volume1h)}`;
   }
 
-  const hook = content?.hook || `${token} on ${chain}`;
+  const ch24 =
+    gem?.change24h != null
+      ? formatPctSafe(gem.change24h)
+      : formatPctSafe(gem?.change1h);
+  const mcLine = gem?.marketCapUsd != null;
+
+  const taxLine =
+    sec.buyTaxPct != null || sec.sellTaxPct != null
+      ? `Tax: buy ${sec.buyTaxPct ?? '—'}% / sell ${sec.sellTaxPct ?? '—'}%`
+      : null;
+  const lpLine = sec.lpBurned
+    ? 'LP: burned ✅'
+    : sec.lpLockedPct != null
+      ? `LP locked: ${Number(sec.lpLockedPct).toFixed(0)}%`
+      : null;
+
+  const hook = content?.hook || `${token} lolos screen aman`;
   const info =
     content?.info ||
-    'Early gem = HIGH RISK. Bukan jaminan airdrop. DYOR.';
+    'Token lolos filter keamanan & likuiditas. Tetap DYOR — bukan saran investasi.';
   const cta =
-    content?.cta || 'Cek chart & entry di OKX Web3 DEX sekarang. Semoga untung! 🚀';
+    content?.cta || 'Trade / cek pair di OKX Web3 DEX sekarang. 🌐';
+
+  const title = screened
+    ? '<b>🛡️ DEX SAFE · LOLOS FILTER</b>'
+    : '<b>🪂 AIRDROP / EARLY GEM</b>';
 
   const build = (h, i, c) =>
     [
-      isTest ? '<b>🧪 [TEST AIRDROP/DEX]</b>' : null,
+      isTest ? '<b>🧪 [TEST DEX SAFE]</b>' : null,
       isTest ? '' : null,
-      '<b>🪂 AIRDROP / EARLY GEM</b>',
+      title,
       '',
-      `Token: <b>${escapeHtml(token)}</b>`,
-      `Jaringan: ${escapeHtml(chain)}`,
-      `Meledak 📈: 1h ${escapeHtml(ch1)} | ${escapeHtml(ch6)} 6h`,
+      `Token: <b>${escapeHtml(token)}</b> · ${escapeHtml(chain)}`,
+      gem?.address ? `CA: <code>${escapeHtml(gem.address)}</code>` : null,
+      ch24 !== '—' ? `24h: <b>${escapeHtml(ch24)}</b>` : null,
+      mcLine
+        ? escapeHtml(
+            `MC: ${formatVolumeUsd(gem.marketCapUsd) || '—'} · Liq: ${formatVolumeUsd(gem.liquidityUsd) || '—'}`
+          )
+        : null,
       escapeHtml(volumeLine),
+      taxLine ? escapeHtml(taxLine) : null,
+      lpLine ? escapeHtml(lpLine) : null,
       when
-        ? `<i>Data: ${escapeHtml(src)} · ${escapeHtml(when)} WIB</i>`
-        : `<i>Data: ${escapeHtml(src)}</i>`,
-      '',
+        ? `<i>Screen: DexScreener + GoPlus · ${escapeHtml(when)} WIB</i>`
+        : '<i>Screen: DexScreener + GoPlus</i>',
       '',
       '<b>📡 Ringkasan</b>',
       escapeHtml(h),
@@ -369,9 +394,8 @@ function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
       '',
       escapeHtml(c),
       '',
-      '<b>Disclaimer:</b>',
-      '- HIGH RISK · bukan jaminan airdrop.',
-      '- DYOR &amp; bukan saran investasi.',
+      '<b>Trade via:</b> OKX Web3 DEX',
+      '<b>Disclaimer:</b> Filter ketat ≠ bebas risiko. DYOR &amp; NFA.',
       '',
       `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
     ]

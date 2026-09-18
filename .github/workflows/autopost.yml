@@ -1,18 +1,20 @@
 name: Autopost Telegram Crypto
 
 # Hemat Actions (free tier):
-# - 3 slot (09:00, 13:00, 19:00 WIB) + Run manual
+# - 4 slot (09:00, 13:00, 19:00, 21:00 WIB) + Run manual
 # - Early schedule check SEBELUM npm ci (hemat menit jika skip)
 # - AI_PROVIDER=free default; sharp (compose logo) butuh npm ci di Ubuntu
+# - Slot airdrop memakai DEX Safe Screen (bukan asal token)
 on:
   schedule:
-    # Sesuai config/schedule.json default/admin: 09:00, 13:00, 19:00 WIB
-    # 09:00 WIB = 02:00 UTC
+    # 09:00 WIB = 02:00 UTC → spot
     - cron: '0 2 * * *'
-    # 13:00 WIB = 06:00 UTC
+    # 13:00 WIB = 06:00 UTC → DEX safe → OKX Web3
     - cron: '0 6 * * *'
-    # 19:00 WIB = 12:00 UTC
+    # 19:00 WIB = 12:00 UTC → news/promo
     - cron: '0 12 * * *'
+    # 21:00 WIB = 14:00 UTC → spot / DEX safe (bergiliran)
+    - cron: '0 14 * * *'
   workflow_dispatch:
     inputs:
       force_post:
@@ -119,15 +121,18 @@ jobs:
           OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'google/gemini-2.5-flash' }}
         run: npm run post:once
 
-      - name: Persist last posted slot
+      - name: Persist last posted slot + DEX cache
         if: success() && steps.gate.outputs.skip != 'true'
         run: |
-          if git diff --quiet -- config/runtime.json; then
-            echo "No runtime change"
+          CHANGED=0
+          git diff --quiet -- config/runtime.json || CHANGED=1
+          git diff --quiet -- data/dex-screen-cache.json 2>/dev/null || CHANGED=1
+          if [ "$CHANGED" -eq 0 ]; then
+            echo "No runtime/cache change"
             exit 0
           fi
           git config user.name "autopost-bot"
           git config user.email "autopost-bot@users.noreply.github.com"
-          git add config/runtime.json
-          git commit -m "chore: mark last posted slot"
+          git add config/runtime.json data/dex-screen-cache.json || true
+          git commit -m "chore: mark last posted slot / dex cache" || exit 0
           git push

@@ -6,7 +6,7 @@ const SCHEDULE_PATH = path.join(__dirname, '..', 'config', 'schedule.json');
 const DEFAULT_SCHEDULE = {
   enabled: true,
   timezone: 'Asia/Jakarta',
-  times: ['09:00', '21:00'],
+  times: ['09:00', '13:00', '19:00', '21:00'],
   updatedAt: null,
   updatedBy: null,
 };
@@ -93,15 +93,19 @@ function shouldPostNow(schedule = loadSchedule(), now = new Date(), windowMinute
   const nowMinutes = hour * 60 + minute;
   const today = `${get('year')}-${get('month')}-${get('day')}`;
 
+  // Ambil slot terdekat yang sudah lewat dalam window (bukan slot lama yang masih masuk window lebar GHA)
+  let best = null;
+  let bestDiff = Infinity;
   for (const t of schedule.times) {
     const [h, m] = t.split(':').map(Number);
     const target = h * 60 + m;
     const diff = nowMinutes - target;
-    if (diff >= 0 && diff <= windowMinutes) {
-      return { match: true, slot: `${today}-${t}` };
+    if (diff >= 0 && diff <= windowMinutes && diff < bestDiff) {
+      bestDiff = diff;
+      best = { match: true, slot: `${today}-${t}` };
     }
   }
-  return { match: false, slot: null };
+  return best || { match: false, slot: null };
 }
 
 function alreadyPostedSlot(slot) {

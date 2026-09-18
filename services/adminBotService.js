@@ -31,7 +31,7 @@ Top aktif grup (@caricuanhp):
 
 Jadwal:
 /jadwal — lihat jadwal
-/jadwal\\_set 09:00,21:00 — ganti semua jam
+/jadwal\\_set 09:00,13:00,19:00,21:00 — ganti semua jam
 /jadwal\\_add 12:30 — tambah jam
 /jadwal\\_del 12:30 — hapus jam
 /jadwal\\_on — aktifkan
@@ -182,7 +182,7 @@ function handleAdminCommand(msg) {
       const times = parseTimesList(args);
       if (!times.length) {
         return {
-          reply: 'Format: /jadwal_set 09:00,21:00',
+          reply: 'Format: /jadwal_set 09:00,13:00,19:00,21:00',
           allowed: true,
         };
       }

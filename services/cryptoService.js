@@ -504,7 +504,9 @@ async function getDexAirdropSnapshot(limit = 5) {
 
 function buildAirdropSummaryText(snapshot) {
   const lines = [
-    'Kategori: Airdrop / Early Gem Opportunity (DEX)',
+    snapshot.screened
+      ? 'Kategori: DEX SAFE (lolos filter MC/liq/LP/tax/honeypot/volume)'
+      : 'Kategori: Airdrop / Early Gem Opportunity (DEX)',
     `Waktu data: ${snapshot.fetchedAt}`,
     `Chain fokus: ${(snapshot.chains || []).join(', ')}`,
     '',
@@ -512,21 +514,32 @@ function buildAirdropSummaryText(snapshot) {
 
   if (snapshot.hotGem) {
     const g = snapshot.hotGem;
-    lines.push('HOT GEM PICK:');
+    const s = g.security || {};
+    lines.push('HOT / SAFE PICK:');
     lines.push(
-      `- ${g.symbol} (${g.chain}) $${formatPrice(g.priceUsd)} | 1h ${formatPct(g.change1h)} | 6h ${formatPct(g.change6h)}`
+      `- ${g.symbol} (${g.chain}) $${formatPrice(g.priceUsd)} | 24h ${formatPct(g.change24h ?? g.change1h)}`
     );
     lines.push(
-      `  vol1h≈${Math.round(g.volume1h || 0)} | vol6h≈${Math.round(g.volume6h || 0)} | liq≈${Math.round(g.liquidityUsd || 0)}`
+      `  MC≈${Math.round(g.marketCapUsd || 0)} | liq≈${Math.round(g.liquidityUsd || 0)} | vol24h≈${Math.round(g.volume24h || g.volume6h || 0)}`
     );
+    if (g.address) lines.push(`  CA: ${g.address}`);
+    if (s.buyTaxPct != null || s.sellTaxPct != null) {
+      lines.push(`  tax buy/sell: ${s.buyTaxPct ?? '—'}% / ${s.sellTaxPct ?? '—'}%`);
+    }
+    if (s.lpLockedPct != null || s.lpBurned) {
+      lines.push(
+        `  LP: locked=${s.lpLockedPct ?? '—'}% burned=${Boolean(s.lpBurned)}`
+      );
+    }
     lines.push(`  url: ${g.url}`);
+    lines.push('  CTA target: OKX Web3 DEX');
     lines.push('');
   }
 
-  lines.push('Watchlist trending (volume spike 1–6h):');
+  lines.push('Watchlist:');
   for (const g of (snapshot.gems || []).slice(0, 3)) {
     lines.push(
-      `- ${g.symbol} @ ${g.chain}: $${formatPrice(g.priceUsd)} (1h ${formatPct(g.change1h)}, 6h ${formatPct(g.change6h)}) vol1h≈${Math.round(g.volume1h || 0)}`
+      `- ${g.symbol} @ ${g.chain}: $${formatPrice(g.priceUsd)} (24h ${formatPct(g.change24h ?? g.change1h)})`
     );
   }
 

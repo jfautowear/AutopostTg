@@ -1,7 +1,7 @@
 name: Top Aktif Mingguan
 
 # Hemat free tier — poll 2×/hari, JADWAL DIGESER dari autopost (hindari race git push).
-# Autopost: 09:00 / 13:00 / 19:00 WIB | Top Aktif: 08:00 & 20:00 WIB
+# Autopost: 09:00 / 13:00 / 19:00 / 21:00 WIB | Top Aktif: 08:00 & 20:00 WIB
 # Sabtu pagi (<14:00 WIB) → poll + analisa + post ke t.me/caricuanhp/65640
 on:
   schedule:

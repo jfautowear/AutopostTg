@@ -15,7 +15,7 @@ File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**,
 | Command | Fungsi |
 |---------|--------|
 | `/jadwal` | Lihat jadwal |
-| `/jadwal_set 09:00,21:00` | Set semua jam |
+| `/jadwal_set 09:00,13:00,19:00,21:00` | Set semua jam |
 | `/jadwal_add 12:30` | Tambah jam |
 | `/jadwal_del 12:30` | Hapus jam |
 | `/jadwal_on` / `/jadwal_off` | Aktif / nonaktif |
@@ -28,15 +28,18 @@ File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**,
 
 Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json`.
 
-## Jenis konten (rotasi otomatis)
+## Jenis konten (rotasi 4×/hari)
 
-Dengan `POST_CATEGORY=auto` (default di Actions), tiap run bergilir:
+Jadwal default: **09:00 · 13:00 · 19:00 · 21:00 WIB** (`POST_CATEGORY=auto`):
 
-| Kategori | Sumber | AI teks |
-|----------|--------|---------|
-| **spot** | Hot gainer OKX/Bitget | LLM free (Groq/OR) |
-| **airdrop** | DEX trending | Template (0 kredit) |
-| **news** | Pengumuman OKX (listing, event, Jumpstart, Earn, Web3) | AI rangkuman ID (batas karakter) |
+| Jam | Kategori | Isi |
+|-----|----------|-----|
+| 09:00 | **spot** | Hot gainer OKX/Bitget |
+| 13:00 | **airdrop** | DEX **Safe Screen** → tombol **Trade OKX Web3** |
+| 19:00 | **news** | Promo/listing OKX → **Daftar OKX** |
+| 21:00 | spot / airdrop | Bergiliran (hari genap DEX aman, ganjil spot) |
+
+Slot **airdrop** hanya memposting token yang lolos filter ketat (MC/liq/LP/tax/honeypot). Jika tidak ada yang lolos → otomatis fallback **spot**.
 
 Semua jalan di **GitHub Actions** 2×/hari — PC tidak perlu nyala.
 

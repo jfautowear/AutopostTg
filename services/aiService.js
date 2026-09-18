@@ -132,23 +132,23 @@ function pickCta(pool) {
 function buildAirdropPrompt(snapshot) {
   const summary = buildAirdropSummaryText(snapshot);
   const gem = snapshot.hotGem;
+  const screened = Boolean(snapshot.screened || gem?.screened);
 
   return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat konten "Airdrop / Early Gem" dari data DEX real-time di bawah.
+Buat konten ${screened ? 'DEX SAFE (token sudah lolos filter keamanan ketat)' : 'Airdrop / Early Gem'} dari DATA di bawah.
 
 WAJIB balas HANYA JSON valid (tanpa markdown):
 {"hook":"...","info":"...","cta":"..."}
 
 ${ACCURACY_RULES}
-- Nada: peluang early / gem on-chain, JUJUR soal risiko.
-- Wajib nuansa HIGH RISK & DYOR di info (bukan jaminan airdrop).
-- Fokus gem: ${gem ? `${gem.symbol} @ ${gem.chain}` : 'token trending DEX'}.
-- Boleh sebut chain + lonjakan 1h/6h HANYA jika ada di DATA.
-- Jangan klaim "pasti airdrop" / "safe entry" / rug-proof.
+- Nada: informatif, hati-hati, JANGAN bilang "100% aman" / "bebas rug" — filter ≠ jaminan.
+- Fokus token: ${gem ? `${gem.symbol} @ ${gem.chain}` : 'token DEX'}.
+${screened ? '- Sebut singkat bahwa token lolos screen (MC/liq/tax/LP) tanpa mengarang angka di luar DATA.\n' : ''}- CTA WAJIB arahkan cek/trade di OKX Web3 DEX (tanpa URL).
+- Jangan klaim pasti airdrop / profit.
 
-Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta} (ajak OKX Web3, tanpa URL)
+Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
 
-DATA (sumber: DexScreener / GeckoTerminal):
+DATA:
 ${summary}`;
 }
 
@@ -748,7 +748,7 @@ function buildImageOverlayMeta(snapshot, content) {
       tickers: logoEntries.map((e) => e.symbol),
       logoEntries,
       exchange: 'OKX',
-      badge: 'AIRDROP / DEX',
+      badge: snapshot.screened || hot?.screened ? 'DEX SAFE' : 'AIRDROP / DEX',
     };
     meta.layout = pickLayout(meta);
     return meta;
