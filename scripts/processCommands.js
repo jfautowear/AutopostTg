@@ -13,6 +13,7 @@ const {
   isAdmin,
   publicPrivateMessage,
   replyOpts,
+  syncBotCommands,
 } = require('../services/adminBotService');
 const {
   loadSchedule,
@@ -229,6 +230,12 @@ async function processCommands() {
     console.log('[commands] Webhook dihapus (siap polling getUpdates)');
   } catch (err) {
     console.warn('[commands] deleteWebhook:', err.message);
+  }
+
+  try {
+    await syncBotCommands(bot);
+  } catch {
+    // ignore
   }
 
   let offset = readOffset();

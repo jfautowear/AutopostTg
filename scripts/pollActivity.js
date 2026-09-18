@@ -20,6 +20,7 @@ const {
   activityEnabled,
 } = require('../services/activityService');
 const { handleIncomingMessage } = require('../index');
+const { syncBotCommands } = require('../services/adminBotService');
 
 const OFFSET_PATH = path.join(__dirname, '..', 'config', 'telegram-offset.json');
 
@@ -76,6 +77,12 @@ async function pollActivity() {
     await bot.deleteWebHook({ drop_pending_updates: false });
   } catch (err) {
     console.warn('[activity] deleteWebhook:', err.message);
+  }
+
+  try {
+    await syncBotCommands(bot);
+  } catch {
+    // ignore
   }
 
   let offset = readOffset();

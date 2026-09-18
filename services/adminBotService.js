@@ -46,6 +46,33 @@ Lainnya:
 Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.
 PC boleh OFF — autopost & news jalan via GitHub Actions.`;
 
+/** Menu slash Telegram (BotFather-style) — agar daftar command selalu lengkap. */
+const BOT_COMMANDS = [
+  { command: 'help', description: 'Bantuan command admin' },
+  { command: 'status', description: 'Status bot & jadwal' },
+  { command: 'test', description: 'Preview spot CEX' },
+  { command: 'test_airdrop', description: 'Preview Airdrop/DEX' },
+  { command: 'test_news', description: 'Preview berita/promo OKX' },
+  { command: 'postnow', description: 'Post spot ke channel' },
+  { command: 'airdrop', description: 'Post Airdrop/DEX ke channel' },
+  { command: 'news', description: 'Post berita/promo OKX' },
+  { command: 'topaktif', description: 'Ranking Top Aktif minggu ini' },
+  { command: 'topaktif_post', description: 'Kirim Top 10 ke grup' },
+  { command: 'topaktif_test', description: 'Preview Top 10' },
+  { command: 'jadwal', description: 'Lihat jadwal autopost' },
+  { command: 'kategori', description: 'Set spot|airdrop|news|auto' },
+  { command: 'sumber', description: 'Set okx|bitget|auto' },
+];
+
+async function syncBotCommands(bot) {
+  try {
+    await bot.setMyCommands(BOT_COMMANDS);
+    console.log('[bot] Menu command Telegram di-sync (%d item)', BOT_COMMANDS.length);
+  } catch (err) {
+    console.warn('[bot] setMyCommands gagal:', err.message);
+  }
+}
+
 function isAdmin(msg) {
   const username = (msg?.from?.username || '').toLowerCase();
   if (username && username === ADMIN_USERNAME) return true;
@@ -360,6 +387,8 @@ function handleAdminCommand(msg) {
 module.exports = {
   ADMIN_USERNAME,
   HELP_TEXT,
+  BOT_COMMANDS,
+  syncBotCommands,
   isAdmin,
   denyText,
   publicPrivateMessage,

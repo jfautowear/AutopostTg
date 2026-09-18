@@ -22,6 +22,7 @@ const {
   publicPrivateMessage,
   parseCommand,
   replyOpts,
+  syncBotCommands,
 } = require('./services/adminBotService');
 const {
   recordMessage,
@@ -301,6 +302,7 @@ function startCommandBot() {
 
   bot
     .deleteWebHook({ drop_pending_updates: false })
+    .then(() => syncBotCommands(bot))
     .then(() => {
       console.log('[bot] Webhook cleared, start polling…');
       return bot.startPolling(pollingOpts);
@@ -310,7 +312,7 @@ function startCommandBot() {
       return bot.startPolling(pollingOpts);
     });
 
-  console.log('[bot] Polling command aktif (/test, /postnow, /topaktif, ...)');
+  console.log('[bot] Polling command aktif (/test, /news, /postnow, /topaktif, ...)');
   console.log(
     `[bot] Admin only: @${process.env.ADMIN_TELEGRAM_USERNAME || 'jfnetworkindo'}`
   );
