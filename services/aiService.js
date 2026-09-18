@@ -2,6 +2,7 @@ const axios = require('axios');
 const {
   buildMarketSummaryText,
   buildAirdropSummaryText,
+  buildNewsSummaryText,
   formatPrice,
   formatPct,
 } = require('./cryptoService');
@@ -140,23 +141,60 @@ function fallbackNewsContent(snapshot) {
   const n = snapshot.hotNews || (snapshot.items || [])[0];
   if (!n) {
     return {
-      hook: 'Update OKX',
-      info: 'Belum ada pengumuman segar saat ini.',
-      cta: 'Cek peluang di OKX & pantau channel JF Network.',
-      provider: 'template-news',
+      hook: clip('📰 Belum ada promo OKX yang menonjol hari ini', LIMITS.hook),
+      info: clip(
+        'Pantau terus listing, event, Jumpstart, dan Earn di OKX. Selalu baca aturan resmi sebelum ikut. 💡',
+        LIMITS.info
+      ),
+      cta: clip('👉 Cek peluang terbaru di OKX sekarang! 🚀', LIMITS.cta),
+      provider: 'fallback-news',
     };
   }
   return {
-    hook: `${n.typeLabel}: ${clip(n.title, 50)}`,
-    info: clip(n.title, 180),
-    cta: 'Baca info resmi & cek peluang di OKX. Semoga untung! 🚀',
-    provider: 'template-news',
+    hook: clip(`✨ ${n.typeLabel} OKX nih!`, LIMITS.hook),
+    info: clip(
+      `📌 ${n.title} — peluang menarik, tapi baca syarat resmi dulu ya. Bukan saran investasi, DYOR. 🔍`,
+      LIMITS.info
+    ),
+    cta: clip('👉 Baca detail & cek di OKX sekarang! Semoga untung 🚀', LIMITS.cta),
+    provider: 'fallback-news',
   };
+}
+
+function buildNewsPrompt(snapshot) {
+  const summary = buildNewsSummaryText(snapshot);
+  const n = snapshot.hotNews;
+
+  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
+Buat rangkuman singkat pengumuman/promo OKX untuk mobile.
+
+WAJIB balas HANYA JSON valid (tanpa markdown), format:
+{"hook":"...","info":"...","cta":"..."}
+
+Aturan WAJIB:
+- Bahasa Indonesia 100% (jangan campur Inggris kecuali nama produk/token).
+- Natural, santai-profesional, mudah dibaca.
+- Emoji 1–3 per bagian (hook, info, cta) — jangan berlebihan.
+- Bukan saran investasi; boleh sebut DYOR singkat di info.
+- Jangan buat-buat angka reward jika tidak ada di data.
+- Fokus jenis: ${n ? n.typeLabel : 'Update OKX'}.
+- info = rangkuman isi pengumuman (bukan copy-paste judul mentah saja).
+
+Panjang ketat (aman caption Telegram):
+- hook: maks ${LIMITS.hook} karakter (1 kalimat pembuka menarik)
+- info: maks ${LIMITS.info} karakter (rangkuman news/promo)
+- cta: maks ${LIMITS.cta} karakter (ajak cek di OKX, tanpa URL)
+
+DATA:
+${summary}`;
 }
 
 function buildPostPrompt(snapshot) {
   if (snapshot.category === 'airdrop') {
     return buildAirdropPrompt(snapshot);
+  }
+  if (snapshot.category === 'news') {
+    return buildNewsPrompt(snapshot);
   }
 
   const summary = buildMarketSummaryText(snapshot);
@@ -173,8 +211,8 @@ WAJIB balas HANYA JSON valid (tanpa markdown), format:
 {"hook":"...","info":"...","cta":"..."}
 
 Aturan:
-- Bahasa Indonesia natural, santai-profesional.
-- Emoji minimal (0–1 per field).
+- Bahasa Indonesia 100% natural, santai-profesional.
+- Emoji 1–2 per bagian.
 - Bukan saran investasi.
 - ${hotHint}
 - JANGAN ulangi nama token + % 24h di info (sudah ada di header template).
@@ -236,7 +274,7 @@ function parsePostJson(raw, provider) {
 }
 
 const SYSTEM_JSON =
-  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} dalam Bahasa Indonesia. Tanpa markdown, tanpa penjelasan lain.';
+  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} dalam Bahasa Indonesia. Wajib pakai beberapa emoji. Tanpa markdown, tanpa penjelasan lain.';
 
 /** Groq — gratis (rate-limit harian). */
 async function generateWithGroq(prompt) {
@@ -379,17 +417,17 @@ async function generateWithGemini(prompt) {
  * - paid  → OpenRouter paid / Gemini dulu, lalu free
  */
 async function generatePostContent(snapshot) {
-  // Caption airdrop & news pakai template tetap (hemat kredit AI)
+  // Airdrop tetap template (hemat). News/Promo pakai AI rangkuman (bahasa Indonesia).
   if (snapshot.category === 'airdrop') {
     console.log('[aiService] Airdrop → template lokal (skip LLM teks)');
     return fallbackAirdropContent(snapshot);
   }
-  if (snapshot.category === 'news') {
-    console.log('[aiService] News/Promo → template lokal (skip LLM teks)');
-    return fallbackNewsContent(snapshot);
-  }
 
   const prompt = buildPostPrompt(snapshot);
+  if (snapshot.category === 'news') {
+    console.log('[aiService] News/Promo → rangkuman AI (batas karakter ketat)');
+  }
+
   const mode = (process.env.AI_PROVIDER || 'free').toLowerCase();
   const allowPaid = mode === 'auto' || mode === 'paid';
   const preferPaidFirst = mode === 'paid';
@@ -510,15 +548,31 @@ function visualThemeFromSymbol(symbol, chain) {
 function buildImagePromptFromContent(snapshot, content) {
   if (snapshot.category === 'news') {
     const n = snapshot.hotNews;
-    const kind = n?.typeLabel || 'crypto promo';
-    const titleBit = clip(n?.title || 'OKX announcement', 80);
+    const kind = n?.typeLabel || 'promo';
+    const titleBit = clip(n?.title || content?.info || 'OKX update', 90);
+    const hookBit = clip(content?.hook || '', 60);
+    const motif =
+      /jumpstart/i.test(kind) || /jumpstart/i.test(titleBit)
+        ? 'rocket launchpad, countdown, token debut stage'
+        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleBit)
+          ? 'new listing board, glowing ticker symbols, stock-style board'
+          : /earn|loan|reward|flash/i.test(kind) || /earn|reward|subscribe/i.test(titleBit)
+            ? 'gift rewards, golden coins raining, yield vault'
+            : /web3|dex/i.test(kind)
+              ? 'Web3 wallet hologram, DEX liquidity pools'
+              : 'festive promo banners, confetti, campaign podium';
+
     return [
-      `Crypto exchange promotional poster for OKX ${kind},`,
-      `headline vibe: ${titleBit},`,
-      'OKX neon blue branding accents, gift box or rocket or listing board motif,',
-      'dark premium fintech aesthetic, holographic UI, celebratory glow,',
-      'ultra detailed cinematic, no watermark, no website URL, 16:9 landscape',
-    ].join(' ');
+      `Indonesian crypto OKX ${kind} promotional poster,`,
+      `main subject matching: ${titleBit},`,
+      hookBit ? `mood from hook: ${hookBit},` : '',
+      `${motif},`,
+      'OKX blue neon accents, dark premium fintech aesthetic,',
+      'cinematic ultra detailed, sharp focal subject,',
+      'no watermark, no website URL text, no pollinations branding, 16:9 landscape',
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 
   const isAirdrop = snapshot.category === 'airdrop';
@@ -631,6 +685,7 @@ module.exports = {
   fallbackAirdropContent,
   fallbackNewsContent,
   buildAirdropPrompt,
+  buildNewsPrompt,
   isQuotaOrLimitError,
   clip,
   getGroqKey,

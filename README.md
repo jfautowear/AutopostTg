@@ -36,7 +36,7 @@ Dengan `POST_CATEGORY=auto` (default di Actions), tiap run bergilir:
 |----------|--------|---------|
 | **spot** | Hot gainer OKX/Bitget | LLM free (Groq/OR) |
 | **airdrop** | DEX trending | Template (0 kredit) |
-| **news** | Pengumuman OKX (listing, event, Jumpstart, Earn, Web3) | Template (0 kredit) |
+| **news** | Pengumuman OKX (listing, event, Jumpstart, Earn, Web3) | AI rangkuman ID (batas karakter) |
 
 Semua jalan di **GitHub Actions** 2×/hari — PC tidak perlu nyala.
 

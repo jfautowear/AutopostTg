@@ -241,38 +241,34 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
 }
 
 /**
- * Caption berita/promo OKX — template rapi, hemat AI.
+ * Caption berita/promo OKX — HOOK → News/Promo → CTA (+ emoji, AI rangkuman).
  */
-function formatNewsMessage(snapshot, _content, { isTest = false } = {}) {
+function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
   const n = snapshot.hotNews;
   const emoji = n?.emoji || '📰';
   const typeLabel = n?.typeLabel || 'Update';
-  const title = n?.title || 'Belum ada pengumuman segar';
 
-  const message = [
-    isTest ? '<b>🧪 [TEST NEWS/PROMO]</b>' : null,
-    isTest ? '' : null,
-    `<b>${emoji} OKX NEWS / PROMO</b>`,
-    '',
-    `Jenis: <b>${escapeHtml(typeLabel)}</b>`,
-    `Judul: <b>${escapeHtml(clip(title, 160))}</b>`,
-    '',
-    '',
-    '<b>📌 Ringkas</b>',
-    escapeHtml(clip(title, 200)),
-    '',
-    'Peluang listing, event, Jumpstart, atau Earn dari OKX.',
-    'Cek detail resmi sebelum ikut — jangan FOMO.',
-    '',
-    'Gabung komunitas & pantau update di channel JF Network.',
-    '',
-    `<i>${escapeHtml(DISCLAIMER)}</i>`,
-  ]
-    .filter((line) => line != null)
-    .join('\n');
+  const build = (hook, info, cta) =>
+    [
+      isTest ? '<b>🧪 [TEST NEWS/PROMO]</b>' : null,
+      isTest ? '' : null,
+      escapeHtml(hook),
+      '',
+      '',
+      `<b>${emoji} NEWS / PROMO</b>`,
+      `Jenis: <b>${escapeHtml(typeLabel)}</b> · OKX`,
+      '',
+      escapeHtml(info),
+      '',
+      '',
+      escapeHtml(cta),
+      '',
+      `<i>${escapeHtml(DISCLAIMER)}</i>`,
+    ]
+      .filter((line) => line != null)
+      .join('\n');
 
-  if (telegramLength(message) <= MAX_CAPTION_CHARS) return message;
-  return clip(message.replace(/\n{3,}/g, '\n\n'), MAX_CAPTION_CHARS);
+  return finalizeCaption(build, content);
 }
 
 /** Volume ringkas untuk mobile: $1.17M / $85.2K */
