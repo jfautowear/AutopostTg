@@ -2,7 +2,9 @@
 
 Repo: https://github.com/jfautowear/AutopostTg
 
-Bot Node.js: fetch **OKX** / **Bitget** / DEX → AI (ID) → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp).
+Bot Node.js: fetch **OKX** / **Bitget** / DEX / **pengumuman OKX** → konten → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp).
+
+**PC boleh OFF.** Autopost, berita/promo, dan Top Aktif jalan lewat GitHub Actions. PC hanya untuk cek/manual.
 
 ## Penting: `.env` tidak ikut ke GitHub
 
@@ -17,13 +19,26 @@ File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**,
 | `/jadwal_add 12:30` | Tambah jam |
 | `/jadwal_del 12:30` | Hapus jam |
 | `/jadwal_on` / `/jadwal_off` | Aktif / nonaktif |
-| `/test` / `/test_airdrop` | Preview ke `TEST_CHAT_ID` |
-| `/postnow` / `/airdrop` | Post ke channel |
-| `/sumber okx\|bitget\|auto` | Sumber data |
+| `/test` / `/test_airdrop` / `/test_news` | Preview ke `TEST_CHAT_ID` |
+| `/postnow` / `/airdrop` / `/news` | Post ke channel |
+| `/sumber okx\|bitget\|auto` | Sumber data CEX |
+| `/kategori spot\|airdrop\|news\|auto` | Jenis konten |
 | `/status` | Status |
 | `/help` | Bantuan |
 
 Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json`.
+
+## Jenis konten (rotasi otomatis)
+
+Dengan `POST_CATEGORY=auto` (default di Actions), tiap run bergilir:
+
+| Kategori | Sumber | AI teks |
+|----------|--------|---------|
+| **spot** | Hot gainer OKX/Bitget | LLM free (Groq/OR) |
+| **airdrop** | DEX trending | Template (0 kredit) |
+| **news** | Pengumuman OKX (listing, event, Jumpstart, Earn, Web3) | Template (0 kredit) |
+
+Semua jalan di **GitHub Actions** 2×/hari — PC tidak perlu nyala.
 
 ## GitHub Actions (hemat free tier)
 

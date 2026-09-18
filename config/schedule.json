@@ -1,7 +1,11 @@
 {
   "enabled": true,
   "timezone": "Asia/Jakarta",
-  "times": ["09:00", "21:00"],
-  "updatedAt": null,
-  "updatedBy": null
+  "times": [
+    "09:00",
+    "13:00",
+    "19:00"
+  ],
+  "updatedAt": "2026-09-18T12:08:14.885Z",
+  "updatedBy": "Jfnetworkindo"
 }

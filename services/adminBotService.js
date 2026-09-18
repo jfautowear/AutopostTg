@@ -16,10 +16,12 @@ const ADMIN_USERNAME = (
 const HELP_TEXT = `🛠 *Admin Autopost* (@${ADMIN_USERNAME})
 
 Test & post:
-/test — preview spot CEX ke grup private
-/test\\_airdrop — preview Airdrop/DEX ke grup private
+/test — preview spot CEX
+/test\\_airdrop — preview Airdrop/DEX
+/test\\_news — preview berita/promo OKX
 /postnow — post spot ke channel
-/airdrop — post Airdrop/DEX ke channel
+/airdrop — post Airdrop/DEX
+/news — post berita/promo OKX
 
 Top aktif grup (@caricuanhp):
 /topaktif — lihat ranking minggu ini
@@ -37,11 +39,12 @@ Jadwal:
 
 Lainnya:
 /sumber okx|bitget|auto — sumber CEX
-/kategori spot|airdrop|auto — jenis konten
+/kategori spot|airdrop|news|auto — jenis konten
 /status — status bot
 /help — bantuan
 
-Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.`;
+Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.
+PC boleh OFF — autopost & news jalan via GitHub Actions.`;
 
 function isAdmin(msg) {
   const username = (msg?.from?.username || '').toLowerCase();
@@ -254,6 +257,25 @@ function handleAdminCommand(msg) {
         category: 'airdrop',
       };
 
+    case '/news':
+    case '/post_news':
+    case '/promo':
+      return {
+        reply: null,
+        allowed: true,
+        runPostNow: true,
+        category: 'news',
+      };
+
+    case '/test_news':
+    case '/testnews':
+      return {
+        reply: null,
+        allowed: true,
+        runTest: true,
+        category: 'news',
+      };
+
     case '/topaktif':
     case '/top_aktif':
       return { reply: null, allowed: true, runTopAktif: 'status' };
@@ -273,13 +295,20 @@ function handleAdminCommand(msg) {
     case '/kategori':
     case '/category': {
       const val = String(args || '').toLowerCase().trim();
-      if (!['spot', 'airdrop', 'auto', 'dex', 'cex'].includes(val)) {
+      if (!['spot', 'airdrop', 'news', 'auto', 'dex', 'cex', 'promo'].includes(val)) {
         return {
-          reply: 'Format: /kategori spot | airdrop | auto',
+          reply: 'Format: /kategori spot | airdrop | news | auto',
           allowed: true,
         };
       }
-      const normalized = val === 'dex' ? 'airdrop' : val === 'cex' ? 'spot' : val;
+      const normalized =
+        val === 'dex'
+          ? 'airdrop'
+          : val === 'cex'
+            ? 'spot'
+            : val === 'promo'
+              ? 'news'
+              : val;
       return {
         reply: `✅ Kategori konten → *${normalized}*`,
         allowed: true,

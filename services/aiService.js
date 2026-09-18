@@ -136,6 +136,24 @@ function fallbackAirdropContent(snapshot) {
   };
 }
 
+function fallbackNewsContent(snapshot) {
+  const n = snapshot.hotNews || (snapshot.items || [])[0];
+  if (!n) {
+    return {
+      hook: 'Update OKX',
+      info: 'Belum ada pengumuman segar saat ini.',
+      cta: 'Cek peluang di OKX & pantau channel JF Network.',
+      provider: 'template-news',
+    };
+  }
+  return {
+    hook: `${n.typeLabel}: ${clip(n.title, 50)}`,
+    info: clip(n.title, 180),
+    cta: 'Baca info resmi & cek peluang di OKX. Semoga untung! 🚀',
+    provider: 'template-news',
+  };
+}
+
 function buildPostPrompt(snapshot) {
   if (snapshot.category === 'airdrop') {
     return buildAirdropPrompt(snapshot);
@@ -175,6 +193,9 @@ ${summary}`;
 function fallbackPostContent(snapshot) {
   if (snapshot.category === 'airdrop') {
     return fallbackAirdropContent(snapshot);
+  }
+  if (snapshot.category === 'news') {
+    return fallbackNewsContent(snapshot);
   }
 
   const { primary, primaryLabel, hotCoin } = snapshot;
@@ -358,10 +379,14 @@ async function generateWithGemini(prompt) {
  * - paid  → OpenRouter paid / Gemini dulu, lalu free
  */
 async function generatePostContent(snapshot) {
-  // Caption airdrop pakai template tetap di telegramService (rapi + hemat kredit AI)
+  // Caption airdrop & news pakai template tetap (hemat kredit AI)
   if (snapshot.category === 'airdrop') {
     console.log('[aiService] Airdrop → template lokal (skip LLM teks)');
     return fallbackAirdropContent(snapshot);
+  }
+  if (snapshot.category === 'news') {
+    console.log('[aiService] News/Promo → template lokal (skip LLM teks)');
+    return fallbackNewsContent(snapshot);
   }
 
   const prompt = buildPostPrompt(snapshot);
@@ -483,6 +508,19 @@ function visualThemeFromSymbol(symbol, chain) {
  * Catatan: dulu ada "no readable logos" → gambar jadi abstrak generik.
  */
 function buildImagePromptFromContent(snapshot, content) {
+  if (snapshot.category === 'news') {
+    const n = snapshot.hotNews;
+    const kind = n?.typeLabel || 'crypto promo';
+    const titleBit = clip(n?.title || 'OKX announcement', 80);
+    return [
+      `Crypto exchange promotional poster for OKX ${kind},`,
+      `headline vibe: ${titleBit},`,
+      'OKX neon blue branding accents, gift box or rocket or listing board motif,',
+      'dark premium fintech aesthetic, holographic UI, celebratory glow,',
+      'ultra detailed cinematic, no watermark, no website URL, 16:9 landscape',
+    ].join(' ');
+  }
+
   const isAirdrop = snapshot.category === 'airdrop';
   const hot = isAirdrop
     ? snapshot.hotGem
@@ -513,7 +551,6 @@ function buildImagePromptFromContent(snapshot, content) {
     ].join(' ');
   }
 
-  // Subjek ticker diulang di awal — model image lebih patuh ke subjek kuat
   return [
     `Crypto promotional poster featuring the token "${symbol}",`,
     `huge centered 3D holographic logo with the ticker text "${symbol}" clearly readable,`,
@@ -592,6 +629,7 @@ module.exports = {
   visualThemeFromSymbol,
   fallbackPostContent,
   fallbackAirdropContent,
+  fallbackNewsContent,
   buildAirdropPrompt,
   isQuotaOrLimitError,
   clip,

@@ -26,7 +26,7 @@ on:
           - okx
           - bitget
       category:
-        description: 'spot | airdrop | auto'
+        description: 'spot | airdrop | news | auto'
         required: false
         default: 'auto'
         type: choice
@@ -34,6 +34,7 @@ on:
           - auto
           - spot
           - airdrop
+          - news
 
 permissions:
   contents: write

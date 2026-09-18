@@ -53,7 +53,9 @@ async function runTestCommand(msg, category = 'spot') {
     msg,
     category === 'airdrop'
       ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-      : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
+      : category === 'news'
+        ? '⏳ Ambil pengumuman OKX (listing/event/promo)...'
+        : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
   );
 
 
@@ -70,7 +72,9 @@ async function runTestCommand(msg, category = 'spot') {
         ? result.snapshot?.hotGem
           ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
           : '—'
-        : result.snapshot?.hotCoin?.base || '—';
+        : category === 'news'
+          ? result.snapshot?.hotNews?.title?.slice(0, 40) || '—'
+          : result.snapshot?.hotCoin?.base || '—';
 
     await bot.editMessageText(
       `✅ Tes berhasil (${category})!\n📦 Preview dikirim ke grup private testing.\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
@@ -99,7 +103,9 @@ async function runPostNowCommand(msg, category = 'spot') {
     msg,
     category === 'airdrop'
       ? '⏳ Posting Airdrop/DEX ke channel...'
-      : '⏳ Posting ke channel utama...'
+      : category === 'news'
+        ? '⏳ Posting berita/promo OKX ke channel...'
+        : '⏳ Posting ke channel utama...'
   );
 
 
@@ -167,6 +173,11 @@ async function handleIncomingMessage(msg) {
     return;
   }
 
+  if (parsed.cmd === '/test_news' || parsed.cmd === '/testnews') {
+    await runTestCommand(msg, 'news');
+    return;
+  }
+
   if (
     parsed.cmd === '/postnow' ||
     parsed.cmd === '/post_sekarang' ||
@@ -178,6 +189,11 @@ async function handleIncomingMessage(msg) {
 
   if (parsed.cmd === '/airdrop' || parsed.cmd === '/post_airdrop') {
     await runPostNowCommand(msg, 'airdrop');
+    return;
+  }
+
+  if (parsed.cmd === '/news' || parsed.cmd === '/post_news' || parsed.cmd === '/promo') {
+    await runPostNowCommand(msg, 'news');
     return;
   }
 
@@ -349,13 +365,21 @@ async function runOnceRespectingSchedule() {
   console.log(`[autopost] Waktu sekarang: ${currentTimeLabel(schedule.timezone)}`);
 
   if (force) {
-    const cat = process.argv.includes('--airdrop') ? 'airdrop' : null;
+    const cat = process.argv.includes('--airdrop')
+      ? 'airdrop'
+      : process.argv.includes('--news')
+        ? 'news'
+        : null;
     console.log(`[autopost] FORCE_POST aktif${cat ? ` (${cat})` : ''}`);
     return runAutoPost(`force-${Date.now()}`, cat);
   }
 
   if (process.argv.includes('--test')) {
-    const cat = process.argv.includes('--airdrop') ? 'airdrop' : 'spot';
+    const cat = process.argv.includes('--airdrop')
+      ? 'airdrop'
+      : process.argv.includes('--news')
+        ? 'news'
+        : 'spot';
     console.log(`[autopost] Mode --test → TEST_CHAT_ID (${cat})`);
     return runPipeline({ target: 'test', category: cat });
   }
@@ -366,6 +390,15 @@ async function runOnceRespectingSchedule() {
       target: 'channel',
       slot: `airdrop-${Date.now()}`,
       category: 'airdrop',
+    });
+  }
+
+  if (process.argv.includes('--news')) {
+    console.log('[autopost] Mode --news → channel');
+    return runPipeline({
+      target: 'channel',
+      slot: `news-${Date.now()}`,
+      category: 'news',
     });
   }
 

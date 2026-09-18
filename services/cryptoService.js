@@ -1,4 +1,6 @@
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 const OKX_BASE = 'https://www.okx.com';
 const BITGET_BASE = 'https://api.bitget.com';
@@ -525,11 +527,157 @@ function buildAirdropSummaryText(snapshot) {
   return lines.join('\n');
 }
 
+/** Tipe pengumuman OKX yang cocok untuk konten promo/berita (bukan delisting teknis). */
+const OKX_NEWS_TYPES = [
+  { type: 'latest-events', label: 'Event / Promo', emoji: '🎁', weight: 5 },
+  { type: 'announcements-jumpstart', label: 'Jumpstart', emoji: '🚀', weight: 5 },
+  { type: 'announcements-new-listings', label: 'Listing Baru', emoji: '🆕', weight: 4 },
+  { type: 'announcements-earn-and-loan', label: 'Earn & Loan', emoji: '💰', weight: 3 },
+  { type: 'announcements-web3', label: 'Web3 / DEX', emoji: '🌐', weight: 3 },
+];
+
+function readRecentNewsUrls() {
+  try {
+    const runtimePath = path.join(__dirname, '..', 'config', 'runtime.json');
+    const runtime = JSON.parse(fs.readFileSync(runtimePath, 'utf8'));
+    return Array.isArray(runtime.recentNewsUrls) ? runtime.recentNewsUrls : [];
+  } catch {
+    return [];
+  }
+}
+
+function markNewsPosted(url) {
+  if (!url) return;
+  const runtimePath = path.join(__dirname, '..', 'config', 'runtime.json');
+  let data = {};
+  try {
+    data = JSON.parse(fs.readFileSync(runtimePath, 'utf8'));
+  } catch {
+    data = {};
+  }
+  const list = Array.isArray(data.recentNewsUrls) ? data.recentNewsUrls : [];
+  data.recentNewsUrls = [url, ...list.filter((u) => u !== url)].slice(0, 30);
+  data.lastNewsAt = new Date().toISOString();
+  fs.writeFileSync(runtimePath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
+async function fetchOkxAnnouncements(annType) {
+  const { data } = await axios.get(`${OKX_BASE}/api/v5/support/announcements`, {
+    params: { annType, page: 1 },
+    timeout: 15000,
+    headers: { 'Accept-Language': 'id-ID' },
+  });
+
+  if (data.code !== '0') {
+    throw new Error(`OKX announcements error: ${data.msg || data.code}`);
+  }
+
+  const details = data.data?.[0]?.details;
+  return Array.isArray(details) ? details : [];
+}
+
+/**
+ * Snapshot berita/promo OKX (listing, event, jumpstart, earn, web3).
+ * PC tidak perlu ON — dipanggil dari GitHub Actions autopost.
+ */
+async function getNewsPromoSnapshot() {
+  const recent = new Set(readRecentNewsUrls());
+  const maxAgeMs = 21 * 24 * 60 * 60 * 1000; // 21 hari
+  const now = Date.now();
+
+  const batches = await Promise.all(
+    OKX_NEWS_TYPES.map(async (meta) => {
+      try {
+        const rows = await fetchOkxAnnouncements(meta.type);
+        return rows.map((row) => ({
+          ...row,
+          annType: row.annType || meta.type,
+          typeLabel: meta.label,
+          emoji: meta.emoji,
+          weight: meta.weight,
+        }));
+      } catch (err) {
+        console.warn(`[cryptoService] OKX news ${meta.type}:`, err.message);
+        return [];
+      }
+    })
+  );
+
+  const merged = [];
+  const seen = new Set();
+  for (const row of batches.flat()) {
+    const url = row.url || '';
+    const title = String(row.title || '').trim();
+    if (!title || !url || seen.has(url)) continue;
+    seen.add(url);
+
+    const pTime = Number(row.pTime || row.businessPTime || 0);
+    const age = pTime > 0 ? now - pTime : 0;
+    if (pTime > 0 && age > maxAgeMs) continue;
+
+    const meta = OKX_NEWS_TYPES.find((t) => t.type === row.annType) || {
+      label: 'Update OKX',
+      emoji: '📰',
+      weight: 1,
+    };
+
+    merged.push({
+      source: 'okx',
+      exchange: 'OKX',
+      annType: row.annType,
+      typeLabel: row.typeLabel || meta.label,
+      emoji: row.emoji || meta.emoji,
+      weight: row.weight || meta.weight,
+      title,
+      url,
+      publishedAt: pTime > 0 ? new Date(pTime).toISOString() : null,
+      score: (row.weight || meta.weight) * 10 + (recent.has(url) ? -100 : 0),
+    });
+  }
+
+  merged.sort((a, b) => b.score - a.score || String(b.publishedAt).localeCompare(String(a.publishedAt)));
+
+  // Ambil item belum pernah dipost; fallback ke terbaru
+  const fresh = merged.filter((n) => !recent.has(n.url));
+  const pick = fresh[0] || merged[0] || null;
+
+  return {
+    category: 'news',
+    fetchedAt: new Date().toISOString(),
+    primarySource: 'okx-news',
+    primaryLabel: 'OKX',
+    items: merged.slice(0, 8),
+    hotNews: pick,
+    hotCoin: null,
+  };
+}
+
+function buildNewsSummaryText(snapshot) {
+  const n = snapshot.hotNews;
+  const lines = [
+    'Kategori: Berita / Promo Exchange (OKX)',
+    `Waktu data: ${snapshot.fetchedAt}`,
+    '',
+  ];
+  if (n) {
+    lines.push(`Jenis: ${n.typeLabel}`);
+    lines.push(`Judul: ${n.title}`);
+    lines.push(`URL: ${n.url}`);
+  } else {
+    lines.push('(tidak ada pengumuman segar)');
+  }
+  return lines.join('\n');
+}
+
 module.exports = {
   getMarketSnapshot,
   buildMarketSummaryText,
   getDexAirdropSnapshot,
   buildAirdropSummaryText,
+  getNewsPromoSnapshot,
+  buildNewsSummaryText,
+  markNewsPosted,
+  OKX_NEWS_TYPES,
   resolvePrimarySource,
   getTopGainers,
   getUnusualVolume,

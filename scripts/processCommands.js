@@ -107,7 +107,9 @@ async function executeTest(bot, msg, category = 'spot') {
       msg,
       category === 'airdrop'
         ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-        : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
+        : category === 'news'
+          ? '⏳ Ambil pengumuman OKX (listing/event/promo)...'
+          : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
     );
   } catch (err) {
     console.error('[commands] gagal kirim status:', err.message);
@@ -124,7 +126,9 @@ async function executeTest(bot, msg, category = 'spot') {
         ? result.snapshot?.hotGem
           ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
           : '—'
-        : result.snapshot?.hotCoin?.base || '—';
+        : category === 'news'
+          ? result.snapshot?.hotNews?.title?.slice(0, 40) || '—'
+          : result.snapshot?.hotCoin?.base || '—';
     await bot.editMessageText(
       `✅ Tes berhasil (${category})!\n📦 Preview → grup private\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
@@ -149,7 +153,9 @@ async function executePostNow(bot, msg, category = 'spot') {
       msg,
       category === 'airdrop'
         ? '⏳ Posting Airdrop/DEX ke channel...'
-        : '⏳ Posting ke channel utama...'
+        : category === 'news'
+          ? '⏳ Posting berita/promo OKX ke channel...'
+          : '⏳ Posting ke channel utama...'
     );
   } catch (err) {
     console.error('[commands] gagal kirim status:', err.message);

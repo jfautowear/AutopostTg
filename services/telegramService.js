@@ -152,6 +152,24 @@ function buildAirdropInlineKeyboard(snapshot) {
   };
 }
 
+/**
+ * Keyboard berita/promo — Trade OKX | Baca Info, lalu JOIN GROUP.
+ */
+function buildNewsInlineKeyboard(snapshot) {
+  const [okx] = buildAffiliateButtons();
+  const infoUrl =
+    snapshot?.hotNews?.url && /^https?:\/\//i.test(snapshot.hotNews.url)
+      ? snapshot.hotNews.url
+      : 'https://www.okx.com/help/section/announcements-latest-announcements';
+
+  return {
+    inline_keyboard: [
+      [okx, { text: '📄 Baca Info', url: infoUrl }],
+      [JOIN_GROUP_BTN],
+    ],
+  };
+}
+
 /** Harga ringkas untuk caption mobile. */
 function formatPriceSafe(value) {
   if (value == null || !Number.isFinite(Number(value))) return '—';
@@ -167,6 +185,9 @@ function formatPriceSafe(value) {
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   if (snapshot.category === 'airdrop') {
     return formatAirdropMessage(snapshot, content, { isTest });
+  }
+  if (snapshot.category === 'news') {
+    return formatNewsMessage(snapshot, content, { isTest });
   }
 
   const exchange = snapshot.primaryLabel || 'CEX';
@@ -217,6 +238,41 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   };
 
   return finalizeCaption(build, content);
+}
+
+/**
+ * Caption berita/promo OKX — template rapi, hemat AI.
+ */
+function formatNewsMessage(snapshot, _content, { isTest = false } = {}) {
+  const n = snapshot.hotNews;
+  const emoji = n?.emoji || '📰';
+  const typeLabel = n?.typeLabel || 'Update';
+  const title = n?.title || 'Belum ada pengumuman segar';
+
+  const message = [
+    isTest ? '<b>🧪 [TEST NEWS/PROMO]</b>' : null,
+    isTest ? '' : null,
+    `<b>${emoji} OKX NEWS / PROMO</b>`,
+    '',
+    `Jenis: <b>${escapeHtml(typeLabel)}</b>`,
+    `Judul: <b>${escapeHtml(clip(title, 160))}</b>`,
+    '',
+    '',
+    '<b>📌 Ringkas</b>',
+    escapeHtml(clip(title, 200)),
+    '',
+    'Peluang listing, event, Jumpstart, atau Earn dari OKX.',
+    'Cek detail resmi sebelum ikut — jangan FOMO.',
+    '',
+    'Gabung komunitas & pantau update di channel JF Network.',
+    '',
+    `<i>${escapeHtml(DISCLAIMER)}</i>`,
+  ]
+    .filter((line) => line != null)
+    .join('\n');
+
+  if (telegramLength(message) <= MAX_CAPTION_CHARS) return message;
+  return clip(message.replace(/\n{3,}/g, '\n\n'), MAX_CAPTION_CHARS);
 }
 
 /** Volume ringkas untuk mobile: $1.17M / $85.2K */
@@ -381,10 +437,14 @@ async function sendMarketPost({
   }
 
   const caption = formatMarketMessage(snapshot, content, { isTest });
-  const reply_markup =
-    snapshot.category === 'airdrop'
-      ? buildAirdropInlineKeyboard(snapshot)
-      : buildInlineKeyboard(snapshot);
+  let reply_markup;
+  if (snapshot.category === 'airdrop') {
+    reply_markup = buildAirdropInlineKeyboard(snapshot);
+  } else if (snapshot.category === 'news') {
+    reply_markup = buildNewsInlineKeyboard(snapshot);
+  } else {
+    reply_markup = buildInlineKeyboard(snapshot);
+  }
   const len = telegramLength(caption);
 
   if (len > 1024) {
@@ -448,8 +508,10 @@ module.exports = {
   getForwardThreadId,
   formatMarketMessage,
   formatAirdropMessage,
+  formatNewsMessage,
   buildInlineKeyboard,
   buildAirdropInlineKeyboard,
+  buildNewsInlineKeyboard,
   forwardToGroup,
   sendMarketPost,
   postToChannel,
