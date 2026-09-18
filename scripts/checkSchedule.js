@@ -1,6 +1,9 @@
 /**
  * Cek cepat jadwal tanpa npm install (hemat menit GitHub Actions).
  * Exit 0 = boleh lanjut post | Exit 78 = skip di luar jadwal / sudah dipost
+ *
+ * Di GHA window diperlebar (6 jam) karena cron GitHub sering delay,
+ * agar slot 09:00/21:00 tidak kelewat.
  */
 const {
   loadSchedule,
@@ -24,9 +27,17 @@ if (force) {
   process.exit(0);
 }
 
-const check = shouldPostNow(schedule);
+// Lokal: 30 menit | GitHub Actions: 6 jam (antisipasi delay runner)
+const windowMinutes =
+  process.env.GITHUB_ACTIONS === 'true'
+    ? Number(process.env.SCHEDULE_WINDOW_MINUTES) || 360
+    : Number(process.env.SCHEDULE_WINDOW_MINUTES) || 30;
+
+const check = shouldPostNow(schedule, new Date(), windowMinutes);
 if (!check.match) {
-  console.log('[check] SKIP — di luar jendela jadwal (hemat Actions)');
+  console.log(
+    `[check] SKIP — di luar jendela jadwal (±${windowMinutes}m) (hemat Actions)`
+  );
   process.exit(78);
 }
 
@@ -35,5 +46,5 @@ if (alreadyPostedSlot(check.slot)) {
   process.exit(78);
 }
 
-console.log(`[check] OK — slot ${check.slot}`);
+console.log(`[check] OK — slot ${check.slot} (window ${windowMinutes}m)`);
 process.exit(0);

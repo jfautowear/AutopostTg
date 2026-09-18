@@ -19,6 +19,7 @@ const {
   handleAdminCommand,
   isAdmin,
   denyText,
+  publicPrivateMessage,
   parseCommand,
   replyOpts,
 } = require('./services/adminBotService');
@@ -130,15 +131,26 @@ async function runPostNowCommand(msg, category = 'spot') {
 async function handleIncomingMessage(msg) {
   if (!msg?.text) return;
 
+  const isPrivate = msg.chat?.type === 'private';
   const parsed = parseCommand(msg.text);
-  if (!parsed) return;
 
+  // Non-admin: di chat pribadi selalu balas ramah + 2 tombol (bukan daftar command)
   if (!isAdmin(msg)) {
-    if (
-      msg.chat?.type === 'private' ||
-      ['/test', '/postnow', '/test_airdrop', '/airdrop'].includes(parsed.cmd)
-    ) {
-      await safeReply(getBot(), msg, denyText());
+    if (isPrivate) {
+      const pub = publicPrivateMessage();
+      await safeReply(getBot(), msg, pub.text, { reply_markup: pub.reply_markup });
+    }
+    return;
+  }
+
+  // Admin, tapi bukan command → tip singkat
+  if (!parsed) {
+    if (isPrivate) {
+      await safeReply(
+        getBot(),
+        msg,
+        '🛠 Mode admin aktif. Ketik /help untuk daftar command.'
+      );
     }
     return;
   }

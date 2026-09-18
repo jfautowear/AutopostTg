@@ -1,9 +1,10 @@
 /**
- * Poll update Telegram → snapshot skor aktivitas ke data/activity-week.json
+ * Poll update Telegram → snapshot skor + balas DM/command.
  * Dipakai GitHub Actions berkala (PC tidak perlu ON).
  *
- * Catatan: Bot API TIDAK bisa ambil riwayat chat seminggu ke belakang.
- * Snapshot harus dikumpulkan bertahap lewat poll (Telegram simpan pending ~24 jam).
+ * Juga memproses chat pribadi:
+ * - non-admin → pesan ramah + 2 tombol (grup & channel)
+ * - @jfnetworkindo → command admin
  */
 require('dotenv').config();
 
@@ -18,6 +19,7 @@ const {
   getTopUsers,
   activityEnabled,
 } = require('../services/activityService');
+const { handleIncomingMessage } = require('../index');
 
 const OFFSET_PATH = path.join(__dirname, '..', 'config', 'telegram-offset.json');
 
@@ -43,10 +45,7 @@ function gitPersist(message) {
   try {
     execSync('git config user.name "autopost-bot"');
     execSync('git config user.email "autopost-bot@users.noreply.github.com"');
-    execSync('git pull --rebase origin HEAD || true', { shell: true });
-    execSync(
-      'git add data/activity-week.json config/telegram-offset.json'
-    );
+    execSync('git add data/activity-week.json config/telegram-offset.json');
     const dirty = execSync(
       'git status --porcelain data/activity-week.json config/telegram-offset.json'
     )
@@ -57,6 +56,7 @@ function gitPersist(message) {
       return;
     }
     execSync(`git commit -m "${message}"`);
+    execSync('git pull --rebase --autostash origin HEAD || true', { shell: true });
     execSync('git push');
     console.log('[activity] Snapshot di-push ke repo');
   } catch (err) {
@@ -81,7 +81,6 @@ async function pollActivity() {
   let offset = readOffset();
   console.log(`[activity] Poll getUpdates offset=${offset}`);
 
-  // Long-poll singkat: kumpulkan batch pending (Telegram buffer ~24 jam)
   const updates = await bot.getUpdates({
     offset: offset > 0 ? offset : undefined,
     timeout: 10,
@@ -90,6 +89,7 @@ async function pollActivity() {
 
   let messages = 0;
   let reactions = 0;
+  let chats = 0;
 
   for (const update of updates) {
     offset = update.update_id + 1;
@@ -101,6 +101,12 @@ async function pollActivity() {
 
     if (update.message) {
       if (recordMessage(update.message)) messages += 1;
+      try {
+        await handleIncomingMessage(update.message);
+        chats += 1;
+      } catch (err) {
+        console.warn('[activity] handle chat:', err.message);
+      }
     }
   }
 
@@ -109,12 +115,14 @@ async function pollActivity() {
   const { ranked, weekKey } = getTopUsers(5);
 
   console.log(
-    `[activity] updates=${updates.length} | +msg=${messages} +reaksi=${reactions} | week=${weekKey} | users=${Object.keys(store.users || {}).length}`
+    `[activity] updates=${updates.length} | +msg=${messages} +reaksi=${reactions} | chats=${chats} | week=${weekKey} | users=${Object.keys(store.users || {}).length}`
   );
   if (ranked.length) {
     console.log(
       '[activity] Top sementara:',
-      ranked.map((u, i) => `${i + 1}.${u.username || u.firstName || u.id}(${u.score})`).join(' ')
+      ranked
+        .map((u, i) => `${i + 1}.${u.username || u.firstName || u.id}(${u.score})`)
+        .join(' ')
     );
   }
 
@@ -124,6 +132,7 @@ async function pollActivity() {
     polled: updates.length,
     messages,
     reactions,
+    chats,
     weekKey,
     userCount: Object.keys(store.users || {}).length,
   };

@@ -11,7 +11,7 @@ const { getBot, getTestChatId } = require('../services/telegramService');
 const {
   handleAdminCommand,
   isAdmin,
-  denyText,
+  publicPrivateMessage,
   replyOpts,
 } = require('../services/adminBotService');
 const {
@@ -269,14 +269,14 @@ async function processCommands() {
     if (!msg.text) continue;
 
     const isPrivate = msg.chat?.type === 'private';
-    const wantsCommand = String(msg.text).startsWith('/');
 
     if (!isAdmin(msg)) {
       console.warn(
         `[commands] Skip non-admin @${msg.from?.username || '?'} id=${msg.from?.id}`
       );
-      if (isPrivate && wantsCommand) {
-        await safeReply(bot, msg, denyText());
+      if (isPrivate) {
+        const pub = publicPrivateMessage();
+        await safeReply(bot, msg, pub.text, { reply_markup: pub.reply_markup });
       }
       continue;
     }

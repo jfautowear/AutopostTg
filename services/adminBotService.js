@@ -75,6 +75,30 @@ function denyText() {
   return `⛔ Akses ditolak.\nCommand pengaturan hanya untuk @${ADMIN_USERNAME}.`;
 }
 
+/** Balasan ramah untuk user non-admin di chat pribadi (bukan daftar command). */
+function publicPrivateMessage() {
+  return {
+    text: [
+      'Hai! 👋',
+      '',
+      'Terima kasih sudah menghubungi bot JF Network.',
+      'Command admin hanya untuk pengelola.',
+      '',
+      'Silakan lanjut di sini:',
+      '💬 Diskusi & komunitas → grup',
+      '📢 Update info & berita → channel',
+    ].join('\n'),
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '💬 Grup Diskusi', url: 'https://t.me/caricuanhp' },
+          { text: '📢 Channel Update', url: 'https://t.me/jfnetworknet' },
+        ],
+      ],
+    },
+  };
+}
+
 function parseCommand(text) {
   const raw = String(text || '').trim();
   if (!raw.startsWith('/')) return null;
@@ -309,6 +333,7 @@ module.exports = {
   HELP_TEXT,
   isAdmin,
   denyText,
+  publicPrivateMessage,
   handleAdminCommand,
   parseCommand,
   replyOpts,
