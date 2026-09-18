@@ -47,7 +47,7 @@ Kalau suatu saat privat, kuota free ≈ **2.000 menit/bulan**.
 
 | Workflow | Jadwal | Run/bulan | Estimasi menit |
 |----------|--------|-----------|----------------|
-| Autopost | 2×/hari (09 & 21 WIB) | ~60 | ~120–180 |
+| Autopost | 3×/hari (09, 13, 19 WIB) + rotasi spot/airdrop/news | ~90 | ~180–270 |
 | Top Aktif snapshot | 2×/hari (08 & 20 WIB, digeser) | ~60 | ~60–120 |
 | Top Aktif umumkan | Sabtu pagi (ikut run 08:00) | ~4 | sudah dihitung |
 | Admin commands | manual saja | ~0 | ~0 |

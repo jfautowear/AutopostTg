@@ -5,10 +5,13 @@ name: Autopost Telegram Crypto
 # - Early schedule check SEBELUM npm ci (hemat menit jika skip)
 on:
   schedule:
+    # Sesuai config/schedule.json default/admin: 09:00, 13:00, 19:00 WIB
     # 09:00 WIB = 02:00 UTC
     - cron: '0 2 * * *'
-    # 21:00 WIB = 14:00 UTC
-    - cron: '0 14 * * *'
+    # 13:00 WIB = 06:00 UTC
+    - cron: '0 6 * * *'
+    # 19:00 WIB = 12:00 UTC
+    - cron: '0 12 * * *'
   workflow_dispatch:
     inputs:
       force_post:
