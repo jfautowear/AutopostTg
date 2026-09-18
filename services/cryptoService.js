@@ -2,8 +2,17 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
+/** API OKX (server Actions OK). Link user-facing selalu di-rewrite ke okx.ac. */
 const OKX_BASE = 'https://www.okx.com';
 const BITGET_BASE = 'https://api.bitget.com';
+
+/** Domain OKX yang bisa dibuka di Indonesia (okx.com sering diblokir). */
+function toOkxAcUrl(url) {
+  if (!url) return url;
+  return String(url)
+    .replace(/https?:\/\/(www\.)?okx\.com/gi, 'https://www.okx.ac')
+    .replace(/https?:\/\/(www\.)?okx\.cc/gi, 'https://www.okx.ac');
+}
 
 const MAJOR_PAIRS = ['BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'BNB-USDT', 'XRP-USDT'];
 const EXCLUDED_FROM_GAINERS = new Set(['BTC', 'ETH']);
@@ -629,9 +638,9 @@ async function getNewsPromoSnapshot() {
       emoji: row.emoji || meta.emoji,
       weight: row.weight || meta.weight,
       title,
-      url,
+      url: toOkxAcUrl(url),
       publishedAt: pTime > 0 ? new Date(pTime).toISOString() : null,
-      score: (row.weight || meta.weight) * 10 + (recent.has(url) ? -100 : 0),
+      score: (row.weight || meta.weight) * 10 + (recent.has(toOkxAcUrl(url)) ? -100 : 0),
     });
   }
 
@@ -678,6 +687,7 @@ module.exports = {
   buildNewsSummaryText,
   markNewsPosted,
   OKX_NEWS_TYPES,
+  toOkxAcUrl,
   resolvePrimarySource,
   getTopGainers,
   getUnusualVolume,

@@ -157,10 +157,14 @@ function buildAirdropInlineKeyboard(snapshot) {
  */
 function buildNewsInlineKeyboard(snapshot) {
   const [okx] = buildAffiliateButtons();
-  const infoUrl =
+  const rawUrl =
     snapshot?.hotNews?.url && /^https?:\/\//i.test(snapshot.hotNews.url)
       ? snapshot.hotNews.url
-      : 'https://www.okx.com/help/section/announcements-latest-announcements';
+      : 'https://www.okx.ac/help/section/announcements-latest-announcements';
+  // Pastikan domain .ac (okx.com sering diblokir di Indonesia)
+  const infoUrl = String(rawUrl)
+    .replace(/https?:\/\/(www\.)?okx\.com/gi, 'https://www.okx.ac')
+    .replace(/https?:\/\/(www\.)?okx\.cc/gi, 'https://www.okx.ac');
 
   return {
     inline_keyboard: [

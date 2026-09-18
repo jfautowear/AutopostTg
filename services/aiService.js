@@ -542,37 +542,77 @@ function visualThemeFromSymbol(symbol, chain) {
 }
 
 /**
- * Prompt gambar terikat konteks token (ticker jelas terbaca).
- * Catatan: dulu ada "no readable logos" → gambar jadi abstrak generik.
+ * Ambil ticker koin dari judul/teks (untuk logo di gambar).
+ */
+function extractTickersFromText(...parts) {
+  const text = parts.filter(Boolean).join(' ');
+  const known = [
+    'BTC', 'ETH', 'SOL', 'OKB', 'BNB', 'XRP', 'DOGE', 'PEPE', 'WIF', 'ADA',
+    'AVAX', 'DOT', 'LINK', 'MATIC', 'POL', 'ATOM', 'UNI', 'APT', 'SUI', 'TIA',
+    'USDT', 'USDC', 'CP', 'OKX',
+  ];
+  const found = [];
+  for (const t of known) {
+    if (new RegExp(`(^|[^A-Z0-9])${t}([^A-Z0-9]|$)`, 'i').test(text)) {
+      found.push(t);
+    }
+  }
+  const dollars = text.match(/\$([A-Z][A-Z0-9]{1,9})/gi) || [];
+  for (const d of dollars) {
+    const sym = d.replace('$', '').toUpperCase();
+    if (sym && !found.includes(sym)) found.push(sym);
+  }
+  return [...new Set(found)].slice(0, 6);
+}
+
+/** Teks overlay gambar — Latin bersih, tanpa emoji (model sering gagal render emoji). */
+function cleanOverlayText(text, max = 48) {
+  return clip(
+    String(text || '')
+      .replace(/[\u{1F300}-\u{1FAFF}]/gu, '')
+      .replace(/[*_`~#>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+    max
+  );
+}
+
+/**
+ * Prompt gambar: judul + logo ticker + hook terbaca (hindari teks acak/abstrak).
  */
 function buildImagePromptFromContent(snapshot, content) {
   if (snapshot.category === 'news') {
     const n = snapshot.hotNews;
-    const kind = n?.typeLabel || 'promo';
-    const titleBit = clip(n?.title || content?.info || 'OKX update', 90);
-    const hookBit = clip(content?.hook || '', 60);
+    const kind = n?.typeLabel || 'Promo';
+    const titleOverlay = cleanOverlayText(n?.title || 'OKX News', 52);
+    const hookOverlay = cleanOverlayText(content?.hook || kind, 40);
+    const tickers = extractTickersFromText(n?.title, content?.hook, content?.info);
+    const logoLine = tickers.length
+      ? `row of clear circular coin logos labeled ${tickers.join(', ')},`
+      : 'OKX coin and crypto coin logos,';
+
     const motif =
-      /jumpstart/i.test(kind) || /jumpstart/i.test(titleBit)
-        ? 'rocket launchpad, countdown, token debut stage'
-        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleBit)
-          ? 'new listing board, glowing ticker symbols, stock-style board'
-          : /earn|loan|reward|flash/i.test(kind) || /earn|reward|subscribe/i.test(titleBit)
-            ? 'gift rewards, golden coins raining, yield vault'
+      /jumpstart/i.test(kind) || /jumpstart/i.test(titleOverlay)
+        ? 'launchpad stage with rocket'
+        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleOverlay)
+          ? 'new listing announcement board'
+          : /earn|loan|reward|flash/i.test(kind) || /earn|reward|subscribe|flash/i.test(titleOverlay)
+            ? 'reward vault with golden coins and gift boxes'
             : /web3|dex/i.test(kind)
-              ? 'Web3 wallet hologram, DEX liquidity pools'
-              : 'festive promo banners, confetti, campaign podium';
+              ? 'Web3 wallet and DEX interface'
+              : 'OKX promo campaign podium';
 
     return [
-      `Indonesian crypto OKX ${kind} promotional poster,`,
-      `main subject matching: ${titleBit},`,
-      hookBit ? `mood from hook: ${hookBit},` : '',
+      'Clean professional OKX crypto marketing poster, photorealistic UI style,',
+      `TOP banner with large sharp readable Latin text exactly: "${titleOverlay}",`,
+      `BOTTOM subtitle with readable Latin text exactly: "${hookOverlay}",`,
+      logoLine,
       `${motif},`,
-      'OKX blue neon accents, dark premium fintech aesthetic,',
-      'cinematic ultra detailed, sharp focal subject,',
-      'no watermark, no website URL text, no pollinations branding, 16:9 landscape',
-    ]
-      .filter(Boolean)
-      .join(' ');
+      'OKX blue and black brand colors, gold accents,',
+      'centered composition, high contrast typography,',
+      'NO gibberish text, NO alien script, NO surreal letters, NO watermark,',
+      'NO pollinations branding, NO website URL, 16:9 landscape',
+    ].join(' ');
   }
 
   const isAirdrop = snapshot.category === 'airdrop';
@@ -588,6 +628,7 @@ function buildImagePromptFromContent(snapshot, content) {
   const theme = symbol
     ? visualThemeFromSymbol(symbol, isAirdrop ? hot?.chain : null)
     : 'crypto market heat map';
+  const hookOverlay = cleanOverlayText(content?.hook || symbol || 'Market Pulse', 40);
 
   const change = isAirdrop
     ? hot?.change1h ?? hot?.change6h
@@ -599,24 +640,22 @@ function buildImagePromptFromContent(snapshot, content) {
 
   if (!symbol) {
     return [
-      'Cinematic crypto trading poster, ultra detailed,',
+      'Clean crypto trading poster,',
+      `readable Latin headline: "${hookOverlay}",`,
       `${mood}, dark premium fintech aesthetic,`,
-      `${chainOrExchange} HUD, holographic UI, 16:9`,
+      `${chainOrExchange} HUD, no gibberish text, no watermark, 16:9`,
     ].join(' ');
   }
 
   return [
-    `Crypto promotional poster featuring the token "${symbol}",`,
-    `huge centered 3D holographic logo with the ticker text "${symbol}" clearly readable,`,
-    `stylized emblem for $${symbol},`,
+    `Clean crypto promotional poster for token ${symbol},`,
+    `huge centered 3D coin logo with sharp readable ticker text "${symbol}",`,
+    `subtitle readable Latin text: "${hookOverlay}",`,
     `visual theme: ${theme},`,
     `${mood},`,
-    `${chainOrExchange} blockchain neon HUD background, soft bokeh,`,
-    isAirdrop
-      ? 'early gem airdrop discovery vibe, treasure glow,'
-      : 'spot trading heat map accents,',
-    'ultra detailed, cinematic lighting, sharp focus on logo,',
-    'no watermark, no website URL text, no pollinations branding, 16:9 landscape',
+    `${chainOrExchange} neon HUD background,`,
+    isAirdrop ? 'early gem discovery vibe,' : 'spot trading heat map accents,',
+    'NO gibberish text, NO alien script, NO watermark, NO pollinations branding, 16:9 landscape',
   ].join(' ');
 }
 
@@ -681,6 +720,8 @@ module.exports = {
   generateMarketImage,
   buildImagePromptFromContent,
   visualThemeFromSymbol,
+  extractTickersFromText,
+  cleanOverlayText,
   fallbackPostContent,
   fallbackAirdropContent,
   fallbackNewsContent,
