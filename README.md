@@ -102,6 +102,32 @@ Repo variable `AI_PROVIDER` default **`free`** (tidak menyentuh Gemini/paid).
 
 Gambar: Pollinations (background) + compose lokal. Layout divariasikan (`hero`/`stack`/`center`/`bottom`).
 
+## DEX Screen (filter ketat)
+
+Screening token DEX (DexScreener + GoPlus) — **hanya post jika lolos semua kriteria** (MC/FDV, likuiditas + LP lock/burn, anti-honeypot/tax/mint, volume & pertumbuhan).
+
+```bash
+npm run dex:screen:demo   # contoh format pesan
+npm run dex:screen:dry    # scan sekali, tanpa kirim Telegram
+npm run dex:screen        # scan + alert ke DEX_SCREEN_CHAT_ID
+npm run dex:screen:loop   # polling tiap 5 menit (lokal)
+```
+
+| Kriteria | Default |
+|----------|---------|
+| MC min | $500K (ideal $1M–$10M) |
+| MC/FDV | ≥ 30% |
+| Liquidity | ≥ $50K & Liq/MC ≥ 10% |
+| LP | Locked ≥ 80% atau burned |
+| Tax buy/sell | ≤ 5%, bukan honeypot |
+| Mint | mati atau ownership renounced |
+| Top10 holders (ex LP/burn) | ≤ 20% |
+| Vol 24h | ≥ $100K |
+| Chg 24h | +10% … +100% |
+| Buys/Sells | ≥ 0.8 |
+
+Anti-spam: `data/dex-screen-cache.json` (24 jam). GHA: workflow **DEX Screen Alerts** tiap 30 menit.
+
 ## Top Aktif Mingguan (`@caricuanhp`)
 
 **PC boleh OFF.** Snapshot lewat GHA 2×/hari (08 & 20 WIB), pengumuman Sabtu pagi ke topik [65640](https://t.me/caricuanhp/65640).
@@ -122,6 +148,7 @@ copy .env.example .env
 npm install
 npm start                 # bot realtime + jadwal + top aktif
 npm run post:force        # post spot sekarang
-npm run post:test-airdrop # preview airdrop
+npm run post:test-news    # preview news
+npm run dex:screen:dry    # screening DEX (tanpa kirim)
 npm run commands          # proses command sekali
 ```

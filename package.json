@@ -17,7 +17,11 @@
     "activity:poll": "node scripts/pollActivity.js",
     "activity:announce": "node scripts/announceWeeklyTop.js",
     "topaktif": "node scripts/announceWeeklyTop.js --force",
-    "topaktif:status": "node -e \"require('dotenv').config(); console.log(require('./services/weeklyTopService').statusText())\""
+    "topaktif:status": "node -e \"require('dotenv').config(); console.log(require('./services/weeklyTopService').statusText())\"",
+    "dex:screen": "node scripts/dexScreen.js",
+    "dex:screen:dry": "node scripts/dexScreen.js --dry-run",
+    "dex:screen:loop": "node scripts/dexScreen.js --loop",
+    "dex:screen:demo": "node scripts/dexScreen.js --force-demo"
   },
   "engines": {
     "node": ">=18"
