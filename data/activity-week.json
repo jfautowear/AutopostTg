@@ -1,7 +1,27 @@
 {
   "weekKey": "2026-W38",
   "chatRef": "@caricuanhp",
-  "users": {},
+  "users": {
+    "7330797950": {
+      "id": 7330797950,
+      "username": "Hari_pornomo",
+      "firstName": "Kotaro",
+      "lastName": "Minami",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6422667984": {
+      "id": 6422667984,
+      "username": "Assn55",
+      "firstName": "naruto",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    }
+  },
   "lastPostedWeekKey": null,
-  "updatedAt": "2026-09-17T20:54:08.753Z"
+  "updatedAt": "2026-09-18T05:29:22.096Z",
+  "chatId": -1002232474263
 }
