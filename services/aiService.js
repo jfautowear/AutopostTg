@@ -446,50 +446,106 @@ async function generatePostContent(snapshot) {
 }
 
 /**
- * Prompt gambar dari teks AI + data hot coin (Pollinations gratis).
+ * Tema visual dari nama ticker (meme coin sering literal: BabyCorn → jagung, dll).
+ */
+function visualThemeFromSymbol(symbol, chain) {
+  const s = String(symbol || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const hints = [];
+
+  if (/corn|maize|cob/.test(s)) hints.push('cute baby corn cob mascot, yellow corn kernels, farm meme');
+  else if (/cat|neko|meow|kitten|whisker/.test(s)) hints.push('cute cat mascot meme character');
+  else if (/dog|inu|shib|doge|puppy|woof/.test(s)) hints.push('cute dog / shiba mascot meme');
+  else if (/pepe|frog|toad/.test(s)) hints.push('green pepe frog meme mascot');
+  else if (/moon|luna|rocket/.test(s)) hints.push('rocket flying to glowing moon');
+  else if (/ai|gpt|bot|neural/.test(s)) hints.push('futuristic AI chip robot face');
+  else if (/baby|kid|mini/.test(s)) hints.push('cute chibi baby mascot character');
+  else if (/ape|monkey/.test(s)) hints.push('cool ape NFT style mascot');
+  else if (/bear|bull/.test(s)) hints.push(`${/bear/.test(s) ? 'bear' : 'bull'} market animal mascot`);
+  else if (/fire|hot|burn/.test(s)) hints.push('flames and heat energy');
+  else if (/gold|rich|money|cash/.test(s)) hints.push('golden coins raining');
+  else hints.push(`creative mascot inspired by the word "${symbol}"`);
+
+  const chainHint =
+    String(chain || '').toLowerCase() === 'solana'
+      ? 'Solana purple-green gradient aura'
+      : String(chain || '').toLowerCase() === 'base'
+        ? 'Base blue network aura'
+        : String(chain || '').toLowerCase() === 'arbitrum'
+          ? 'Arbitrum blue neon aura'
+          : 'multi-chain neon aura';
+
+  hints.push(chainHint);
+  return hints.join(', ');
+}
+
+/**
+ * Prompt gambar terikat konteks token (ticker jelas terbaca).
+ * Catatan: dulu ada "no readable logos" → gambar jadi abstrak generik.
  */
 function buildImagePromptFromContent(snapshot, content) {
   const isAirdrop = snapshot.category === 'airdrop';
   const hot = isAirdrop
     ? snapshot.hotGem
     : snapshot.hotCoin || snapshot.primary?.hotCoin;
-  const label = isAirdrop
-    ? hot?.chain || 'multi-chain DEX'
-    : snapshot.primaryLabel;
-  const symbol = isAirdrop ? hot?.symbol : hot?.base;
-  const mood = isAirdrop
-    ? 'mysterious early gem discovery, purple cyan neon portals'
-    : hot?.changePct != null && hot.changePct >= 0
-      ? 'bullish neon green glow'
-      : 'dramatic red market tension';
+  const chainOrExchange = isAirdrop
+    ? hot?.chain || 'DEX'
+    : snapshot.primaryLabel || 'CEX';
+  const symbol = String(isAirdrop ? hot?.symbol : hot?.base || '')
+    .trim()
+    .slice(0, 24);
+  const theme = symbol
+    ? visualThemeFromSymbol(symbol, isAirdrop ? hot?.chain : null)
+    : 'crypto market heat map';
 
-  const narrative = [content?.hook, content?.info].filter(Boolean).join('. ');
+  const change = isAirdrop
+    ? hot?.change1h ?? hot?.change6h
+    : hot?.changePct;
+  const mood =
+    change != null && Number(change) >= 0
+      ? 'bullish green neon pump energy, rising candlesticks'
+      : 'dramatic red market tension, falling candles';
 
+  if (!symbol) {
+    return [
+      'Cinematic crypto trading poster, ultra detailed,',
+      `${mood}, dark premium fintech aesthetic,`,
+      `${chainOrExchange} HUD, holographic UI, 16:9`,
+    ].join(' ');
+  }
+
+  // Subjek ticker diulang di awal — model image lebih patuh ke subjek kuat
   return [
+    `Crypto promotional poster featuring the token "${symbol}",`,
+    `huge centered 3D holographic logo with the ticker text "${symbol}" clearly readable,`,
+    `stylized emblem for $${symbol},`,
+    `visual theme: ${theme},`,
+    `${mood},`,
+    `${chainOrExchange} blockchain neon HUD background, soft bokeh,`,
     isAirdrop
-      ? 'Cinematic crypto airdrop early gem illustration, ultra detailed,'
-      : 'Cinematic crypto trading illustration, ultra detailed,',
-    `${mood}, dark premium fintech aesthetic,`,
-    symbol ? `spotlight on ${symbol} token,` : 'altcoin heat map,',
-    `${label} on-chain HUD, liquidity pools, holographic UI,`,
-    narrative ? `visual mood inspired by: ${clip(narrative, 160)},` : '',
-    'no readable logos, no watermark, 16:9',
-  ]
-    .filter(Boolean)
-    .join(' ');
+      ? 'early gem airdrop discovery vibe, treasure glow,'
+      : 'spot trading heat map accents,',
+    'ultra detailed, cinematic lighting, sharp focus on logo,',
+    'no watermark, no website URL text, no pollinations branding, 16:9 landscape',
+  ].join(' ');
 }
 
 /** Gambar gratis via Pollinations — tanpa API key. */
 async function generateImageWithPollinations(prompt) {
   const encoded = encodeURIComponent(prompt);
   const seed = Math.floor(Math.random() * 1_000_000);
-  // 1024x576 cukup untuk Telegram, lebih cepat & hemat bandwidth Actions
-  const url = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=576&seed=${seed}&nologo=true&model=flux`;
+  // nologo + enhance: kurangi watermark, prompt lebih dipatuhi
+  const url =
+    `https://image.pollinations.ai/prompt/${encoded}` +
+    `?width=1024&height=576&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
   console.log('[aiService] Pollinations image…');
+  console.log('[aiService] Image prompt:', clip(prompt, 220));
   const { data } = await axios.get(url, {
     responseType: 'arraybuffer',
-    timeout: 60000,
+    timeout: 90000,
+    headers: {
+      'User-Agent': 'JFNetwork-Autopost/1.0',
+    },
   });
 
   return Buffer.from(data);
@@ -532,6 +588,8 @@ module.exports = {
   generatePostAssets,
   generatePostContent,
   generateMarketImage,
+  buildImagePromptFromContent,
+  visualThemeFromSymbol,
   fallbackPostContent,
   fallbackAirdropContent,
   buildAirdropPrompt,
