@@ -1,8 +1,16 @@
+const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
 const sharp = require('sharp');
 
 const WIDTH = 1024;
 const HEIGHT = 576;
+
+/** Logo exchange lokal — andal di GHA tanpa tergantung CDN. */
+const LOCAL_LOGOS = {
+  OKX: path.join(__dirname, '..', 'assets', 'logos', 'okx.png'),
+  BITGET: path.join(__dirname, '..', 'assets', 'logos', 'bitget.png'),
+};
 
 /** CDN icon statis (hanya jika file memang ada). */
 const ICON_CDN =
@@ -84,9 +92,14 @@ const TICKER_FILE = {
 };
 
 const EXCHANGE_LOGOS = {
-  OKX: 'https://static.okx.com/cdn/assets/imgs/221/187957948BD02D97.png',
-  BITGET:
-    'https://img.bgstatic.com/image/exchange/bitget/logo/bitget_logo_1.png',
+  OKX: [
+    'https://static.okx.com/cdn/assets/imgs/221/187957948BD02D97.png',
+  ],
+  BITGET: [
+    // CMC exchange id 540 = Bitget (jangan pakai 1300)
+    'https://s2.coinmarketcap.com/static/img/exchanges/128x128/540.png',
+    'https://s2.coinmarketcap.com/static/img/exchanges/64x64/540.png',
+  ],
 };
 
 const bufferCache = new Map();
@@ -301,24 +314,44 @@ async function loadExchangeLogo(exchange, height = 44) {
   const key = String(exchange || 'OKX').toUpperCase().includes('BITGET')
     ? 'BITGET'
     : 'OKX';
-  const raw = await fetchBuffer(EXCHANGE_LOGOS[key]);
-  if (raw) {
+
+  // 1) File lokal (paling andal di GHA)
+  try {
+    const localPath = LOCAL_LOGOS[key];
+    if (localPath && fs.existsSync(localPath)) {
+      return await sharp(localPath)
+        .resize({ height, fit: 'inside', withoutEnlargement: false })
+        .png()
+        .toBuffer();
+    }
+  } catch {
+    // lanjut CDN
+  }
+
+  // 2) CDN fallback
+  const urls = EXCHANGE_LOGOS[key] || [];
+  for (const url of urls) {
+    const raw = await fetchBuffer(url);
+    if (!raw) continue;
     try {
       return await sharp(raw)
-        .resize({ height, fit: 'inside', withoutEnlargement: true })
+        .resize({ height, fit: 'inside', withoutEnlargement: false })
         .png()
         .toBuffer();
     } catch {
-      // fall through
+      // coba URL berikutnya
     }
   }
+
+  console.warn(`[imageCompose] Logo ${key} gagal diunduh — pakai badge teks`);
   const label = key === 'BITGET' ? 'Bitget' : 'OKX';
   const w = key === 'BITGET' ? 120 : 90;
+  const brand = key === 'BITGET' ? '#00f0ff' : '#3b82f6';
   const svg = Buffer.from(
     `<svg width="${w}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${w}" height="${height}" rx="8" fill="#111827" stroke="#3b82f6" stroke-width="2"/>
+      <rect width="${w}" height="${height}" rx="8" fill="#0b1220" stroke="${brand}" stroke-width="2"/>
       <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle"
-        font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="700" fill="#ffffff">${escapeXml(label)}</text>
+        font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">${escapeXml(label)}</text>
     </svg>`
   );
   return sharp(svg).png().toBuffer();

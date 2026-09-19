@@ -135,14 +135,28 @@ function escapeHtml(text) {
 }
 
 /**
- * Keyboard spot — 3 tombol:
- * Baris 1: OKX | Bitget
- * Baris 2: JOIN GROUP (caricuanhp)
+ * Keyboard spot — CTA utama = sumber data, plus 1 tombol ke exchange lain + JOIN GROUP.
+ * Contoh Bitget: [Trade Bitget | Cek OKX] / [JOIN GROUP]
  */
-function buildInlineKeyboard(_snapshot) {
+function buildInlineKeyboard(snapshot) {
   const [okx, bitget] = buildAffiliateButtons();
+  const isBitget = String(snapshot?.primaryLabel || '')
+    .toUpperCase()
+    .includes('BITGET');
+
+  const primary = isBitget
+    ? { text: '⚡ Trade Bitget', url: bitget.url }
+    : { text: '📈 Trade OKX', url: okx.url };
+  const secondary = isBitget
+    ? { text: '🔗 Cek OKX', url: okx.url }
+    : { text: '🔗 Cek Bitget', url: bitget.url };
+
+  console.log(
+    `[telegram] Spot keyboard → primary=${primary.text} | secondary=${secondary.text}`
+  );
+
   return {
-    inline_keyboard: [[okx, bitget], [JOIN_GROUP_BTN]],
+    inline_keyboard: [[primary, secondary], [JOIN_GROUP_BTN]],
   };
 }
 
