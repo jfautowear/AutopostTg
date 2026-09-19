@@ -32,20 +32,20 @@ Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json` (sumber k
 
 ⚠️ **Jangan** biarkan `npm start` ON di PC bersamaan GHA — bentrok `getUpdates`.
 
-## Jenis konten (rotasi 4×/hari)
+## Jenis konten (acak tiap slot)
 
-Jadwal default: **09:00 · 13:00 · 19:00 · 21:00 WIB** (`POST_CATEGORY=auto`):
+Default `POST_CATEGORY=auto` — tiap post **acak** dari:
 
-| Jam | Kategori | Isi |
-|-----|----------|-----|
-| 09:00 | **spot** | Hot gainer OKX/Bitget |
-| 13:00 | **airdrop** | DEX **Safe Screen** → tombol **Trade OKX Web3** |
-| 19:00 | **news** | Promo/listing OKX → **Daftar OKX** |
-| 21:00 | spot / airdrop | Bergiliran (hari genap DEX aman, ganjil spot) |
+| Kategori | Isi |
+|----------|-----|
+| **topcoin** | Top 15 harga (BTC, ETH, SOL, BNB, …) + naik/turun |
+| **spot** | Hot gainer / top move CEX |
+| **airdrop** | DEX Safe Screen → OKX Web3 |
+| **news** | Pengumuman OKX umum |
+| **event** | Event / Jumpstart / promo |
+| **listing** | New listing |
 
-Slot **airdrop** hanya memposting token yang lolos filter ketat (MC/liq/LP/tax/honeypot). Jika tidak ada yang lolos → otomatis fallback **spot**.
-
-Autopost GHA: cron **tiap jam** → cek `schedule.json` (window 6 jam). PC tidak perlu nyala.
+**Dedupe ketat:** konten yang sudah pernah dipost (URL berita, ticker spot, token DEX, bucket TopCoin) **tidak diulang** sampai TTL habis.
 
 ## GitHub Actions (hemat free tier)
 

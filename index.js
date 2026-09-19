@@ -179,6 +179,11 @@ async function handleIncomingMessage(msg) {
     return;
   }
 
+  if (parsed.cmd === '/test_topcoin' || parsed.cmd === '/testtopcoin') {
+    await runTestCommand(msg, 'topcoin');
+    return;
+  }
+
   if (
     parsed.cmd === '/postnow' ||
     parsed.cmd === '/post_sekarang' ||
@@ -195,6 +200,25 @@ async function handleIncomingMessage(msg) {
 
   if (parsed.cmd === '/news' || parsed.cmd === '/post_news' || parsed.cmd === '/promo') {
     await runPostNowCommand(msg, 'news');
+    return;
+  }
+
+  if (
+    parsed.cmd === '/topcoin' ||
+    parsed.cmd === '/top_coin' ||
+    parsed.cmd === '/post_topcoin'
+  ) {
+    await runPostNowCommand(msg, 'topcoin');
+    return;
+  }
+
+  if (parsed.cmd === '/event' || parsed.cmd === '/post_event') {
+    await runPostNowCommand(msg, 'event');
+    return;
+  }
+
+  if (parsed.cmd === '/listing' || parsed.cmd === '/post_listing') {
+    await runPostNowCommand(msg, 'listing');
     return;
   }
 

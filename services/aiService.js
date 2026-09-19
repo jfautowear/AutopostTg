@@ -3,6 +3,7 @@ const {
   buildMarketSummaryText,
   buildAirdropSummaryText,
   buildNewsSummaryText,
+  buildTopCoinsSummaryText,
   formatPrice,
   formatPct,
 } = require('./cryptoService');
@@ -226,12 +227,63 @@ DATA (sumber: ${exchange} Announcements — fakta wajib dihormati):
 ${summary}`;
 }
 
+function buildTopCoinsPrompt(snapshot) {
+  const summary = buildTopCoinsSummaryText(snapshot);
+  const exchange = snapshot.primaryLabel || 'CEX';
+  const stats = snapshot.topCoinStats || {};
+  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
+Buat update singkat Top Koin (harga + naik/turun).
+
+WAJIB balas HANYA JSON valid (tanpa markdown):
+{"hook":"...","info":"...","cta":"..."}
+
+${ACCURACY_RULES}
+- hook: ringkas soal kondisi market major (bullish/bearish/campur) berdasarkan DATA (Naik ${stats.up || 0} / Turun ${stats.down || 0}).
+- info: 1–2 kalimat highlight koin yang paling naik & paling turun dari DATA (sebut ticker + arah, JANGAN invent angka).
+- cta: ajak cek chart di ${exchange}, tanpa URL.
+- Jangan sebut airdrop/listing di post ini.
+
+Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
+
+DATA Top Koin (${exchange}):
+${summary}`;
+}
+
+function fallbackTopCoinsContent(snapshot) {
+  const coins = snapshot.topCoins || [];
+  const stats = snapshot.topCoinStats || {};
+  const best = [...coins].sort((a, b) => (b.changePct || 0) - (a.changePct || 0))[0];
+  const worst = [...coins].sort((a, b) => (a.changePct || 0) - (b.changePct || 0))[0];
+  const exchange = snapshot.primaryLabel || 'CEX';
+  return {
+    hook: clip(
+      `📊 Top ${coins.length} koin: ${stats.up || 0} naik · ${stats.down || 0} turun`,
+      LIMITS.hook
+    ),
+    info: clip(
+      best && worst
+        ? `Terkuat ${best.base} ${formatPct(best.changePct)}, terlemah ${worst.base} ${formatPct(worst.changePct)}. Pantau likuiditas.`
+        : 'Update harga major coin — pantau likuiditas, jangan FOMO.',
+      LIMITS.info
+    ),
+    cta: clip(`Cek chart di app ${exchange} sekarang 📊`, LIMITS.cta),
+    provider: 'fallback',
+  };
+}
+
+function isNewsLike(category) {
+  return ['news', 'event', 'listing'].includes(category);
+}
+
 function buildPostPrompt(snapshot) {
   if (snapshot.category === 'airdrop') {
     return buildAirdropPrompt(snapshot);
   }
-  if (snapshot.category === 'news') {
+  if (isNewsLike(snapshot.category)) {
     return buildNewsPrompt(snapshot);
+  }
+  if (snapshot.category === 'topcoin') {
+    return buildTopCoinsPrompt(snapshot);
   }
 
   const summary = buildMarketSummaryText(snapshot);
@@ -264,8 +316,11 @@ function fallbackPostContent(snapshot) {
   if (snapshot.category === 'airdrop') {
     return fallbackAirdropContent(snapshot);
   }
-  if (snapshot.category === 'news') {
+  if (isNewsLike(snapshot.category)) {
     return fallbackNewsContent(snapshot);
+  }
+  if (snapshot.category === 'topcoin') {
+    return fallbackTopCoinsContent(snapshot);
   }
 
   const { primary, primaryLabel, hotCoin } = snapshot;
@@ -452,15 +507,18 @@ async function generateWithGemini(prompt) {
  * - paid  → OpenRouter paid / Gemini dulu, lalu free
  */
 async function generatePostContent(snapshot) {
-  // Airdrop tetap template (hemat). News/Promo pakai AI rangkuman (bahasa Indonesia).
+  // Airdrop tetap template (hemat). News/Promo/TopCoin pakai AI.
   if (snapshot.category === 'airdrop') {
     console.log('[aiService] Airdrop → template lokal (skip LLM teks)');
     return fallbackAirdropContent(snapshot);
   }
 
   const prompt = buildPostPrompt(snapshot);
-  if (snapshot.category === 'news') {
-    console.log('[aiService] News/Promo → rangkuman AI (batas karakter ketat)');
+  if (['news', 'event', 'listing'].includes(snapshot.category)) {
+    console.log('[aiService] News/Event/Listing → rangkuman AI');
+  }
+  if (snapshot.category === 'topcoin') {
+    console.log('[aiService] TopCoin → hook AI + list harga programmatic');
   }
 
   const mode = (process.env.AI_PROVIDER || 'free').toLowerCase();
@@ -693,11 +751,15 @@ function resolveFocusLogoEntries({
 function buildImageOverlayMeta(snapshot, content) {
   const { pickLayout } = require('./imageComposeService');
 
-  if (snapshot.category === 'news') {
+  if (['news', 'event', 'listing'].includes(snapshot.category)) {
     const n = snapshot.hotNews;
-    const kind = n?.typeLabel || 'NEWS / PROMO';
+    const kind =
+      snapshot.category === 'listing'
+        ? 'NEW LISTING'
+        : snapshot.category === 'event'
+          ? n?.typeLabel || 'EVENT'
+          : n?.typeLabel || 'NEWS / PROMO';
     const tickers = extractTickersFromText(n?.title, content?.hook, content?.info);
-    // News: multi logo hanya jika teks resmi/AI menyebut ≥2 token
     const logoEntries =
       tickers.length >= 2
         ? tickers.map((symbol) => ({ symbol }))
@@ -709,6 +771,33 @@ function buildImageOverlayMeta(snapshot, content) {
       logoEntries,
       exchange: 'OKX',
       badge: cleanOverlayText(kind, 22),
+    };
+    meta.layout = pickLayout(meta);
+    return meta;
+  }
+
+  if (snapshot.category === 'topcoin') {
+    const coins = snapshot.topCoins || [];
+    const stats = snapshot.topCoinStats || {};
+    const logoEntries = coins.slice(0, 6).map((c) => ({ symbol: c.base }));
+    const meta = {
+      title: cleanOverlayText(`Top ${coins.length} Coins`, 40),
+      hook: cleanOverlayText(
+        content?.hook || `▲${stats.up || 0} · ▼${stats.down || 0}`,
+        56
+      ),
+      tickers: logoEntries.map((e) => e.symbol),
+      logoEntries,
+      exchange: String(snapshot.primaryLabel || 'OKX')
+        .toUpperCase()
+        .includes('BITGET')
+        ? 'BITGET'
+        : 'OKX',
+      badge: 'TOP 15',
+      pctLabel:
+        stats.up != null
+          ? `${stats.up} naik · ${stats.down} turun`
+          : '',
     };
     meta.layout = pickLayout(meta);
     return meta;
@@ -818,7 +907,7 @@ function buildImageOverlayMeta(snapshot, content) {
  * Brand: Bitget = hitam/putih + cyan · OKX = hitam + hijau neon.
  */
 function buildImagePromptFromContent(snapshot, content) {
-  if (snapshot.category === 'news') {
+  if (['news', 'event', 'listing'].includes(snapshot.category)) {
     const n = snapshot.hotNews;
     const kind = n?.typeLabel || 'Promo';
     const titleHint = cleanOverlayText(n?.title || '', 40);
@@ -826,12 +915,14 @@ function buildImagePromptFromContent(snapshot, content) {
     const motif =
       /jumpstart/i.test(kind) || /jumpstart/i.test(titleHint)
         ? 'blurred launchpad stage lights and rocket trail bokeh'
-        : /listing/i.test(kind) || /listing|mencatatkan|me-listing/i.test(titleHint)
-          ? 'abstract neon trading floor lights, blue gold glow'
+        : /listing/i.test(kind) ||
+            snapshot.category === 'listing' ||
+            /listing|mencatatkan|me-listing/i.test(titleHint)
+          ? 'abstract neon trading floor lights, listing board glow'
           : /earn|loan|reward|flash/i.test(kind) ||
               /earn|reward|subscribe|flash/i.test(titleHint)
             ? 'soft golden coin bokeh vault atmosphere, dark navy'
-            : /web3|dex/i.test(kind)
+            : /web3|dex|event/i.test(kind) || snapshot.category === 'event'
               ? 'abstract Web3 network nodes, black with neon green glow'
               : 'premium black fintech gradient, neon green light streaks';
 
@@ -841,6 +932,21 @@ function buildImagePromptFromContent(snapshot, content) {
       'cinematic lighting, shallow depth of field, 16:9 landscape,',
       'empty right third for large coin overlay,',
       'professional marketing backdrop',
+    ].join(' ');
+  }
+
+  if (snapshot.category === 'topcoin') {
+    const isBitget = String(snapshot.primaryLabel || '')
+      .toUpperCase()
+      .includes('BITGET');
+    return [
+      'Abstract crypto background only, no text, no letters, no logos, no watermark,',
+      'multiple floating metallic coins soft bokeh, dark studio,',
+      isBitget
+        ? 'black white cyan neon accents, Bitget style,'
+        : 'black neon green accents, OKX style,',
+      'empty center and lower half for multi logo row overlay,',
+      'cinematic 16:9 landscape',
     ].join(' ');
   }
 
@@ -915,7 +1021,8 @@ async function generateImageWithPollinations(prompt) {
 /** Background solid jika Pollinations gagal — overlay tetap jalan. */
 async function solidFallbackBackground(snapshot) {
   const isAirdrop = snapshot.category === 'airdrop';
-  const isNews = snapshot.category === 'news';
+  const isNews = ['news', 'event', 'listing'].includes(snapshot.category);
+  const isTop = snapshot.category === 'topcoin';
   const isBitget = String(snapshot.primaryLabel || '')
     .toUpperCase()
     .includes('BITGET');
@@ -923,9 +1030,13 @@ async function solidFallbackBackground(snapshot) {
     ? { r: 8, g: 18, b: 12 }
     : isAirdrop
       ? { r: 6, g: 16, b: 10 }
-      : isBitget
-        ? { r: 4, g: 28, b: 32 }
-        : { r: 6, g: 18, b: 10 };
+      : isTop
+        ? isBitget
+          ? { r: 4, g: 24, b: 28 }
+          : { r: 6, g: 16, b: 10 }
+        : isBitget
+          ? { r: 4, g: 28, b: 32 }
+          : { r: 6, g: 18, b: 10 };
   const sharp = require('sharp');
   return sharp({
     create: {

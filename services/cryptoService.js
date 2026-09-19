@@ -15,6 +15,26 @@ function toOkxAcUrl(url) {
 }
 
 const MAJOR_PAIRS = ['BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'BNB-USDT', 'XRP-USDT'];
+
+/** Top 15 koin utama untuk update harga (urutan prioritas market). */
+const TOP15_BASES = [
+  'BTC',
+  'ETH',
+  'BNB',
+  'SOL',
+  'XRP',
+  'DOGE',
+  'TON',
+  'ADA',
+  'AVAX',
+  'TRX',
+  'LINK',
+  'DOT',
+  'SHIB',
+  'SUI',
+  'NEAR',
+];
+
 const EXCLUDED_FROM_GAINERS = new Set(['BTC', 'ETH']);
 const STABLE_BASES = new Set([
   'USDT', 'USDC', 'USD', 'DAI', 'FDUSD', 'TUSD', 'USDE', 'USDD', 'BUSD',
@@ -119,6 +139,27 @@ function pickMajors(tickers, exchangeLabel) {
   }).filter(Boolean);
 }
 
+/** Ambil Top 15 (atau sebanyak yang tersedia) dari ticker CEX. */
+function pickTop15(tickers, exchangeLabel) {
+  const byBase = new Map();
+  for (const t of tickers || []) {
+    const base = String(t.base || '').toUpperCase();
+    if (!base || STABLE_BASES.has(base)) continue;
+    const prev = byBase.get(base);
+    if (!prev || (t.volume24h || 0) > (prev.volume24h || 0)) {
+      byBase.set(base, { ...t, exchange: exchangeLabel, base });
+    }
+  }
+
+  const ordered = [];
+  for (const base of TOP15_BASES) {
+    const row = byBase.get(base);
+    if (row && row.last != null && row.changePct != null) ordered.push(row);
+  }
+
+  return ordered.slice(0, 15);
+}
+
 /** TOP 3 GAINERS — abaikan BTC & ETH. */
 function getTopGainers(tickers, limit = 3) {
   return [...tickers]
@@ -189,17 +230,65 @@ function resolvePrimarySource() {
 }
 
 function buildExchangeBundle(tickers, exchangeLabel) {
-  const topGainers = getTopGainers(tickers, 3);
+  const topGainers = getTopGainers(tickers, 5);
   const unusualVolume = getUnusualVolume(tickers, 3);
   const hotCoin = pickHotCoin([...topGainers, ...unusualVolume]);
+  const topCoins = pickTop15(tickers, exchangeLabel);
 
   return {
     majors: pickMajors(tickers, exchangeLabel),
+    topCoins,
     gainers: topGainers,
     topGainers,
     unusualVolume,
     hotCoin,
   };
+}
+
+/**
+ * Snapshot Top 15 koin: harga + naik/turun 24h.
+ */
+async function getTopCoinsSnapshot() {
+  const market = await getMarketSnapshot();
+  let coins = market.primary?.topCoins || [];
+
+  if (!coins.length) {
+    const tickers =
+      market.primarySource === 'okx'
+        ? await fetchOkxTickers()
+        : await fetchBitgetTickers();
+    coins = pickTop15(tickers, market.primaryLabel);
+  }
+
+  const up = coins.filter((c) => (c.changePct || 0) > 0).length;
+  const down = coins.filter((c) => (c.changePct || 0) < 0).length;
+
+  return {
+    ...market,
+    category: 'topcoin',
+    topCoins: coins,
+    topCoinStats: { up, down, total: coins.length },
+    hotCoin: coins[0] || null,
+  };
+}
+
+function buildTopCoinsSummaryText(snapshot) {
+  const coins = snapshot.topCoins || [];
+  const stats = snapshot.topCoinStats || {};
+  const lines = [
+    `Kategori: Top ${coins.length} Koin — Harga & Pergerakan 24h`,
+    `Sumber: ${snapshot.primaryLabel}`,
+    `Waktu: ${snapshot.fetchedAt}`,
+    `Naik: ${stats.up || 0} · Turun: ${stats.down || 0}`,
+    '',
+  ];
+  for (const t of coins) {
+    const arrow = (t.changePct || 0) >= 0 ? '▲' : '▼';
+    lines.push(
+      `${t.base}: $${formatPrice(t.last)} ${arrow} ${formatPct(t.changePct)}`
+    );
+  }
+  return lines.join('\n');
 }
 
 /**
@@ -601,15 +690,24 @@ async function fetchOkxAnnouncements(annType) {
 
 /**
  * Snapshot berita/promo OKX (listing, event, jumpstart, earn, web3).
- * PC tidak perlu ON — dipanggil dari GitHub Actions autopost.
+ * @param {{ preferTypes?: string[], categoryLabel?: string }} [opts]
+ * preferTypes: filter annType (mis. latest-events, announcements-new-listings)
+ * Tidak pernah memilih URL yang sudah pernah dipost.
  */
-async function getNewsPromoSnapshot() {
-  const recent = new Set(readRecentNewsUrls());
-  const maxAgeMs = 21 * 24 * 60 * 60 * 1000; // 21 hari
+async function getNewsPromoSnapshot(opts = {}) {
+  const { wasContentPosted } = require('./contentHistoryService');
+  const recentUrls = new Set(readRecentNewsUrls());
+  const preferTypes = Array.isArray(opts.preferTypes) ? opts.preferTypes : null;
+  const categoryLabel = opts.categoryLabel || 'news';
+  const maxAgeMs = 21 * 24 * 60 * 60 * 1000;
   const now = Date.now();
 
+  const typeList = preferTypes?.length
+    ? OKX_NEWS_TYPES.filter((t) => preferTypes.includes(t.type))
+    : OKX_NEWS_TYPES;
+
   const batches = await Promise.all(
-    OKX_NEWS_TYPES.map(async (meta) => {
+    (typeList.length ? typeList : OKX_NEWS_TYPES).map(async (meta) => {
       try {
         const rows = await fetchOkxAnnouncements(meta.type);
         return rows.map((row) => ({
@@ -629,7 +727,7 @@ async function getNewsPromoSnapshot() {
   const merged = [];
   const seen = new Set();
   for (const row of batches.flat()) {
-    const url = row.url || '';
+    const url = toOkxAcUrl(row.url || '');
     const title = String(row.title || '').trim();
     if (!title || !url || seen.has(url)) continue;
     seen.add(url);
@@ -637,6 +735,9 @@ async function getNewsPromoSnapshot() {
     const pTime = Number(row.pTime || row.businessPTime || 0);
     const age = pTime > 0 ? now - pTime : 0;
     if (pTime > 0 && age > maxAgeMs) continue;
+
+    // Skip yang sudah pernah dipost (URL history + content key)
+    if (recentUrls.has(url) || wasContentPosted(`news:${url}`)) continue;
 
     const meta = OKX_NEWS_TYPES.find((t) => t.type === row.annType) || {
       label: 'Update OKX',
@@ -652,20 +753,22 @@ async function getNewsPromoSnapshot() {
       emoji: row.emoji || meta.emoji,
       weight: row.weight || meta.weight,
       title,
-      url: toOkxAcUrl(url),
+      url,
       publishedAt: pTime > 0 ? new Date(pTime).toISOString() : null,
-      score: (row.weight || meta.weight) * 10 + (recent.has(toOkxAcUrl(url)) ? -100 : 0),
+      score: (row.weight || meta.weight) * 10,
     });
   }
 
-  merged.sort((a, b) => b.score - a.score || String(b.publishedAt).localeCompare(String(a.publishedAt)));
+  merged.sort(
+    (a, b) =>
+      b.score - a.score ||
+      String(b.publishedAt || '').localeCompare(String(a.publishedAt || ''))
+  );
 
-  // Ambil item belum pernah dipost; fallback ke terbaru
-  const fresh = merged.filter((n) => !recent.has(n.url));
-  const pick = fresh[0] || merged[0] || null;
+  const pick = merged[0] || null;
 
   return {
-    category: 'news',
+    category: categoryLabel,
     fetchedAt: new Date().toISOString(),
     primarySource: 'okx-news',
     primaryLabel: 'OKX',
@@ -695,17 +798,21 @@ function buildNewsSummaryText(snapshot) {
 module.exports = {
   getMarketSnapshot,
   buildMarketSummaryText,
+  getTopCoinsSnapshot,
+  buildTopCoinsSummaryText,
   getDexAirdropSnapshot,
   buildAirdropSummaryText,
   getNewsPromoSnapshot,
   buildNewsSummaryText,
   markNewsPosted,
   OKX_NEWS_TYPES,
+  TOP15_BASES,
   toOkxAcUrl,
   resolvePrimarySource,
   getTopGainers,
   getUnusualVolume,
   pickHotCoin,
+  pickTop15,
   viralScore,
   formatPrice,
   formatPct,

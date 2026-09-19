@@ -236,8 +236,11 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   if (snapshot.category === 'airdrop') {
     return formatAirdropMessage(snapshot, content, { isTest });
   }
-  if (snapshot.category === 'news') {
+  if (['news', 'event', 'listing'].includes(snapshot.category)) {
     return formatNewsMessage(snapshot, content, { isTest });
+  }
+  if (snapshot.category === 'topcoin') {
+    return formatTopCoinsMessage(snapshot, content, { isTest });
   }
 
   const exchange = snapshot.primaryLabel || 'CEX';
@@ -296,6 +299,51 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   };
 
   return finalizeCaption(build, content);
+}
+
+/**
+ * Caption Top 15 koin — harga + naik/turun (kompak untuk mobile).
+ */
+function formatTopCoinsMessage(snapshot, content, { isTest = false } = {}) {
+  const coins = snapshot.topCoins || [];
+  const stats = snapshot.topCoinStats || {};
+  const exchange = snapshot.primaryLabel || 'CEX';
+  const when = formatShortTime(snapshot.fetchedAt);
+  const hook = content?.hook || `📊 Top ${coins.length} koin update`;
+  const info = content?.info || '';
+  const cta =
+    content?.cta || `Cek chart di app ${exchange} sekarang 📊`;
+
+  const rows = coins.map((t) => {
+    const arrow = (t.changePct || 0) >= 0 ? '🟢' : '🔴';
+    return `${arrow} <b>${escapeHtml(t.base)}</b> $${escapeHtml(formatPriceSafe(t.last))} ${escapeHtml(formatPctSafe(t.changePct))}`;
+  });
+
+  const build = (h, i, c) =>
+    [
+      isTest ? '<b>🧪 [TEST TOP COIN]</b>' : null,
+      isTest ? '' : null,
+      `<b>${escapeHtml(h)}</b>`,
+      '',
+      `<b>📊 TOP ${coins.length} COIN</b> · ${escapeHtml(exchange)}`,
+      `▲ ${stats.up || 0} naik · ▼ ${stats.down || 0} turun`,
+      when ? `<i>Data: ${escapeHtml(exchange)} · ${escapeHtml(when)} WIB</i>` : null,
+      '',
+      ...rows,
+      '',
+      escapeHtml(i),
+      '',
+      escapeHtml(c),
+      '',
+      `<i>${escapeHtml(DISCLAIMER)}</i>`,
+    ]
+      .filter((line) => line != null)
+      .join('\n');
+
+  return finalizeCaption(
+    (h, i, c) => build(h || hook, i || info, c || cta),
+    { hook, info, cta }
+  );
 }
 
 /**
@@ -528,7 +576,7 @@ async function sendMarketPost({
   let reply_markup;
   if (snapshot.category === 'airdrop') {
     reply_markup = buildAirdropInlineKeyboard(snapshot);
-  } else if (snapshot.category === 'news') {
+  } else if (['news', 'event', 'listing'].includes(snapshot.category)) {
     reply_markup = buildNewsInlineKeyboard(snapshot);
   } else {
     reply_markup = buildInlineKeyboard(snapshot);
@@ -597,6 +645,7 @@ module.exports = {
   formatMarketMessage,
   formatAirdropMessage,
   formatNewsMessage,
+  formatTopCoinsMessage,
   buildInlineKeyboard,
   buildAirdropInlineKeyboard,
   buildNewsInlineKeyboard,

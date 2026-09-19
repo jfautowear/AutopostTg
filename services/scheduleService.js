@@ -122,11 +122,8 @@ function getUpcomingSlots(schedule = loadSchedule(), now = new Date(), count = 4
   return out;
 }
 
-function categoryForHour(hour) {
-  if (hour < 11) return 'spot';
-  if (hour < 16) return 'airdrop/DEX';
-  if (hour < 20) return 'news/promo';
-  return 'spot/airdrop';
+function categoryForHour() {
+  return 'acak (topcoin/spot/airdrop/news/event/listing)';
 }
 
 /**
@@ -148,10 +145,7 @@ function formatStatusText(extra = {}) {
     : '—';
 
   const slotPlan = (schedule.times || [])
-    .map((t) => {
-      const h = Number(t.split(':')[0]);
-      return `  • ${t} → ${categoryForHour(h)}`;
-    })
+    .map((t) => `  • ${t} → ${categoryForHour()}`)
     .join('\n');
 
   return [
@@ -171,7 +165,8 @@ function formatStatusText(extra = {}) {
     `✅ Last post slot: ${lastSlot}`,
     `⏱ Last post at: ${lastAt}`,
     `📡 EXCHANGE_SOURCE: ${runtime.exchangeSource || process.env.EXCHANGE_SOURCE || 'auto'}`,
-    `🏷 POST_CATEGORY: ${runtime.postCategory || process.env.POST_CATEGORY || 'auto'}`,
+    `🏷 POST_CATEGORY: ${runtime.postCategory || process.env.POST_CATEGORY || 'auto'} (auto = acak)`,
+    `♻️ Dedupe: aktif (konten lama tidak diulang)`,
     `🤖 AI_PROVIDER: ${process.env.AI_PROVIDER || 'free'}`,
     `📢 Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,
     `💬 Top Aktif: ${process.env.ACTIVITY_ENABLED === 'false' ? 'OFF' : 'ON'} → ${process.env.ACTIVITY_CHAT_ID || process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp'}`,

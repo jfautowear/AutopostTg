@@ -2,8 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const {
   getMarketSnapshot,
+  getTopCoinsSnapshot,
   getNewsPromoSnapshot,
   markNewsPosted,
+  pickHotCoin,
 } = require('./cryptoService');
 const {
   getSafeDexAutopostSnapshot,
@@ -12,6 +14,28 @@ const {
 const { generatePostAssets } = require('./aiService');
 const { postToChannel, postToTestChat } = require('./telegramService');
 const { markPostedSlot } = require('./scheduleService');
+const {
+  buildContentKey,
+  isFreshSnapshot,
+  markContentPosted,
+  wasContentPosted,
+} = require('./contentHistoryService');
+
+/** Pool autopost random (weight). */
+const CATEGORY_POOL = [
+  { id: 'topcoin', weight: 3 },
+  { id: 'spot', weight: 3 },
+  { id: 'airdrop', weight: 2 },
+  { id: 'news', weight: 2 },
+  { id: 'event', weight: 2 },
+  { id: 'listing', weight: 2 },
+];
+
+const NEWS_TYPE_FILTER = {
+  event: ['latest-events', 'announcements-jumpstart'],
+  listing: ['announcements-new-listings'],
+  news: null, // semua tipe
+};
 
 function applyRuntimeEnv() {
   try {
@@ -28,39 +52,114 @@ function applyRuntimeEnv() {
   }
 }
 
-/**
- * Rotasi 4 slot/hari agar konten relevan:
- * 09 → spot | 13 → airdrop (DEX aman) | 19 → news | 21 → spot/airdrop bergiliran
- */
-function resolvePostCategory(forced) {
-  if (forced === 'airdrop' || forced === 'spot' || forced === 'news') {
-    return forced;
+function normalizeCategory(raw) {
+  const v = String(raw || '')
+    .toLowerCase()
+    .trim();
+  if (v === 'dex') return 'airdrop';
+  if (v === 'cex' || v === 'gainer' || v === 'topmove') return 'spot';
+  if (v === 'promo' || v === 'announcement') return 'news';
+  if (v === 'top' || v === 'top15' || v === 'majors' || v === 'topcoins') return 'topcoin';
+  if (v === 'newlisting' || v === 'listings') return 'listing';
+  if (['spot', 'airdrop', 'news', 'event', 'listing', 'topcoin'].includes(v)) return v;
+  return null;
+}
+
+function weightedPick(pool) {
+  const total = pool.reduce((s, p) => s + (p.weight || 1), 0);
+  let r = Math.random() * total;
+  for (const p of pool) {
+    r -= p.weight || 1;
+    if (r <= 0) return p.id;
   }
-  const raw = (process.env.POST_CATEGORY || 'auto').toLowerCase();
-  if (raw === 'airdrop' || raw === 'dex') return 'airdrop';
-  if (raw === 'spot' || raw === 'cex') return 'spot';
-  if (raw === 'news' || raw === 'promo' || raw === 'announcement') return 'news';
+  return pool[pool.length - 1]?.id || 'spot';
+}
 
-  const tz = process.env.CRON_TIMEZONE || 'Asia/Jakarta';
-  const day = new Date().toLocaleDateString('en-CA', { timeZone: tz });
-  const dayNum = Number(String(day).replace(/-/g, ''));
-  const hour = Number(
-    new Intl.DateTimeFormat('en-GB', {
-      timeZone: tz,
-      hour: '2-digit',
-      hour12: false,
-    }).format(new Date())
-  );
-
-  if (hour < 11) return 'spot'; // ~09
-  if (hour < 16) return 'airdrop'; // ~13 — DEX screened → OKX Web3
-  if (hour < 20) return 'news'; // ~19
-  // ~21 — campur: genap airdrop aman, ganjil spot closing
-  return dayNum % 2 === 0 ? 'airdrop' : 'spot';
+function shuffled(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 /**
- * Pipeline: fetch → konten → kirim (spot / airdrop aman / news).
+ * Auto = acak dari pool. Forced = kategori pasti.
+ */
+function resolvePostCategory(forced) {
+  const forcedNorm = normalizeCategory(forced);
+  if (forcedNorm) return forcedNorm;
+
+  const raw = normalizeCategory(process.env.POST_CATEGORY || 'auto');
+  if (raw) return raw;
+
+  return weightedPick(CATEGORY_POOL);
+}
+
+/** Urutan fallback jika kategori terpilih kosong / duplikat. */
+function buildTryOrder(primary) {
+  const rest = CATEGORY_POOL.map((p) => p.id).filter((id) => id !== primary);
+  return [primary, ...shuffled(rest)];
+}
+
+/**
+ * Spot: skip hot coin yang sudah dipost baru-baru ini.
+ */
+async function fetchFreshSpotSnapshot() {
+  const snapshot = await getMarketSnapshot();
+  snapshot.category = 'spot';
+  const gainers = snapshot.primary?.topGainers || snapshot.primary?.gainers || [];
+  const unusual = snapshot.primary?.unusualVolume || [];
+  const candidates = [...gainers, ...unusual];
+
+  const fresh = candidates.filter((c) => {
+    const key = `spot:${snapshot.primaryLabel}:${String(c.base).toUpperCase()}`;
+    return !wasContentPosted(key);
+  });
+
+  if (fresh.length) {
+    snapshot.hotCoin = pickHotCoin(fresh);
+    if (snapshot.primary) snapshot.primary.hotCoin = snapshot.hotCoin;
+  } else if (snapshot.hotCoin) {
+    const key = buildContentKey(snapshot);
+    if (wasContentPosted(key)) {
+      snapshot.hotCoin = null;
+      if (snapshot.primary) snapshot.primary.hotCoin = null;
+    }
+  }
+
+  return snapshot;
+}
+
+async function fetchCategorySnapshot(category) {
+  if (category === 'topcoin') {
+    return getTopCoinsSnapshot();
+  }
+
+  if (category === 'airdrop') {
+    const useSafe = process.env.DEX_SAFE_AUTOPOST !== 'false';
+    if (!useSafe) {
+      const { getDexAirdropSnapshot } = require('./cryptoService');
+      return getDexAirdropSnapshot(5);
+    }
+    return getSafeDexAutopostSnapshot();
+  }
+
+  if (category === 'event' || category === 'listing' || category === 'news') {
+    return getNewsPromoSnapshot({
+      preferTypes: NEWS_TYPE_FILTER[category],
+      categoryLabel: category === 'news' ? 'news' : category,
+    });
+  }
+
+  // spot
+  return fetchFreshSpotSnapshot();
+}
+
+/**
+ * Pipeline: pilih kategori (random) → snapshot segar → post.
+ * Tidak pernah memposting fingerprint yang sudah ada di riwayat.
  */
 async function runPipeline({
   target = 'channel',
@@ -68,50 +167,69 @@ async function runPipeline({
   category: forcedCategory = null,
 } = {}) {
   applyRuntimeEnv();
-  let category = resolvePostCategory(forcedCategory);
-  const startedAt = new Date().toISOString();
-  console.log(`[pipeline] Mulai ${startedAt} | target=${target} | category=${category}`);
+  const primary = resolvePostCategory(forcedCategory);
+  const tryOrder = forcedCategory
+    ? [normalizeCategory(forcedCategory) || primary]
+    : buildTryOrder(primary);
 
-  let snapshot;
-  if (category === 'airdrop') {
-    const useSafe = process.env.DEX_SAFE_AUTOPOST !== 'false';
-    if (useSafe) {
-      console.log('[pipeline] Fetch DEX Safe Screen (filter ketat GoPlus+DexScreener)...');
-      snapshot = await getSafeDexAutopostSnapshot();
-      if (!snapshot.safePass || !snapshot.hotGem) {
-        console.warn(
-          `[pipeline] Tidak ada token lolos filter aman (candidates=${snapshot.screenStats?.candidates || 0}) → fallback SPOT`
-        );
-        category = 'spot';
-        snapshot = await getMarketSnapshot();
-        snapshot.category = 'spot';
-      } else {
-        console.log(
-          `[pipeline] DEX SAFE OK → $${snapshot.hotGem.symbol}@${snapshot.hotGem.chain} | MC≈${snapshot.hotGem.marketCapUsd}`
-        );
+  const startedAt = new Date().toISOString();
+  console.log(
+    `[pipeline] Mulai ${startedAt} | target=${target} | primary=${primary} | try=${tryOrder.join('→')}`
+  );
+
+  let category = null;
+  let snapshot = null;
+
+  for (const cat of tryOrder) {
+    console.log(`[pipeline] Coba kategori: ${cat}`);
+    try {
+      const snap = await fetchCategorySnapshot(cat);
+      snap.category = cat === 'spot' ? 'spot' : cat;
+
+      // airdrop tanpa token aman → skip
+      if (cat === 'airdrop' && !snap.hotGem) {
+        console.warn('[pipeline] Airdrop kosong / tidak lolos filter — skip');
+        continue;
       }
-    } else {
-      console.log('[pipeline] DEX_SAFE_AUTOPOST=false — mode legacy (tidak disarankan)');
-      const { getDexAirdropSnapshot } = require('./cryptoService');
-      snapshot = await getDexAirdropSnapshot(5);
+
+      if (!isFreshSnapshot(snap)) {
+        const key = buildContentKey(snap);
+        console.warn(`[pipeline] Skip ${cat} — konten tidak segar / duplikat (${key || 'no-key'})`);
+        continue;
+      }
+
+      category = cat;
+      snapshot = snap;
+      break;
+    } catch (err) {
+      console.warn(`[pipeline] Gagal fetch ${cat}:`, err.message);
     }
-  } else if (category === 'news') {
-    console.log('[pipeline] Fetch OKX announcements (listing/event/promo)...');
-    snapshot = await getNewsPromoSnapshot();
-    console.log(
-      `[pipeline] News items=${snapshot.items.length} | pick=${snapshot.hotNews ? snapshot.hotNews.title.slice(0, 60) : '-'}`
+  }
+
+  if (!snapshot || !category) {
+    throw new Error(
+      'Tidak ada konten SEGAR untuk dipost (semua kategori kosong atau sudah pernah dipost). Coba lagi nanti.'
     );
   }
 
-  if (category === 'spot') {
-    if (!snapshot || snapshot.category === 'airdrop') {
-      console.log('[pipeline] Fetch OKX / Bitget market...');
-      snapshot = await getMarketSnapshot();
-    }
-    snapshot.category = 'spot';
+  console.log(`[pipeline] Pilih kategori=${category} | key=${buildContentKey(snapshot)}`);
+
+  if (category === 'topcoin') {
+    console.log(
+      `[pipeline] TopCoin n=${snapshot.topCoins?.length || 0} | up=${snapshot.topCoinStats?.up} down=${snapshot.topCoinStats?.down}`
+    );
+  } else if (category === 'airdrop') {
+    console.log(
+      `[pipeline] DEX → $${snapshot.hotGem?.symbol}@${snapshot.hotGem?.chain}`
+    );
+  } else if (['news', 'event', 'listing'].includes(category)) {
+    console.log(
+      `[pipeline] News pick=${snapshot.hotNews ? snapshot.hotNews.title.slice(0, 60) : '-'}`
+    );
+  } else {
     const hot = snapshot.hotCoin;
     console.log(
-      `[pipeline] ${snapshot.primaryLabel} | gainers=${(snapshot.primary?.topGainers || []).length} | hot=${hot ? hot.base : '-'}`
+      `[pipeline] ${snapshot.primaryLabel} | hot=${hot ? hot.base : '-'}`
     );
   }
 
@@ -127,18 +245,23 @@ async function runPipeline({
       ? await postToTestChat(payload)
       : await postToChannel(payload);
 
-  if (category === 'news' && snapshot.hotNews?.url && target === 'channel') {
-    markNewsPosted(snapshot.hotNews.url);
-  }
-  if (category === 'airdrop' && snapshot.screened && snapshot.hotGem && target === 'channel') {
-    markSafeDexPosted(snapshot);
+  if (target === 'channel') {
+    const key = buildContentKey(snapshot);
+    markContentPosted(key, { category, chatId: result.chatId, messageId: result.messageId });
+
+    if (['news', 'event', 'listing'].includes(category) && snapshot.hotNews?.url) {
+      markNewsPosted(snapshot.hotNews.url);
+    }
+    if (category === 'airdrop' && snapshot.screened && snapshot.hotGem) {
+      markSafeDexPosted(snapshot);
+    }
+    if (slot) markPostedSlot(slot);
   }
 
   console.log(
     `[pipeline] OK → ${result.chatId}#${result.messageId} | ${result.captionLength} chars | cat=${category}`
   );
 
-  if (slot && target === 'channel') markPostedSlot(slot);
   return { ...result, snapshot, content, category };
 }
 
@@ -146,4 +269,6 @@ module.exports = {
   runPipeline,
   applyRuntimeEnv,
   resolvePostCategory,
+  normalizeCategory,
+  CATEGORY_POOL,
 };

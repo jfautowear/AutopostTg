@@ -19,9 +19,11 @@ Test & post:
 /test — preview spot CEX
 /test\\_airdrop — preview Airdrop/DEX
 /test\\_news — preview berita/promo OKX
+/test\\_topcoin — preview Top 15 harga
 /postnow — post spot ke channel
 /airdrop — post Airdrop/DEX
 /news — post berita/promo OKX
+/topcoin — post Top 15 koin
 
 Top aktif grup (@caricuanhp):
 /topaktif — lihat ranking minggu ini
@@ -39,12 +41,13 @@ Jadwal:
 
 Lainnya:
 /sumber okx|bitget|auto — sumber CEX
-/kategori spot|airdrop|news|auto — jenis konten
+/kategori spot|topcoin|airdrop|news|event|listing|auto — jenis konten
 /status — status bot
 /help — bantuan
 
 Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.
-PC boleh OFF — autopost + /jadwal + /status diproses GitHub Actions (poll ±10 mnt).
+PC boleh OFF — autopost + command via GitHub Actions (poll ±10 mnt).
+Konten tidak diulang (dedupe). Autopost acak: TopCoin / Spot / Airdrop / News / Event / Listing.
 Jangan biarkan npm start ON di PC bersamaan (bentrok getUpdates).`;
 
 /** Menu slash Telegram (BotFather-style) — agar daftar command selalu lengkap. */
@@ -54,14 +57,16 @@ const BOT_COMMANDS = [
   { command: 'test', description: 'Preview spot CEX' },
   { command: 'test_airdrop', description: 'Preview Airdrop/DEX' },
   { command: 'test_news', description: 'Preview berita/promo OKX' },
+  { command: 'test_topcoin', description: 'Preview Top 15 harga' },
   { command: 'postnow', description: 'Post spot ke channel' },
   { command: 'airdrop', description: 'Post Airdrop/DEX ke channel' },
   { command: 'news', description: 'Post berita/promo OKX' },
+  { command: 'topcoin', description: 'Post Top 15 koin harga' },
   { command: 'topaktif', description: 'Ranking Top Aktif minggu ini' },
   { command: 'topaktif_post', description: 'Kirim Top 10 ke grup' },
   { command: 'topaktif_test', description: 'Preview Top 10' },
   { command: 'jadwal', description: 'Lihat jadwal autopost' },
-  { command: 'kategori', description: 'Set spot|airdrop|news|auto' },
+  { command: 'kategori', description: 'Set spot|topcoin|news|event|listing|airdrop|auto' },
   { command: 'sumber', description: 'Set okx|bitget|auto' },
 ];
 
@@ -304,6 +309,43 @@ function handleAdminCommand(msg) {
         category: 'news',
       };
 
+    case '/topcoin':
+    case '/top_coin':
+    case '/post_topcoin':
+      return {
+        reply: null,
+        allowed: true,
+        runPostNow: true,
+        category: 'topcoin',
+      };
+
+    case '/test_topcoin':
+    case '/testtopcoin':
+      return {
+        reply: null,
+        allowed: true,
+        runTest: true,
+        category: 'topcoin',
+      };
+
+    case '/event':
+    case '/post_event':
+      return {
+        reply: null,
+        allowed: true,
+        runPostNow: true,
+        category: 'event',
+      };
+
+    case '/listing':
+    case '/post_listing':
+      return {
+        reply: null,
+        allowed: true,
+        runPostNow: true,
+        category: 'listing',
+      };
+
     case '/topaktif':
     case '/top_aktif':
       return { reply: null, allowed: true, runTopAktif: 'status' };
@@ -323,20 +365,23 @@ function handleAdminCommand(msg) {
     case '/kategori':
     case '/category': {
       const val = String(args || '').toLowerCase().trim();
-      if (!['spot', 'airdrop', 'news', 'auto', 'dex', 'cex', 'promo'].includes(val)) {
+      const { normalizeCategory } = require('./postService');
+      if (val === 'auto') {
         return {
-          reply: 'Format: /kategori spot | airdrop | news | auto',
+          reply: '✅ Kategori konten → *auto* (acak tiap post)',
+          allowed: true,
+          parseMode: 'Markdown',
+          postCategory: 'auto',
+        };
+      }
+      const normalized = normalizeCategory(val);
+      if (!normalized) {
+        return {
+          reply:
+            'Format: /kategori spot | topcoin | airdrop | news | event | listing | auto',
           allowed: true,
         };
       }
-      const normalized =
-        val === 'dex'
-          ? 'airdrop'
-          : val === 'cex'
-            ? 'spot'
-            : val === 'promo'
-              ? 'news'
-              : val;
       return {
         reply: `✅ Kategori konten → *${normalized}*`,
         allowed: true,
