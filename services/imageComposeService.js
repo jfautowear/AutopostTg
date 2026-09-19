@@ -248,9 +248,6 @@ async function bufferToCircularLogo(raw, size) {
     .png()
     .toBuffer();
 
-  const ring = logoSize => logoSize; // noop clarity
-  void ring;
-
   const outer = size + 8;
   const ringed = await sharp({
     create: {
@@ -269,6 +266,54 @@ async function bufferToCircularLogo(raw, size) {
   );
   return sharp(ringed)
     .composite([{ input: circle, blend: 'dest-in' }])
+    .png()
+    .toBuffer();
+}
+
+/**
+ * Logo koin besar + ring neon brand (Bitget cyan / OKX hijau) untuk layout spotlight.
+ */
+async function bufferToSpotlightCoin(raw, size, exchange = 'OKX') {
+  const accent = brandAccent(exchange);
+  const pad = 12;
+  const outer = size + pad * 2;
+  const resized = await sharp(raw)
+    .resize(size, size, {
+      fit: 'cover',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+
+  const ringSvg = Buffer.from(
+    `<svg width="${outer}" height="${outer}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="g" cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="${accent.fill}" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="${accent.fill}" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="${outer / 2}" cy="${outer / 2}" r="${outer / 2 - 1}" fill="url(#g)"/>
+      <circle cx="${outer / 2}" cy="${outer / 2}" r="${size / 2 + 7}"
+        fill="none" stroke="${accent.fill}" stroke-width="5" stroke-opacity="0.95"/>
+      <circle cx="${outer / 2}" cy="${outer / 2}" r="${size / 2 + 2}" fill="#0b1220"/>
+    </svg>`
+  );
+
+  const masked = await sharp(resized)
+    .composite([
+      {
+        input: Buffer.from(
+          `<svg width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/></svg>`
+        ),
+        blend: 'dest-in',
+      },
+    ])
+    .png()
+    .toBuffer();
+
+  return sharp(ringSvg)
+    .composite([{ input: masked, left: pad, top: pad }])
     .png()
     .toBuffer();
 }
@@ -310,6 +355,34 @@ async function loadTokenLogo(ticker, size = 96, imageUrl = null) {
   return null;
 }
 
+async function loadTokenLogoSpotlight(ticker, size = 220, imageUrl = null, exchange = 'OKX') {
+  const sym = normalizeTicker(ticker);
+  if (!isRenderableTicker(sym) && !imageUrl) return null;
+
+  const candidates = [];
+  if (imageUrl) candidates.push(imageUrl);
+  if (COINGECKO_LARGE[sym]) candidates.push(COINGECKO_LARGE[sym]);
+  const file = TICKER_FILE[sym];
+  if (file) candidates.push(`${ICON_CDN}/${file}.png`);
+  const geckoUrl = await resolveCoinGeckoLogoUrl(sym);
+  if (geckoUrl) candidates.push(geckoUrl);
+
+  const tried = new Set();
+  for (const url of candidates) {
+    if (!url || tried.has(url)) continue;
+    tried.add(url);
+    const raw = await fetchBuffer(url);
+    if (!raw) continue;
+    try {
+      return await bufferToSpotlightCoin(raw, size, exchange);
+    } catch {
+      // coba URL berikutnya
+    }
+  }
+  console.warn(`[imageCompose] Spotlight logo ${sym} gagal — dilewati`);
+  return null;
+}
+
 async function loadExchangeLogo(exchange, height = 44) {
   const key = String(exchange || 'OKX').toUpperCase().includes('BITGET')
     ? 'BITGET'
@@ -346,7 +419,7 @@ async function loadExchangeLogo(exchange, height = 44) {
   console.warn(`[imageCompose] Logo ${key} gagal diunduh — pakai badge teks`);
   const label = key === 'BITGET' ? 'Bitget' : 'OKX';
   const w = key === 'BITGET' ? 120 : 90;
-  const brand = key === 'BITGET' ? '#00f0ff' : '#3b82f6';
+  const brand = key === 'BITGET' ? '#00f0ff' : '#00ff66';
   const svg = Buffer.from(
     `<svg width="${w}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="${w}" height="${height}" rx="8" fill="#0b1220" stroke="${brand}" stroke-width="2"/>
@@ -358,16 +431,25 @@ async function loadExchangeLogo(exchange, height = 44) {
 }
 
 function pickLayout(meta = {}) {
-  const key = `${meta.title || ''}|${(meta.tickers || []).join(',')}|${meta.badge || ''}`;
-  let hash = 0;
-  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
   const logoCount = Array.isArray(meta.logoEntries)
     ? meta.logoEntries.length
     : (meta.tickers || []).length;
-  if (logoCount <= 1) {
-    return ['hero', 'stack', 'center'][hash % 3];
-  }
-  return ['center', 'bottom', 'stack', 'hero'][hash % 4];
+  // 1 token: selalu spotlight (kartu listing profesional)
+  if (logoCount <= 1) return 'spotlight';
+
+  const key = `${meta.title || ''}|${(meta.tickers || []).join(',')}|${meta.badge || ''}`;
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  return ['center', 'bottom', 'stack'][hash % 3];
+}
+
+function brandAccent(exchange) {
+  // Bitget: hitam/putih + cyan · OKX: hitam + hijau neon
+  return String(exchange || '')
+    .toUpperCase()
+    .includes('BITGET')
+    ? { fill: '#00F0FF', soft: 'rgba(0,240,255,0.35)', badge: '#0d9488' }
+    : { fill: '#00FF66', soft: 'rgba(0,255,102,0.35)', badge: '#16a34a' };
 }
 
 function buildOverlaySvg({
@@ -378,21 +460,34 @@ function buildOverlaySvg({
   height,
   layout = 'center',
   singleLogo = false,
+  exchange = 'OKX',
+  pctLabel = '',
 }) {
-  const titleFont = singleLogo ? 44 : 36;
-  const hookFont = 22;
+  const accent = brandAccent(exchange);
+  const isSpotlight = layout === 'spotlight' && singleLogo;
 
+  let titleFont = singleLogo ? 48 : 36;
+  let hookFont = 22;
   let titleY = 140;
   let titleX = '50%';
   let titleAnchor = 'middle';
   let hookY = height - 100;
-  const hookX = '50%';
-  const hookAnchor = 'middle';
+  let hookX = '50%';
+  let hookAnchor = 'middle';
 
-  if (layout === 'hero') {
+  if (isSpotlight) {
+    // Teks kiri terklaster, koin kanan besar (kartu listing)
+    titleFont = 58;
+    hookFont = 26;
+    titleY = 195;
+    titleX = '6%';
+    titleAnchor = 'start';
+    hookY = height - 88;
+    hookX = '6%';
+    hookAnchor = 'start';
+  } else if (layout === 'hero') {
     titleY = singleLogo ? 200 : 150;
     titleX = singleLogo ? '68%' : '50%';
-    titleAnchor = 'middle';
     hookY = height - 90;
   } else if (layout === 'stack') {
     titleY = singleLogo ? 360 : 320;
@@ -405,7 +500,7 @@ function buildOverlaySvg({
   const titleSpans = titleLines
     .map(
       (line, i) =>
-        `<tspan x="${titleX}" dy="${i === 0 ? 0 : 46}">${escapeXml(line)}</tspan>`
+        `<tspan x="${titleX}" dy="${i === 0 ? 0 : 52}">${escapeXml(line)}</tspan>`
     )
     .join('');
   const hookSpans = hookLines
@@ -415,30 +510,50 @@ function buildOverlaySvg({
     )
     .join('');
 
+  const pctBlock =
+    isSpotlight && pctLabel
+      ? `<text x="${titleX}" y="${titleY + 58}" text-anchor="${titleAnchor}"
+           font-family="DejaVu Sans, Arial, sans-serif" font-size="30" font-weight="700"
+           fill="${accent.fill}" filter="url(#shadow)">${escapeXml(pctLabel)}</text>
+         <text x="${titleX}" y="${titleY + 96}" text-anchor="${titleAnchor}"
+           font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="600"
+           fill="#94a3b8" filter="url(#shadow)">Top Move</text>`
+      : '';
+
+  const titleYAdj = isSpotlight && pctLabel ? titleY - 8 : titleY;
+  const hookYAdj = hookY;
+
   return Buffer.from(
     `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="topFade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#000000" stop-opacity="0.70"/>
-          <stop offset="50%" stop-color="#000000" stop-opacity="0.25"/>
-          <stop offset="100%" stop-color="#000000" stop-opacity="0.78"/>
+        <linearGradient id="topFade" x1="0" y1="0" x2="${isSpotlight ? '1' : '0'}" y2="${isSpotlight ? '0' : '1'}">
+          <stop offset="0%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.78' : '0.70'}"/>
+          <stop offset="55%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.22' : '0.25'}"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.55' : '0.78'}"/>
         </linearGradient>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.85"/>
         </filter>
+        <radialGradient id="coinGlow" cx="62%" cy="48%" r="38%">
+          <stop offset="0%" stop-color="${accent.fill}" stop-opacity="0.55"/>
+          <stop offset="55%" stop-color="${accent.fill}" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#topFade)"/>
+      ${isSpotlight ? `<rect width="${width}" height="${height}" fill="url(#coinGlow)"/>` : ''}
       ${
         badge
-          ? `<rect x="${width - 210}" y="22" width="188" height="36" rx="18" fill="#2563eb" fill-opacity="0.92"/>
-             <text x="${width - 116}" y="46" text-anchor="middle"
+          ? `<rect x="${width - 200}" y="22" width="172" height="36" rx="18" fill="${accent.badge}" fill-opacity="0.95"/>
+             <text x="${width - 114}" y="46" text-anchor="middle"
                font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">${escapeXml(badge)}</text>`
           : ''
       }
-      <text x="${titleX}" y="${titleY}" text-anchor="${titleAnchor}"
+      <text x="${titleX}" y="${titleYAdj}" text-anchor="${titleAnchor}"
         font-family="DejaVu Sans, Arial, sans-serif" font-size="${titleFont}" font-weight="800"
         fill="#ffffff" filter="url(#shadow)">${titleSpans}</text>
-      <text x="${hookX}" y="${hookY}" text-anchor="${hookAnchor}"
+      ${pctBlock}
+      <text x="${hookX}" y="${hookYAdj}" text-anchor="${hookAnchor}"
         font-family="DejaVu Sans, Arial, sans-serif" font-size="${hookFont}" font-weight="600"
         fill="#fde68a" filter="url(#shadow)">${hookSpans}</text>
     </svg>`
@@ -449,6 +564,15 @@ function logoPlacement(layout, count, logoOuter, width, height) {
   const gap = count > 1 ? 16 : 0;
   const totalW = count * logoOuter + Math.max(0, count - 1) * gap;
   const positions = [];
+
+  if (layout === 'spotlight' && count === 1) {
+    // Koin besar di kanan — dekat ke teks agar tidak bolong di tengah
+    positions.push({
+      left: Math.round(width * 0.52),
+      top: Math.round((height - logoOuter) / 2 - 6),
+    });
+    return positions;
+  }
 
   if (layout === 'hero' && count === 1) {
     positions.push({
@@ -527,9 +651,11 @@ async function composePromoImage(backgroundBuffer, meta = {}) {
 
   const bg = await prepareBackground(backgroundBuffer);
   const singleLogo = entries.length <= 1;
-  const titleMax = layout === 'hero' && singleLogo ? 28 : 36;
+  const isSpotlight = layout === 'spotlight' && singleLogo;
+  const pctLabel = String(meta.pctLabel || '').trim();
+  const titleMax = isSpotlight ? 22 : layout === 'hero' && singleLogo ? 28 : 36;
   const titleLines = wrapLines(title, titleMax, 2);
-  const hookLines = wrapLines(hook, 48, 2);
+  const hookLines = wrapLines(hook, isSpotlight ? 36 : 48, 2);
   const overlaySvg = buildOverlaySvg({
     titleLines,
     hookLines,
@@ -538,24 +664,38 @@ async function composePromoImage(backgroundBuffer, meta = {}) {
     height: HEIGHT,
     layout,
     singleLogo,
+    exchange,
+    pctLabel,
   });
 
   const composites = [{ input: overlaySvg, left: 0, top: 0 }];
 
   try {
-    const exLogo = await loadExchangeLogo(exchange, 40);
-    composites.push({ input: exLogo, left: 28, top: 24 });
+    // Bitget wordmark lebar → height lebih kecil agar proporsional di pojok
+    const isBitget = String(exchange).toUpperCase().includes('BITGET');
+    const exLogo = await loadExchangeLogo(exchange, isBitget ? 36 : 40);
+    composites.push({ input: exLogo, left: 28, top: 22 });
   } catch {
     // ignore
   }
 
   if (entries.length) {
     const logoSize =
-      entries.length === 1 ? (layout === 'hero' ? 168 : 128) : entries.length >= 5 ? 72 : 88;
+      entries.length === 1
+        ? isSpotlight
+          ? 220
+          : layout === 'hero'
+            ? 168
+            : 128
+        : entries.length >= 5
+          ? 72
+          : 88;
     const logos = [];
     for (const e of entries) {
       try {
-        const logo = await loadTokenLogo(e.symbol, logoSize, e.imageUrl);
+        const logo = isSpotlight
+          ? await loadTokenLogoSpotlight(e.symbol, logoSize, e.imageUrl, exchange)
+          : await loadTokenLogo(e.symbol, logoSize, e.imageUrl);
         if (logo) logos.push(logo);
       } catch {
         // skip
@@ -563,7 +703,7 @@ async function composePromoImage(backgroundBuffer, meta = {}) {
     }
 
     if (logos.length) {
-      const outer = logoSize + 8;
+      const outer = isSpotlight ? logoSize + 24 : logoSize + 8;
       const places = logoPlacement(layout, logos.length, outer, WIDTH, HEIGHT);
       logos.forEach((logo, i) => {
         const p = places[i];

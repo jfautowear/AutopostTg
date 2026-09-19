@@ -230,7 +230,7 @@ function formatShortTime(iso) {
 }
 
 /**
- * Caption spot/CEX — angka dari API live; AI hanya hook/info/cta kontekstual.
+ * Caption spot/CEX — hook kuat di baris pertama, bullets gainer, CTA jelas.
  */
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
   if (snapshot.category === 'airdrop') {
@@ -247,11 +247,17 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
     3
   );
   const when = formatShortTime(snapshot.fetchedAt);
+  const pct = hot?.changePct != null ? formatPctSafe(hot.changePct) : null;
+  const defaultHook = hot?.base
+    ? pct && !String(pct).startsWith('-')
+      ? `🚀 Lonjakan ekstrem: ${hot.base} ${pct}!`
+      : `🔥 Breaking: ${hot.base} jadi fokusasi utama di ${exchange}`
+    : `🔥 Breaking Market Pulse · ${exchange}`;
 
   const build = (hook, info, cta) => {
     const gainerBlock = gainers.length
       ? [
-          '<b>Top gainer:</b>',
+          '<b>🛰 Top Gainer</b>',
           ...gainers.map(
             (g) =>
               `• <b>${escapeHtml(g.base)}</b> ${escapeHtml(formatPctSafe(g.changePct))}`
@@ -260,28 +266,28 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
         ]
       : [];
 
+    const firstLine = escapeHtml(hook || defaultHook);
+
     return [
       isTest ? '<b>🧪 [TEST PREVIEW]</b>' : null,
       isTest ? '' : null,
-      '<b>🔥 MARKET PULSE</b>',
+      `<b>${firstLine}</b>`,
       '',
+      '<b>🔥 MARKET PULSE</b>',
       hot
-        ? `Hot: <b>${escapeHtml(hot.base)}</b>`
-        : 'Hot: —',
-      `Exchange: ${escapeHtml(exchange)}`,
+        ? `Hot: <b>${escapeHtml(hot.base)}</b> · ${escapeHtml(exchange)}`
+        : `Exchange: ${escapeHtml(exchange)}`,
       hot
-        ? `Meledak 📈: 24h ${escapeHtml(formatPctSafe(hot.changePct))} · $${escapeHtml(formatPriceSafe(hot.last))}`
+        ? `📈 24h ${escapeHtml(formatPctSafe(hot.changePct))} · $${escapeHtml(formatPriceSafe(hot.last))}`
         : null,
       when ? `<i>Data: ${escapeHtml(exchange)} · ${escapeHtml(when)} WIB</i>` : null,
-      '',
-      '',
-      '<b>📡 Ringkasan</b>',
-      escapeHtml(hook),
       '',
       ...gainerBlock,
       escapeHtml(info),
       '',
-      escapeHtml(cta),
+      escapeHtml(
+        cta || `Buka app ${exchange} untuk analisis ${hot?.base || 'pasar'} sekarang. 📊`
+      ),
       '',
       `<i>${escapeHtml(DISCLAIMER)}</i>`,
     ]

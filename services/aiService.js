@@ -789,15 +789,25 @@ function buildImageOverlayMeta(snapshot, content) {
       lead
         ? multi && peer
           ? `${lead} · ${peer.symbol}`
-          : `${lead} · Top Move`
+          : `${lead} / USDT`
         : content?.hook || 'Market Pulse',
       48
     ),
-    hook: cleanOverlayText(content?.hook || 'Spot gainers & volume', 56),
+    hook: cleanOverlayText(
+      content?.hook ||
+        (hot?.changePct != null
+          ? `Top Move ${Number(hot.changePct) >= 0 ? '▲' : '▼'} ${Math.abs(Number(hot.changePct)).toFixed(1)}%`
+          : 'Spot gainers & volume'),
+      56
+    ),
     tickers: logoEntries.map((e) => e.symbol),
     logoEntries,
     exchange,
     badge: 'SPOT',
+    pctLabel:
+      !multi && hot?.changePct != null
+        ? `${Number(hot.changePct) >= 0 ? '+' : ''}${Number(hot.changePct).toFixed(1)}% 24h`
+        : '',
   };
   meta.layout = pickLayout(meta);
   return meta;
@@ -805,6 +815,7 @@ function buildImageOverlayMeta(snapshot, content) {
 
 /**
  * Prompt background SAJA — tanpa teks/logo (supaya AI tidak bikin tulisan acak).
+ * Brand: Bitget = hitam/putih + cyan · OKX = hitam + hijau neon.
  */
 function buildImagePromptFromContent(snapshot, content) {
   if (snapshot.category === 'news') {
@@ -821,16 +832,14 @@ function buildImagePromptFromContent(snapshot, content) {
               /earn|reward|subscribe|flash/i.test(titleHint)
             ? 'soft golden coin bokeh vault atmosphere, dark navy'
             : /web3|dex/i.test(kind)
-              ? 'abstract Web3 network nodes, purple blue glow'
-              : 'premium dark fintech gradient, blue and gold light streaks';
+              ? 'abstract Web3 network nodes, black with neon green glow'
+              : 'premium black fintech gradient, neon green light streaks';
 
     return [
       'Abstract crypto background only, no text, no letters, no logos, no watermark,',
       `${motif},`,
       'cinematic lighting, shallow depth of field, 16:9 landscape,',
-      Math.random() > 0.5
-        ? 'empty left third for logo placement,'
-        : 'empty center space for overlay,',
+      'empty right third for large coin overlay,',
       'professional marketing backdrop',
     ].join(' ');
   }
@@ -849,23 +858,35 @@ function buildImagePromptFromContent(snapshot, content) {
   const change = isAirdrop
     ? hot?.change1h ?? hot?.change6h
     : hot?.changePct;
+
+  const isBitget =
+    !isAirdrop &&
+    String(snapshot.primaryLabel || '')
+      .toUpperCase()
+      .includes('BITGET');
+
+  const brandGlow = isAirdrop
+    ? 'black background with neon green accents, OKX Web3 style, metallic coin reflections'
+    : isBitget
+      ? 'black and white cinematic base with neon cyan accents, Bitget brand lighting, clean metallic reflections'
+      : 'pure black background with neon lime green accents, OKX brand lighting, metallic reflections';
+
   const mood =
     change != null && Number(change) >= 0
-      ? 'bullish green neon energy, rising light trails'
-      : 'dramatic red market tension, cool dark tones';
+      ? `bullish ${isBitget ? 'cyan' : 'neon green'} energy, rising light trails`
+      : 'dramatic cool dark tension, soft rim light';
 
-  const spaceHint =
-    ['empty left third for hero logo,', 'empty center for logo,', 'soft blur upper half for title,'][
-      Math.abs(String(symbol || 'x').charCodeAt(0)) % 3
-    ];
+  // Spotlight 1-token: kosongkan kanan untuk koin besar
+  const spaceHint = 'empty clean right third for large circular coin, cinematic dark left side for text,';
 
   return [
     'Abstract crypto background only, no text, no letters, no logos, no watermark,',
     `visual theme: ${theme},`,
+    `${brandGlow},`,
     `${mood},`,
     isAirdrop ? 'early gem discovery atmosphere,' : 'spot trading heat map glow,',
     spaceHint,
-    'cinematic bokeh, 16:9 landscape',
+    'cinematic bokeh, 16:9 landscape, no characters, no faces',
   ].join(' ');
 }
 
@@ -895,11 +916,16 @@ async function generateImageWithPollinations(prompt) {
 async function solidFallbackBackground(snapshot) {
   const isAirdrop = snapshot.category === 'airdrop';
   const isNews = snapshot.category === 'news';
+  const isBitget = String(snapshot.primaryLabel || '')
+    .toUpperCase()
+    .includes('BITGET');
   const color = isNews
-    ? { r: 12, g: 24, b: 56 }
+    ? { r: 8, g: 18, b: 12 }
     : isAirdrop
-      ? { r: 20, g: 16, b: 48 }
-      : { r: 10, g: 28, b: 40 };
+      ? { r: 6, g: 16, b: 10 }
+      : isBitget
+        ? { r: 4, g: 28, b: 32 }
+        : { r: 6, g: 18, b: 10 };
   const sharp = require('sharp');
   return sharp({
     create: {
