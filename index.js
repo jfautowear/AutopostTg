@@ -404,9 +404,18 @@ async function runOnceRespectingSchedule() {
     });
   }
 
-  const check = shouldPostNow(schedule);
+  // Samakan jendela dengan scripts/checkSchedule.js
+  // GHA cron sering delay 30–90+ menit → default lokal 30m, Actions 360m
+  const windowMinutes =
+    process.env.GITHUB_ACTIONS === 'true'
+      ? Number(process.env.SCHEDULE_WINDOW_MINUTES) || 360
+      : Number(process.env.SCHEDULE_WINDOW_MINUTES) || 30;
+
+  const check = shouldPostNow(schedule, new Date(), windowMinutes);
   if (!check.match) {
-    console.log('[autopost] Skip — di luar jadwal (pakai --force / --test)');
+    console.log(
+      `[autopost] Skip — di luar jadwal (±${windowMinutes}m). Pakai --force / FORCE_POST=true`
+    );
     return { skipped: true };
   }
 
@@ -415,6 +424,7 @@ async function runOnceRespectingSchedule() {
     return { skipped: true, reason: 'duplicate_slot' };
   }
 
+  console.log(`[autopost] Slot ${check.slot} OK (window ${windowMinutes}m)`);
   return runAutoPost(check.slot);
 }
 

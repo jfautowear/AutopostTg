@@ -3,7 +3,8 @@
  * Exit 0 = boleh lanjut post | Exit 78 = skip di luar jadwal / sudah dipost
  *
  * Di GHA window diperlebar (6 jam) karena cron GitHub sering delay,
- * agar slot 09:00/21:00 tidak kelewat.
+ * agar slot 09:00/13:00/19:00/21:00 tidak kelewat.
+ * Catatan: index.js post:once HARUS pakai jendela yang sama (SCHEDULE_WINDOW_MINUTES).
  */
 const {
   loadSchedule,
