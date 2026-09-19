@@ -19,9 +19,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8710461435": {
+      "id": 8710461435,
+      "username": null,
+      "firstName": "Gafuri",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "7704701141": {
+      "id": 7704701141,
+      "username": "ajiajot",
+      "firstName": "Jhon_starlex",
+      "lastName": "$PERIA",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-19T05:26:13.322Z",
+  "updatedAt": "2026-09-19T18:13:35.799Z",
   "chatId": -1002232474263
 }
