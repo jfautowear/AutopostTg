@@ -58,12 +58,124 @@ function formatScheduleText(schedule) {
   const lines = [
     `📅 Jadwal Autopost: ${status}`,
     `🌏 Timezone: ${s.timezone}`,
-    `⏰ Jam: ${times}`,
+    `⏰ Jam (WIB): ${times}`,
+    '☁️ Eksekusi: GitHub Actions (PC boleh OFF)',
   ];
   if (s.updatedAt) {
     lines.push(`✏️ Update: ${s.updatedAt}${s.updatedBy ? ` oleh @${s.updatedBy}` : ''}`);
   }
   return lines.join('\n');
+}
+
+function loadRuntime() {
+  try {
+    const runtimePath = path.join(__dirname, '..', 'config', 'runtime.json');
+    return JSON.parse(fs.readFileSync(runtimePath, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+/** Slot berikutnya dari sekarang (timezone jadwal). */
+function getUpcomingSlots(schedule = loadSchedule(), now = new Date(), count = 4) {
+  const s = schedule || loadSchedule();
+  const tz = s.timezone || 'Asia/Jakarta';
+  const times = [...(s.times || [])].sort();
+  if (!times.length) return [];
+
+  const fmt = new Intl.DateTimeFormat('en-CA', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const partsOf = (date) => {
+    const parts = fmt.formatToParts(date);
+    const get = (type) => parts.find((p) => p.type === type).value;
+    return {
+      date: `${get('year')}-${get('month')}-${get('day')}`,
+      minutes: Number(get('hour')) * 60 + Number(get('minute')),
+    };
+  };
+
+  const out = [];
+  // Scan 48 jam ke depan dalam langkah 1 menit... terlalu mahal.
+  // Cukup: hari ini + 7 hari, cocokkan jam jadwal.
+  for (let dayOffset = 0; dayOffset < 8 && out.length < count; dayOffset++) {
+    const base = partsOf(now);
+    const [yy, mm, dd] = base.date.split('-').map(Number);
+    const dayDate = new Date(Date.UTC(yy, mm - 1, dd + dayOffset, 12, 0, 0));
+    const dayLabel = partsOf(dayDate).date;
+    const nowMin = dayOffset === 0 ? partsOf(now).minutes : -1;
+
+    for (const t of times) {
+      const [h, m] = t.split(':').map(Number);
+      const target = h * 60 + m;
+      if (dayOffset === 0 && target <= nowMin) continue;
+      out.push(`${dayLabel} ${t} WIB`);
+      if (out.length >= count) break;
+    }
+  }
+  return out;
+}
+
+function categoryForHour(hour) {
+  if (hour < 11) return 'spot';
+  if (hour < 16) return 'airdrop/DEX';
+  if (hour < 20) return 'news/promo';
+  return 'spot/airdrop';
+}
+
+/**
+ * Status lengkap — data yang sama dipakai GitHub Actions (schedule.json + runtime.json).
+ */
+function formatStatusText(extra = {}) {
+  const schedule = loadSchedule();
+  const runtime = loadRuntime();
+  const runner =
+    process.env.GITHUB_ACTIONS === 'true'
+      ? 'GitHub Actions ☁️'
+      : 'Lokal (matikan npm start agar command ikut GHA)';
+  const upcoming = getUpcomingSlots(schedule, new Date(), 4);
+  const lastSlot = runtime.lastPostedSlot || '—';
+  const lastAt = runtime.lastPostedAt
+    ? new Date(runtime.lastPostedAt).toLocaleString('id-ID', {
+        timeZone: schedule.timezone || 'Asia/Jakarta',
+      })
+    : '—';
+
+  const slotPlan = (schedule.times || [])
+    .map((t) => {
+      const h = Number(t.split(':')[0]);
+      return `  • ${t} → ${categoryForHour(h)}`;
+    })
+    .join('\n');
+
+  return [
+    '📊 Status Autopost',
+    `👤 Admin: @${extra.adminUsername || process.env.ADMIN_TELEGRAM_USERNAME || 'jfnetworkindo'}`,
+    `🖥️ Runner: ${runner}`,
+    `🕐 Sekarang: ${currentTimeLabel(schedule.timezone)}`,
+    '',
+    formatScheduleText(schedule),
+    '',
+    '🗂 Rotasi konten (sesuai jam):',
+    slotPlan || '  (jadwal kosong)',
+    '',
+    `⏭ Slot berikutnya:`,
+    ...(upcoming.length ? upcoming.map((x) => `  • ${x}`) : ['  • —']),
+    '',
+    `✅ Last post slot: ${lastSlot}`,
+    `⏱ Last post at: ${lastAt}`,
+    `📡 EXCHANGE_SOURCE: ${runtime.exchangeSource || process.env.EXCHANGE_SOURCE || 'auto'}`,
+    `🏷 POST_CATEGORY: ${runtime.postCategory || process.env.POST_CATEGORY || 'auto'}`,
+    `🤖 AI_PROVIDER: ${process.env.AI_PROVIDER || 'free'}`,
+    `📢 Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,
+    `💬 Top Aktif: ${process.env.ACTIVITY_ENABLED === 'false' ? 'OFF' : 'ON'} → ${process.env.ACTIVITY_CHAT_ID || process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp'}`,
+  ].join('\n');
 }
 
 /**
@@ -148,6 +260,9 @@ module.exports = {
   loadSchedule,
   saveSchedule,
   formatScheduleText,
+  formatStatusText,
+  loadRuntime,
+  getUpcomingSlots,
   shouldPostNow,
   alreadyPostedSlot,
   markPostedSlot,

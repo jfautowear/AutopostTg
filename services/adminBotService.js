@@ -2,8 +2,8 @@ const {
   loadSchedule,
   saveSchedule,
   formatScheduleText,
+  formatStatusText,
   normalizeTime,
-  currentTimeLabel,
 } = require('./scheduleService');
 
 /** Hanya username ini yang boleh akses command admin. */
@@ -44,7 +44,8 @@ Lainnya:
 /help — bantuan
 
 Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.
-PC boleh OFF — autopost & news jalan via GitHub Actions.`;
+PC boleh OFF — autopost + /jadwal + /status diproses GitHub Actions (poll ±10 mnt).
+Jangan biarkan npm start ON di PC bersamaan (bentrok getUpdates).`;
 
 /** Menu slash Telegram (BotFather-style) — agar daftar command selalu lengkap. */
 const BOT_COMMANDS = [
@@ -363,19 +364,7 @@ function handleAdminCommand(msg) {
 
     case '/status':
       return {
-        reply: [
-          '📊 Status Autopost',
-          `👤 Admin: @${ADMIN_USERNAME}`,
-          `🕐 Sekarang: ${currentTimeLabel(schedule.timezone)}`,
-          '',
-          formatScheduleText(schedule),
-          '',
-          `AI_PROVIDER: ${process.env.AI_PROVIDER || 'free'}`,
-          `EXCHANGE_SOURCE: ${process.env.EXCHANGE_SOURCE || 'auto'}`,
-          `POST_CATEGORY: ${process.env.POST_CATEGORY || 'auto'}`,
-          `Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,
-          `Top Aktif: ${process.env.ACTIVITY_ENABLED === 'false' ? 'OFF' : 'ON'} → ${process.env.ACTIVITY_CHAT_ID || process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp'}`,
-        ].join('\n'),
+        reply: formatStatusText({ adminUsername: ADMIN_USERNAME }),
         allowed: true,
       };
 

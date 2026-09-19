@@ -4,7 +4,7 @@ Repo: https://github.com/jfautowear/AutopostTg
 
 Bot Node.js: fetch **OKX** / **Bitget** / DEX / **pengumuman OKX** → konten → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp).
 
-**PC boleh OFF.** Autopost, berita/promo, dan Top Aktif jalan lewat GitHub Actions. PC hanya untuk cek/manual.
+**PC boleh OFF.** Autopost, command admin (`/jadwal`, `/status`, …), berita/promo, dan Top Aktif jalan lewat **GitHub Actions**. PC hanya untuk debug lokal.
 
 ## Penting: `.env` tidak ikut ke GitHub
 
@@ -12,9 +12,11 @@ File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**,
 
 ## Admin chat bot (`@jfnetworkindo` saja)
 
+Command diproses GHA tiap **±10 menit** (PC OFF OK). Data `/jadwal` & `/status` = `config/schedule.json` + `config/runtime.json` — **sama** yang dipakai Autopost.
+
 | Command | Fungsi |
 |---------|--------|
-| `/jadwal` | Lihat jadwal |
+| `/jadwal` | Lihat jadwal (sinkron GHA) |
 | `/jadwal_set 09:00,13:00,19:00,21:00` | Set semua jam |
 | `/jadwal_add 12:30` | Tambah jam |
 | `/jadwal_del 12:30` | Hapus jam |
@@ -23,10 +25,12 @@ File `.env` ada di `.gitignore`. Secrets diisi lewat **GitHub Actions Secrets**,
 | `/postnow` / `/airdrop` / `/news` | Post ke channel |
 | `/sumber okx\|bitget\|auto` | Sumber data CEX |
 | `/kategori spot\|airdrop\|news\|auto` | Jenis konten |
-| `/status` | Status |
+| `/status` | Status + last post + slot berikutnya |
 | `/help` | Bantuan |
 
-Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json`.
+Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json` (sumber kebenaran Autopost GHA).
+
+⚠️ **Jangan** biarkan `npm start` ON di PC bersamaan GHA — bentrok `getUpdates`.
 
 ## Jenis konten (rotasi 4×/hari)
 
@@ -41,24 +45,20 @@ Jadwal default: **09:00 · 13:00 · 19:00 · 21:00 WIB** (`POST_CATEGORY=auto`):
 
 Slot **airdrop** hanya memposting token yang lolos filter ketat (MC/liq/LP/tax/honeypot). Jika tidak ada yang lolos → otomatis fallback **spot**.
 
-Semua jalan di **GitHub Actions** 2×/hari — PC tidak perlu nyala.
+Autopost GHA: cron **tiap jam** → cek `schedule.json` (window 6 jam). PC tidak perlu nyala.
 
 ## GitHub Actions (hemat free tier)
 
 Repo **publik** → menit Actions GitHub-hosted **gratis tanpa batas**.  
 Kalau suatu saat privat, kuota free ≈ **2.000 menit/bulan**.
 
-| Workflow | Jadwal | Run/bulan | Estimasi menit |
-|----------|--------|-----------|----------------|
-| Autopost | 3×/hari (09, 13, 19 WIB) + rotasi spot/airdrop/news | ~90 | ~180–270 |
-| Top Aktif snapshot | 2×/hari (08 & 20 WIB, digeser) | ~60 | ~60–120 |
-| Top Aktif umumkan | Sabtu pagi (ikut run 08:00) | ~4 | sudah dihitung |
-| Admin commands | manual saja | ~0 | ~0 |
-| **Total** | | **~120** | **~180–300 menit/bulan** |
-
-→ Di akun free privat masih **aman** (~10–15% dari 2.000). Di repo publik **tidak makan kuota berbayar**.
-
-Jangan naikkan poll ke `*/5` / `*/15` — itu yang boros.
+| Workflow | Jadwal | Catatan |
+|----------|--------|---------|
+| **Autopost** | tiap jam `:07` UTC | Skip cepat jika di luar `schedule.json` |
+| **Admin commands** | tiap 10 menit | `/jadwal` `/status` `/test` … |
+| Top Aktif snapshot | 2×/hari | |
+| Top Aktif umumkan | Sabtu | |
+| DEX Screen | opsional | |
 
 Pengumuman Top 10 → topik [t.me/caricuanhp/65640](https://t.me/caricuanhp/65640) (`ACTIVITY_THREAD_ID=65640`).
 
