@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-20-09:00",
-  "lastPostedAt": "2026-09-20T04:48:52.344Z",
+  "lastPostedSlot": "2026-09-20-13:00",
+  "lastPostedAt": "2026-09-20T09:44:10.322Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-09-20:b2",
+      "at": "2026-09-20T09:44:10.322Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1108
+    },
     {
       "key": "spot:OKX:CELR",
       "at": "2026-09-20T04:48:52.343Z",
