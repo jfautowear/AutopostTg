@@ -1,6 +1,15 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-19-21:00",
-  "lastPostedAt": "2026-09-19T15:44:28.913Z"
+  "lastPostedSlot": "2026-09-20-09:00",
+  "lastPostedAt": "2026-09-20T04:48:52.344Z",
+  "recentContent": [
+    {
+      "key": "spot:OKX:CELR",
+      "at": "2026-09-20T04:48:52.343Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1107
+    }
+  ]
 }
