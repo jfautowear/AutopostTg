@@ -37,9 +37,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "5967576874": {
+      "id": 5967576874,
+      "username": "PutryAmellia",
+      "firstName": "PutryXAmelia",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-21T04:45:16.422Z",
+  "updatedAt": "2026-09-21T10:14:35.316Z",
   "chatId": -1002232474263
 }
