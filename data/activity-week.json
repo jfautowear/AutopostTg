@@ -64,9 +64,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6974624435": {
+      "id": 6974624435,
+      "username": "Irmanq98",
+      "firstName": "Irman.Q",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-21T20:35:00.041Z",
+  "updatedAt": "2026-09-21T23:36:26.374Z",
   "chatId": -1002232474263
 }
