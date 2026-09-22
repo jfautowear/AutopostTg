@@ -2,6 +2,15 @@
   "weekKey": "2026-W39",
   "chatRef": "@caricuanhp",
   "users": {
+    "494761293": {
+      "id": 494761293,
+      "username": "Rustianaura23",
+      "firstName": "Muhammad",
+      "lastName": "Rusdi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "1418478243": {
       "id": 1418478243,
       "username": "waheng22",
@@ -103,6 +112,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-22T20:26:03.760Z",
+  "updatedAt": "2026-09-22T23:12:12.267Z",
   "chatId": -1002232474263
 }
