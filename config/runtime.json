@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-22-13:00",
-  "lastPostedAt": "2026-09-22T09:51:59.844Z",
+  "lastPostedSlot": "2026-09-22-21:00",
+  "lastPostedAt": "2026-09-22T14:43:21.769Z",
   "recentContent": [
+    {
+      "key": "spot:OKX:ICX",
+      "at": "2026-09-22T14:43:21.769Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1116
+    },
     {
       "key": "topcoin:2026-09-22:b2",
       "at": "2026-09-22T09:51:59.843Z",
@@ -31,13 +38,6 @@
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1111
-    },
-    {
-      "key": "spot:OKX:ONE",
-      "at": "2026-09-20T14:08:48.837Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1109
     }
   ]
 }
