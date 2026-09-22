@@ -25,9 +25,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "5978663615": {
       "id": 5978663615,
@@ -73,9 +73,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "7237483033": {
+      "id": 7237483033,
+      "username": "hajthorku",
+      "firstName": "bagus setra",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-21T23:36:26.374Z",
+  "updatedAt": "2026-09-22T01:53:06.549Z",
   "chatId": -1002232474263
 }
