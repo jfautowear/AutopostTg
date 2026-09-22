@@ -2,6 +2,15 @@
   "weekKey": "2026-W39",
   "chatRef": "@caricuanhp",
   "users": {
+    "1418478243": {
+      "id": 1418478243,
+      "username": "waheng22",
+      "firstName": "dwi",
+      "lastName": "gopel",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "8822752996": {
       "id": 8822752996,
       "username": null,
@@ -16,9 +25,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 3,
+      "messages": 6,
       "reactions": 0,
-      "score": 6
+      "score": 12
     },
     "7330797950": {
       "id": 7330797950,
@@ -85,6 +94,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-22T01:53:06.549Z",
+  "updatedAt": "2026-09-22T07:31:35.348Z",
   "chatId": -1002232474263
 }
