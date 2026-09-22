@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-21-19:00",
-  "lastPostedAt": "2026-09-21T13:57:54.928Z",
+  "lastPostedSlot": "2026-09-22-09:00",
+  "lastPostedAt": "2026-09-22T04:43:48.528Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-09-22:b1",
+      "at": "2026-09-22T04:43:48.528Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1113
+    },
     {
       "key": "spot:Bitget:PHA",
       "at": "2026-09-21T13:57:54.891Z",
