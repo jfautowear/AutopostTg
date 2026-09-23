@@ -79,9 +79,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6974624435": {
       "id": 6974624435,
@@ -121,6 +121,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-23T05:26:59.252Z",
+  "updatedAt": "2026-09-23T06:38:55.971Z",
   "chatId": -1002232474263
 }
