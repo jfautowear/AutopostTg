@@ -34,9 +34,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 8,
+      "messages": 16,
       "reactions": 0,
-      "score": 16
+      "score": 32
     },
     "7330797950": {
       "id": 7330797950,
@@ -88,9 +88,9 @@
       "username": "Irmanq98",
       "firstName": "Irman.Q@MeebitsAppBot",
       "lastName": null,
-      "messages": 6,
+      "messages": 8,
       "reactions": 0,
-      "score": 12
+      "score": 16
     },
     "7237483033": {
       "id": 7237483033,
@@ -106,9 +106,9 @@
       "username": null,
       "firstName": "Gafuri",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "5203244900": {
       "id": 5203244900,
@@ -118,9 +118,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6046806167": {
+      "id": 6046806167,
+      "username": "Andrehalim77",
+      "firstName": "Budi",
+      "lastName": "Santoso PIXLANDS",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-23T06:38:55.971Z",
+  "updatedAt": "2026-09-23T12:14:12.994Z",
   "chatId": -1002232474263
 }
