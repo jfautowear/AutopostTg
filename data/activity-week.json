@@ -86,11 +86,11 @@
     "6974624435": {
       "id": 6974624435,
       "username": "Irmanq98",
-      "firstName": "Irman.Q",
+      "firstName": "Irman.Q@MeebitsAppBot",
       "lastName": null,
-      "messages": 3,
+      "messages": 6,
       "reactions": 0,
-      "score": 6
+      "score": 12
     },
     "7237483033": {
       "id": 7237483033,
@@ -109,9 +109,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "5203244900": {
+      "id": 5203244900,
+      "username": "Adk025",
+      "firstName": "Id5 01",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-22T23:12:12.267Z",
+  "updatedAt": "2026-09-23T05:26:59.252Z",
   "chatId": -1002232474263
 }
