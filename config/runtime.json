@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-24-09:00",
-  "lastPostedAt": "2026-09-24T04:36:39.715Z",
+  "lastPostedSlot": "2026-09-24-13:00",
+  "lastPostedAt": "2026-09-24T09:54:45.688Z",
   "recentContent": [
+    {
+      "key": "spot:OKX:LSK",
+      "at": "2026-09-24T09:54:45.687Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1122
+    },
     {
       "key": "topcoin:2026-09-24:b1",
       "at": "2026-09-24T04:36:39.715Z",
