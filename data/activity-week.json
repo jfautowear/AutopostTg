@@ -115,18 +115,18 @@
       "username": "Adk025",
       "firstName": "Id5 01",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "8977011219": {
       "id": 8977011219,
@@ -148,6 +148,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-23T20:30:25.558Z",
+  "updatedAt": "2026-09-24T06:35:31.135Z",
   "chatId": -1002232474263
 }
