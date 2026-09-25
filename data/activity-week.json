@@ -34,9 +34,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 18,
+      "messages": 19,
       "reactions": 0,
-      "score": 36
+      "score": 38
     },
     "7330797950": {
       "id": 7330797950,
@@ -86,11 +86,11 @@
     "6974624435": {
       "id": 6974624435,
       "username": "Irmanq98",
-      "firstName": "Irman.Q@MeebitsAppBot",
+      "firstName": "Irman.Q",
       "lastName": null,
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "7237483033": {
       "id": 7237483033,
@@ -115,9 +115,9 @@
       "username": "Adk025",
       "firstName": "Id5 01",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6046806167": {
       "id": 6046806167,
@@ -151,9 +151,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6955339842": {
       "id": 6955339842,
@@ -163,9 +163,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7332328699": {
+      "id": 7332328699,
+      "username": null,
+      "firstName": "Faisal",
+      "lastName": "Alwani #RoninRise👺",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-25T06:48:05.377Z",
+  "updatedAt": "2026-09-25T12:21:40.507Z",
   "chatId": -1002232474263
 }
