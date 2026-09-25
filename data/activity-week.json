@@ -34,9 +34,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 19,
+      "messages": 20,
       "reactions": 0,
-      "score": 38
+      "score": 40
     },
     "7330797950": {
       "id": 7330797950,
@@ -106,9 +106,9 @@
       "username": null,
       "firstName": "Gafuri",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "5203244900": {
       "id": 5203244900,
@@ -172,9 +172,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8195913206": {
+      "id": 8195913206,
+      "username": "BUGIS01",
+      "firstName": "Aqu4rius || Web3🇮🇩",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-25T12:21:40.507Z",
+  "updatedAt": "2026-09-25T17:28:05.879Z",
   "chatId": -1002232474263
 }
