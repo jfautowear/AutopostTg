@@ -34,9 +34,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 20,
+      "messages": 21,
       "reactions": 0,
-      "score": 40
+      "score": 42
     },
     "7330797950": {
       "id": 7330797950,
@@ -115,18 +115,18 @@
       "username": "Adk025",
       "firstName": "Id5 01",
       "lastName": null,
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "8977011219": {
       "id": 8977011219,
@@ -184,6 +184,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-25T17:38:01.471Z",
+  "updatedAt": "2026-09-25T20:42:15.321Z",
   "chatId": -1002232474263
 }
