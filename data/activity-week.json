@@ -43,9 +43,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "5978663615": {
       "id": 5978663615,
@@ -70,9 +70,9 @@
       "username": "sopandim846",
       "firstName": "Sopandi",
       "lastName": "Maulana ",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "8028556373": {
       "id": 8028556373,
@@ -166,6 +166,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W38",
-  "updatedAt": "2026-09-24T20:36:14.858Z",
+  "updatedAt": "2026-09-25T01:49:33.524Z",
   "chatId": -1002232474263
 }
