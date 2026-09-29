@@ -16,9 +16,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "8972990328": {
       "id": 8972990328,
@@ -46,9 +46,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6974624435": {
+      "id": 6974624435,
+      "username": "Irmanq98",
+      "firstName": "Irman.Q",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-29T18:37:31.526Z",
+  "updatedAt": "2026-09-29T22:37:21.857Z",
   "chatId": -1002232474263
 }
