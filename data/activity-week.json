@@ -28,9 +28,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8621715235": {
+      "id": 8621715235,
+      "username": "salmanalfarisyi111",
+      "firstName": "salman",
+      "lastName": "al farisyi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-29T00:38:42.306Z",
+  "updatedAt": "2026-09-29T06:15:01.557Z",
   "chatId": -1002232474263
 }
