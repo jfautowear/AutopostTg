@@ -55,9 +55,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "7484416960": {
+      "id": 7484416960,
+      "username": "DRAGONBOLLGRAM",
+      "firstName": "DROP",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-29T22:37:21.857Z",
+  "updatedAt": "2026-09-30T06:15:04.331Z",
   "chatId": -1002232474263
 }
