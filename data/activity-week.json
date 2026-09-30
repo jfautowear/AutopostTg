@@ -64,9 +64,18 @@
       "messages": 2,
       "reactions": 0,
       "score": 4
+    },
+    "5203244900": {
+      "id": 5203244900,
+      "username": "Adk025",
+      "firstName": "Id5 01",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-30T06:15:04.331Z",
+  "updatedAt": "2026-09-30T14:09:35.889Z",
   "chatId": -1002232474263
 }
