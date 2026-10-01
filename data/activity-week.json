@@ -52,9 +52,9 @@
       "username": "Irmanq98",
       "firstName": "Irman.Q",
       "lastName": null,
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "7484416960": {
       "id": 7484416960,
@@ -85,6 +85,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W39",
-  "updatedAt": "2026-09-30T23:09:19.955Z",
+  "updatedAt": "2026-10-01T02:10:28.934Z",
   "chatId": -1002232474263
 }
