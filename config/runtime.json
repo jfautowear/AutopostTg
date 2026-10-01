@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-09-30-19:00",
-  "lastPostedAt": "2026-09-30T13:36:32.585Z",
+  "lastPostedSlot": "2026-10-01-09:00",
+  "lastPostedAt": "2026-10-01T05:40:37.395Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:MOVR",
+      "at": "2026-10-01T05:40:37.394Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1152
+    },
     {
       "key": "topcoin:2026-09-30:b3",
       "at": "2026-09-30T13:36:32.585Z",
