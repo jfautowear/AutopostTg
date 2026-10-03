@@ -109,9 +109,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8017659162": {
+      "id": 8017659162,
+      "username": null,
+      "firstName": "@Ryan",
+      "lastName": "Collins",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-03T01:25:48.848Z",
+  "updatedAt": "2026-10-03T05:58:23.241Z",
   "chatId": -1002232474263
 }
