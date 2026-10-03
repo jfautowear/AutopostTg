@@ -16,9 +16,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "8972990328": {
       "id": 8972990328,
@@ -79,9 +79,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 6,
+      "messages": 7,
       "reactions": 0,
-      "score": 12
+      "score": 14
     },
     "7859029890": {
       "id": 7859029890,
@@ -112,6 +112,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-02T22:33:43.412Z",
+  "updatedAt": "2026-10-03T01:25:48.848Z",
   "chatId": -1002232474263
 }
