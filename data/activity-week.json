@@ -2,6 +2,15 @@
   "weekKey": "2026-W40",
   "chatRef": "@caricuanhp",
   "users": {
+    "494761293": {
+      "id": 494761293,
+      "username": "Rustianaura23",
+      "firstName": "Muhammad",
+      "lastName": "Rusdi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "7704701141": {
       "id": 7704701141,
       "username": "ajiajot",
@@ -16,9 +25,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "8972990328": {
       "id": 8972990328,
@@ -121,6 +130,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-03T12:26:57.819Z",
+  "updatedAt": "2026-10-04T07:57:47.607Z",
   "chatId": -1002232474263
 }
