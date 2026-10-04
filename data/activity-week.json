@@ -1,135 +1,27 @@
 {
-  "weekKey": "2026-W40",
+  "weekKey": "2026-W41",
   "chatRef": "@caricuanhp",
   "users": {
-    "494761293": {
-      "id": 494761293,
-      "username": "Rustianaura23",
-      "firstName": "Muhammad",
-      "lastName": "Rusdi",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
     "7704701141": {
       "id": 7704701141,
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 8,
+      "messages": 1,
       "reactions": 0,
-      "score": 16
+      "score": 2
     },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 10,
-      "reactions": 0,
-      "score": 20
-    },
-    "8972990328": {
-      "id": 8972990328,
-      "username": null,
-      "firstName": "Yash",
-      "lastName": "Yash",
       "messages": 1,
       "reactions": 0,
       "score": 2
-    },
-    "8621715235": {
-      "id": 8621715235,
-      "username": "salmanalfarisyi111",
-      "firstName": "salman",
-      "lastName": "al farisyi",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "5978663615": {
-      "id": 5978663615,
-      "username": "Shirou01",
-      "firstName": "Shiro",
-      "lastName": "#TelomonBot",
-      "messages": 6,
-      "reactions": 0,
-      "score": 12
-    },
-    "6974624435": {
-      "id": 6974624435,
-      "username": "Irmanq98",
-      "firstName": "Irman.Q",
-      "lastName": null,
-      "messages": 7,
-      "reactions": 0,
-      "score": 14
-    },
-    "7484416960": {
-      "id": 7484416960,
-      "username": "DRAGONBOLLGRAM",
-      "firstName": "DROP",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "5203244900": {
-      "id": 5203244900,
-      "username": "Adk025",
-      "firstName": "Id5 01",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "8028556373": {
-      "id": 8028556373,
-      "username": "Hanuunal",
-      "firstName": "Flying",
-      "lastName": "'S",
-      "messages": 7,
-      "reactions": 0,
-      "score": 14
-    },
-    "7859029890": {
-      "id": 7859029890,
-      "username": "sopandim846",
-      "firstName": "Sopandi",
-      "lastName": "Maulana ",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "6046806167": {
-      "id": 6046806167,
-      "username": "Andrehalim77",
-      "firstName": "Budi",
-      "lastName": "Santoso PIXLANDS",
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "6007389920": {
-      "id": 6007389920,
-      "username": "Iwanez",
-      "firstName": "Captain iwank",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8017659162": {
-      "id": 8017659162,
-      "username": null,
-      "firstName": "@Ryan",
-      "lastName": "Collins",
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-04T07:57:47.607Z",
+  "updatedAt": "2026-10-04T18:03:14.509Z",
   "chatId": -1002232474263
 }
