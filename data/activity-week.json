@@ -28,9 +28,36 @@
       "messages": 2,
       "reactions": 0,
       "score": 4
+    },
+    "7859029890": {
+      "id": 7859029890,
+      "username": "sopandim846",
+      "firstName": "Sopandi",
+      "lastName": "Maulana ",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6046806167": {
+      "id": 6046806167,
+      "username": "Andrehalim77",
+      "firstName": "Budi",
+      "lastName": "Santoso PIXLANDS",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8028556373": {
+      "id": 8028556373,
+      "username": "Hanuunal",
+      "firstName": "Flying",
+      "lastName": "'S",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-04T21:20:04.478Z",
+  "updatedAt": "2026-10-05T05:32:08.640Z",
   "chatId": -1002232474263
 }
