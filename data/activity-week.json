@@ -82,9 +82,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7342944272": {
+      "id": 7342944272,
+      "username": "Ton_spacce",
+      "firstName": "Ansor👑",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7653738412": {
+      "id": 7653738412,
+      "username": null,
+      "firstName": "Erik",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-06T07:06:51.171Z",
+  "updatedAt": "2026-10-06T15:09:22.276Z",
   "chatId": -1002232474263
 }
