@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-06-13:00",
-  "lastPostedAt": "2026-10-06T10:07:01.088Z",
+  "lastPostedSlot": "2026-10-06-21:00",
+  "lastPostedAt": "2026-10-06T16:45:41.395Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-06:b3",
+      "at": "2026-10-06T16:45:41.394Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1178
+    },
     {
       "key": "spot:OKX:AEON",
       "at": "2026-10-06T10:07:01.087Z",
