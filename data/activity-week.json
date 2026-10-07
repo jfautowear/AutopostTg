@@ -7,9 +7,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "7330797950": {
       "id": 7330797950,
@@ -79,9 +79,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7342944272": {
       "id": 7342944272,
@@ -103,6 +103,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-07T12:05:08.975Z",
+  "updatedAt": "2026-10-07T18:55:13.945Z",
   "chatId": -1002232474263
 }
