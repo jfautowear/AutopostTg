@@ -79,9 +79,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "7342944272": {
       "id": 7342944272,
@@ -112,6 +112,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-08T02:54:30.512Z",
+  "updatedAt": "2026-10-08T10:14:58.616Z",
   "chatId": -1002232474263
 }
