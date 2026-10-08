@@ -7,18 +7,18 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "8913462371": {
       "id": 8913462371,
@@ -121,6 +121,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-08T17:26:19.137Z",
+  "updatedAt": "2026-10-08T22:20:38.985Z",
   "chatId": -1002232474263
 }
