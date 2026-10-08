@@ -34,9 +34,9 @@
       "username": "sopandim846",
       "firstName": "Sopandi",
       "lastName": "Maulana ",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6046806167": {
       "id": 6046806167,
@@ -97,9 +97,9 @@
       "username": null,
       "firstName": "Erik",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6974624435": {
       "id": 6974624435,
@@ -109,9 +109,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "7398726478": {
+      "id": 7398726478,
+      "username": null,
+      "firstName": "Agis",
+      "lastName": "Tambunan",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W40",
-  "updatedAt": "2026-10-08T10:14:58.616Z",
+  "updatedAt": "2026-10-08T17:26:19.137Z",
   "chatId": -1002232474263
 }
