@@ -7,9 +7,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "7330797950": {
       "id": 7330797950,
@@ -43,9 +43,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "8028556373": {
       "id": 8028556373,
@@ -121,6 +121,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-09T18:35:28.118Z",
+  "updatedAt": "2026-10-09T21:15:17.409Z",
   "chatId": -1002232474263
 }
