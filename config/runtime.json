@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-09-09:00",
-  "lastPostedAt": "2026-10-09T02:02:22.219Z",
+  "lastPostedSlot": "2026-10-09-13:00",
+  "lastPostedAt": "2026-10-09T08:54:16.965Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:US",
+      "at": "2026-10-09T08:54:16.965Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1192
+    },
     {
       "key": "spot:Bitget:OGN",
       "at": "2026-10-09T02:02:22.218Z",
@@ -24,13 +31,6 @@
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1188
-    },
-    {
-      "key": "spot:Bitget:BAY",
-      "at": "2026-10-07T08:33:45.477Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1183
     }
   ]
 }
