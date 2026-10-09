@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-08-21:00",
-  "lastPostedAt": "2026-10-08T16:23:40.185Z",
+  "lastPostedSlot": "2026-10-09-09:00",
+  "lastPostedAt": "2026-10-09T02:02:22.219Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:OGN",
+      "at": "2026-10-09T02:02:22.218Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1190
+    },
     {
       "key": "spot:OKX:STRK",
       "at": "2026-10-08T16:23:40.185Z",
