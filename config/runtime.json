@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-09-21:00",
-  "lastPostedAt": "2026-10-09T16:06:57.378Z",
+  "lastPostedSlot": "2026-10-10-13:00",
+  "lastPostedAt": "2026-10-10T06:58:21.458Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-10:b2",
+      "at": "2026-10-10T06:58:21.457Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1195
+    },
     {
       "key": "spot:Bitget:JCT",
       "at": "2026-10-09T16:06:57.378Z",
