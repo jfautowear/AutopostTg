@@ -16,9 +16,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "8913462371": {
       "id": 8913462371,
@@ -106,9 +106,9 @@
       "username": "Irmanq98",
       "firstName": "Irman.Q",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "7398726478": {
       "id": 7398726478,
@@ -118,9 +118,27 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "8710461435": {
+      "id": 8710461435,
+      "username": null,
+      "firstName": "Gafuri",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6953094293": {
+      "id": 6953094293,
+      "username": "Agnes1712",
+      "firstName": "Fiqah",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-09T21:15:17.409Z",
+  "updatedAt": "2026-10-10T00:59:24.849Z",
   "chatId": -1002232474263
 }
