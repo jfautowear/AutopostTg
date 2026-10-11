@@ -1,153 +1,27 @@
 {
-  "weekKey": "2026-W41",
+  "weekKey": "2026-W42",
   "chatRef": "@caricuanhp",
   "users": {
-    "7704701141": {
-      "id": 7704701141,
-      "username": "ajiajot",
-      "firstName": "Jhon_starlex",
-      "lastName": "$PERIA",
-      "messages": 6,
-      "reactions": 0,
-      "score": 12
-    },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 7,
-      "reactions": 0,
-      "score": 14
-    },
-    "8913462371": {
-      "id": 8913462371,
-      "username": "idlezaynn",
-      "firstName": "Zoerik Noir",
-      "lastName": "⏤‌‌‌‌𝐅𝐎-𝐄𝐒𝟎𝟐",
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "7859029890": {
-      "id": 7859029890,
-      "username": "sopandim846",
-      "firstName": "Sopandi",
-      "lastName": "Maulana ",
-      "messages": 6,
-      "reactions": 0,
-      "score": 12
-    },
-    "6046806167": {
-      "id": 6046806167,
-      "username": "Andrehalim77",
-      "firstName": "Budi",
-      "lastName": "Santoso PIXLANDS",
-      "messages": 5,
-      "reactions": 0,
-      "score": 10
-    },
-    "8028556373": {
-      "id": 8028556373,
-      "username": "Hanuunal",
-      "firstName": "Flying",
-      "lastName": "'S",
-      "messages": 6,
-      "reactions": 0,
-      "score": 12
-    },
-    "5693796980": {
-      "id": 5693796980,
-      "username": "evanefendi",
-      "firstName": "You",
-      "lastName": null,
       "messages": 1,
       "reactions": 0,
       "score": 2
     },
-    "8195913206": {
-      "id": 8195913206,
-      "username": "BUGIS01",
-      "firstName": "Aqu4rius || Web3🇮🇩",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "5978663615": {
-      "id": 5978663615,
-      "username": "Shirou01",
-      "firstName": "Shiro",
-      "lastName": "#TelomonBot",
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "7342944272": {
-      "id": 7342944272,
-      "username": "Ton_spacce",
-      "firstName": "Ansor👑",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7653738412": {
-      "id": 7653738412,
-      "username": null,
-      "firstName": "Erik",
-      "lastName": null,
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "6974624435": {
-      "id": 6974624435,
-      "username": "Irmanq98",
-      "firstName": "Irman.Q",
-      "lastName": null,
-      "messages": 6,
-      "reactions": 0,
-      "score": 12
-    },
-    "7398726478": {
-      "id": 7398726478,
-      "username": null,
-      "firstName": "Agis",
-      "lastName": "Tambunan",
-      "messages": 5,
-      "reactions": 0,
-      "score": 10
-    },
-    "8710461435": {
-      "id": 8710461435,
-      "username": null,
-      "firstName": "Gafuri",
+    "6650100585": {
+      "id": 6650100585,
+      "username": "reyyyytr",
+      "firstName": "reyyyooo",
       "lastName": null,
       "messages": 1,
       "reactions": 0,
       "score": 2
-    },
-    "6953094293": {
-      "id": 6953094293,
-      "username": "Agnes1712",
-      "firstName": "Fiqah",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "5203244900": {
-      "id": 5203244900,
-      "username": "Adk025",
-      "firstName": "Id5 01",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-11T13:10:13.741Z",
+  "updatedAt": "2026-10-11T18:06:14.469Z",
   "chatId": -1002232474263
 }
