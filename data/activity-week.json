@@ -37,9 +37,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8621715235": {
+      "id": 8621715235,
+      "username": "salmanalfarisyi111",
+      "firstName": "salman",
+      "lastName": "al farisyi🇹🇷🇹🇹",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8028556373": {
+      "id": 8028556373,
+      "username": "Hanuunal",
+      "firstName": "Flying",
+      "lastName": "'S",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-12T01:05:41.374Z",
+  "updatedAt": "2026-10-12T06:52:24.701Z",
   "chatId": -1002232474263
 }
