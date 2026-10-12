@@ -55,9 +55,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7398726478": {
+      "id": 7398726478,
+      "username": null,
+      "firstName": "Agis",
+      "lastName": "Tambunan",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "7859029890": {
+      "id": 7859029890,
+      "username": "sopandim846",
+      "firstName": "Sopandi",
+      "lastName": "Maulana ",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-12T06:52:24.701Z",
+  "updatedAt": "2026-10-12T16:51:49.056Z",
   "chatId": -1002232474263
 }
