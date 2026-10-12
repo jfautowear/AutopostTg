@@ -7,9 +7,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro",
       "lastName": "Minami",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "6650100585": {
       "id": 6650100585,
@@ -19,9 +19,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7332328699": {
+      "id": 7332328699,
+      "username": null,
+      "firstName": "Faisal",
+      "lastName": "Alwani #RoninRise👺",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6735578502": {
+      "id": 6735578502,
+      "username": "s4sinson",
+      "firstName": "who?",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-11T18:06:14.469Z",
+  "updatedAt": "2026-10-12T01:05:41.374Z",
   "chatId": -1002232474263
 }
