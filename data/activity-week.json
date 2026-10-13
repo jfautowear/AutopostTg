@@ -52,9 +52,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7398726478": {
       "id": 7398726478,
@@ -106,9 +106,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 1,
+      "messages": 5,
       "reactions": 0,
-      "score": 2
+      "score": 10
     },
     "6974624435": {
       "id": 6974624435,
@@ -127,9 +127,27 @@
       "messages": 2,
       "reactions": 0,
       "score": 4
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 6,
+      "reactions": 0,
+      "score": 12
+    },
+    "8932149926": {
+      "id": 8932149926,
+      "username": "r4aredan",
+      "firstName": "nana",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-13T11:33:46.289Z",
+  "updatedAt": "2026-10-13T18:30:15.353Z",
   "chatId": -1002232474263
 }
