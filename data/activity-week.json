@@ -61,9 +61,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "7859029890": {
       "id": 7859029890,
@@ -91,9 +91,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7756831930": {
+      "id": 7756831930,
+      "username": null,
+      "firstName": "Dante",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-12T23:32:50.405Z",
+  "updatedAt": "2026-10-13T03:52:02.040Z",
   "chatId": -1002232474263
 }
