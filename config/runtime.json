@@ -1,29 +1,22 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-13-13:00",
-  "lastPostedAt": "2026-10-13T07:38:45.784Z",
+  "lastPostedSlot": "2026-10-13-21:00",
+  "lastPostedAt": "2026-10-13T15:53:14.658Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:Q",
+      "at": "2026-10-13T15:53:14.657Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1207
+    },
     {
       "key": "spot:Bitget:OGN",
       "at": "2026-10-13T07:38:45.783Z",
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1206
-    },
-    {
-      "key": "spot:Bitget:RCCC",
-      "at": "2026-10-11T15:35:01.304Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1200
-    },
-    {
-      "key": "spot:Bitget:STRK",
-      "at": "2026-10-11T08:41:50.816Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1198
     }
   ]
 }
