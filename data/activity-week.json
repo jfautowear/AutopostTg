@@ -11,6 +11,15 @@
       "reactions": 0,
       "score": 2
     },
+    "1344817226": {
+      "id": 1344817226,
+      "username": "Saikuro08",
+      "firstName": "Saikuro",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
     "1836684121": {
       "id": 1836684121,
       "username": "Lumerinx",
@@ -175,6 +184,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-14T17:56:15.017Z",
+  "updatedAt": "2026-10-14T21:30:44.593Z",
   "chatId": -1002232474263
 }
