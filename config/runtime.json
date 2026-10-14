@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-14-13:00",
-  "lastPostedAt": "2026-10-14T07:29:19.694Z",
+  "lastPostedSlot": "2026-10-14-19:00",
+  "lastPostedAt": "2026-10-14T13:37:25.188Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-14:b3",
+      "at": "2026-10-14T13:37:25.187Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1211
+    },
     {
       "key": "spot:OKX:PONS",
       "at": "2026-10-14T07:29:19.694Z",
