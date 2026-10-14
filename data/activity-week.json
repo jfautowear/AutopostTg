@@ -2,14 +2,23 @@
   "weekKey": "2026-W42",
   "chatRef": "@caricuanhp",
   "users": {
+    "1836684121": {
+      "id": 1836684121,
+      "username": "Lumerinx",
+      "firstName": "Lumerinx",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "6650100585": {
       "id": 6650100585,
@@ -157,6 +166,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-14T01:52:24.572Z",
+  "updatedAt": "2026-10-14T05:43:43.763Z",
   "chatId": -1002232474263
 }
