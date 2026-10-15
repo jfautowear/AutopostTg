@@ -25,9 +25,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 5,
+      "messages": 12,
       "reactions": 0,
-      "score": 10
+      "score": 24
     },
     "7330797950": {
       "id": 7330797950,
@@ -202,6 +202,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-15T14:19:45.331Z",
+  "updatedAt": "2026-10-15T18:25:50.024Z",
   "chatId": -1002232474263
 }
