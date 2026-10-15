@@ -34,9 +34,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "6650100585": {
       "id": 6650100585,
@@ -140,11 +140,11 @@
     "6974624435": {
       "id": 6974624435,
       "username": "Irmanq98",
-      "firstName": "Irman.Q",
+      "firstName": "Irman.Q🐙 $KRX",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8195913206": {
       "id": 8195913206,
@@ -181,9 +181,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8710461435": {
+      "id": 8710461435,
+      "username": null,
+      "firstName": "Gafuri",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5419606101": {
+      "id": 5419606101,
+      "username": null,
+      "firstName": "Bapakmu",
+      "lastName": "👑",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-14T21:30:44.593Z",
+  "updatedAt": "2026-10-15T00:05:40.630Z",
   "chatId": -1002232474263
 }
