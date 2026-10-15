@@ -133,9 +133,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 8,
+      "messages": 10,
       "reactions": 0,
-      "score": 16
+      "score": 20
     },
     "6974624435": {
       "id": 6974624435,
@@ -151,18 +151,18 @@
       "username": "BUGIS01",
       "firstName": "Aqu4rius || Web3🇮🇩",
       "lastName": null,
-      "messages": 2,
+      "messages": 5,
       "reactions": 0,
-      "score": 4
+      "score": 10
     },
     "5978663615": {
       "id": 5978663615,
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 8,
+      "messages": 10,
       "reactions": 0,
-      "score": 16
+      "score": 20
     },
     "8932149926": {
       "id": 8932149926,
@@ -202,6 +202,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-15T05:30:05.851Z",
+  "updatedAt": "2026-10-15T09:24:51.761Z",
   "chatId": -1002232474263
 }
