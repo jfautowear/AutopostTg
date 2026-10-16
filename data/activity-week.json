@@ -79,9 +79,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 5,
+      "messages": 7,
       "reactions": 0,
-      "score": 10
+      "score": 14
     },
     "7398726478": {
       "id": 7398726478,
@@ -133,9 +133,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 10,
+      "messages": 12,
       "reactions": 0,
-      "score": 20
+      "score": 24
     },
     "6974624435": {
       "id": 6974624435,
@@ -220,6 +220,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-16T08:53:27.831Z",
+  "updatedAt": "2026-10-16T13:50:29.392Z",
   "chatId": -1002232474263
 }
