@@ -151,9 +151,9 @@
       "username": "BUGIS01",
       "firstName": "Aqu4rius || Web3🇮🇩",
       "lastName": null,
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "5978663615": {
       "id": 5978663615,
@@ -220,6 +220,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W41",
-  "updatedAt": "2026-10-16T05:21:26.526Z",
+  "updatedAt": "2026-10-16T08:53:27.831Z",
   "chatId": -1002232474263
 }
