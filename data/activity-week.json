@@ -25,9 +25,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 13,
+      "messages": 14,
       "reactions": 0,
-      "score": 26
+      "score": 28
     },
     "7330797950": {
       "id": 7330797950,
@@ -79,9 +79,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 7,
+      "messages": 8,
       "reactions": 0,
-      "score": 14
+      "score": 16
     },
     "7398726478": {
       "id": 7398726478,
@@ -220,6 +220,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-16T23:03:30.386Z",
+  "updatedAt": "2026-10-17T01:16:56.837Z",
   "chatId": -1002232474263
 }
