@@ -187,9 +187,9 @@
       "username": null,
       "firstName": "Gafuri",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "5419606101": {
       "id": 5419606101,
@@ -238,6 +238,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-17T18:49:09.116Z",
+  "updatedAt": "2026-10-17T23:06:48.595Z",
   "chatId": -1002232474263
 }
