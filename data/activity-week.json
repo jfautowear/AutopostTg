@@ -187,9 +187,9 @@
       "username": null,
       "firstName": "Gafuri",
       "lastName": null,
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "5419606101": {
       "id": 5419606101,
@@ -226,9 +226,18 @@
       "messages": 13,
       "reactions": 0,
       "score": 26
+    },
+    "6007389920": {
+      "id": 6007389920,
+      "username": "Iwanez",
+      "firstName": "Captain iwank",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-17T16:02:42.863Z",
+  "updatedAt": "2026-10-17T16:31:02.057Z",
   "chatId": -1002232474263
 }
