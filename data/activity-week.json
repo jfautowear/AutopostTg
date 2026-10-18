@@ -25,9 +25,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 20,
+      "messages": 21,
       "reactions": 0,
-      "score": 40
+      "score": 42
     },
     "1908245743": {
       "id": 1908245743,
@@ -142,9 +142,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 15,
+      "messages": 19,
       "reactions": 0,
-      "score": 30
+      "score": 38
     },
     "6974624435": {
       "id": 6974624435,
@@ -265,6 +265,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-18T05:20:37.628Z",
+  "updatedAt": "2026-10-18T10:40:25.962Z",
   "chatId": -1002232474263
 }
