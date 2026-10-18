@@ -142,9 +142,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 19,
+      "messages": 23,
       "reactions": 0,
-      "score": 38
+      "score": 46
     },
     "6974624435": {
       "id": 6974624435,
@@ -262,9 +262,36 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "7917232793": {
+      "id": 7917232793,
+      "username": "mieeayamm_12",
+      "firstName": "Chaa♥ うみちゃん",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7850469257": {
+      "id": 7850469257,
+      "username": "ZtarZling",
+      "firstName": "ZtarZling",
+      "lastName": "👑",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6890989931": {
+      "id": 6890989931,
+      "username": null,
+      "firstName": "Ap",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-18T10:40:25.962Z",
+  "updatedAt": "2026-10-18T14:10:15.501Z",
   "chatId": -1002232474263
 }
