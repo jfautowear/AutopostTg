@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 6,
+      "messages": 9,
       "reactions": 0,
-      "score": 12
+      "score": 18
     },
     "1908245743": {
       "id": 1908245743,
@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 7,
+      "messages": 8,
       "reactions": 0,
-      "score": 14
+      "score": 16
     },
     "7330797950": {
       "id": 7330797950,
@@ -73,9 +73,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6117005832": {
+      "id": 6117005832,
+      "username": "Bonbon1682",
+      "firstName": "Ridho Yudhitiawan🇲🇨",
+      "lastName": "Putra@monsterland_bot🌱SEED🐈‍⬛🏎🍅♥️🐾✌️Yescoiner💲BLM🐣 KittyMint",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "6442107810": {
+      "id": 6442107810,
+      "username": "NUUUUUUNU",
+      "firstName": "Nuunuu 🌊 Wave",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-19T05:37:37.014Z",
+  "updatedAt": "2026-10-19T10:13:20.594Z",
   "chatId": -1002232474263
 }
