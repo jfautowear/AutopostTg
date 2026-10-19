@@ -34,9 +34,9 @@
       "username": null,
       "firstName": "P",
       "lastName": null,
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "5986077208": {
       "id": 5986077208,
@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 8,
+      "messages": 10,
       "reactions": 0,
-      "score": 16
+      "score": 20
     },
     "7330797950": {
       "id": 7330797950,
@@ -79,9 +79,9 @@
       "username": "Bonbon1682",
       "firstName": "Ridho Yudhitiawan🇲🇨",
       "lastName": "Putra@monsterland_bot🌱SEED🐈‍⬛🏎🍅♥️🐾✌️Yescoiner💲BLM🐣 KittyMint",
-      "messages": 2,
+      "messages": 7,
       "reactions": 0,
-      "score": 4
+      "score": 14
     },
     "6442107810": {
       "id": 6442107810,
@@ -91,9 +91,36 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "8195913206": {
+      "id": 8195913206,
+      "username": "BUGIS01",
+      "firstName": "Aqu4rius || Web3🇮🇩",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "6254886482": {
+      "id": 6254886482,
+      "username": "aldossm00",
+      "firstName": "Aldo",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-19T10:13:20.594Z",
+  "updatedAt": "2026-10-19T17:01:38.191Z",
   "chatId": -1002232474263
 }
