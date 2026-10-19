@@ -1,22 +1,22 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-18-21:00",
-  "lastPostedAt": "2026-10-18T14:30:51.886Z",
+  "lastPostedSlot": "2026-10-19-13:00",
+  "lastPostedAt": "2026-10-19T06:08:57.073Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:ARIA",
+      "at": "2026-10-19T06:08:57.073Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1242
+    },
     {
       "key": "topcoin:2026-10-18:b3",
       "at": "2026-10-18T14:30:51.886Z",
       "category": "topcoin",
       "chatId": "@jfnetworknet",
       "messageId": 1235
-    },
-    {
-      "key": "topcoin:2026-10-18:b2",
-      "at": "2026-10-18T10:55:02.585Z",
-      "category": "topcoin",
-      "chatId": "@jfnetworknet",
-      "messageId": 1233
     },
     {
       "key": "spot:OKX:SAND",
@@ -31,13 +31,6 @@
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1226
-    },
-    {
-      "key": "spot:Bitget:ICNT",
-      "at": "2026-10-17T04:15:17.904Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1224
     }
   ]
 }
