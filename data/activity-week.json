@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 10,
+      "messages": 16,
       "reactions": 0,
-      "score": 20
+      "score": 32
     },
     "1908245743": {
       "id": 1908245743,
@@ -97,9 +97,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "8195913206": {
       "id": 8195913206,
@@ -130,6 +130,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-20T00:38:26.716Z",
+  "updatedAt": "2026-10-20T05:20:09.307Z",
   "chatId": -1002232474263
 }
