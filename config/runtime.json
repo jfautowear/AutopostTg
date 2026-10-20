@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-20-13:00",
-  "lastPostedAt": "2026-10-20T11:25:15.063Z",
+  "lastPostedSlot": "2026-10-20-21:00",
+  "lastPostedAt": "2026-10-20T16:51:20.001Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-20:b3",
+      "at": "2026-10-20T16:51:20.000Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1249
+    },
     {
       "key": "spot:OKX:GRVT",
       "at": "2026-10-20T11:25:15.062Z",
