@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "1908245743": {
       "id": 1908245743,
@@ -61,9 +61,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8028556373": {
       "id": 8028556373,
@@ -118,9 +118,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "7761385580": {
+      "id": 7761385580,
+      "username": "nextrellic",
+      "firstName": "RELLIC",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-19T17:01:38.191Z",
+  "updatedAt": "2026-10-20T00:38:26.716Z",
   "chatId": -1002232474263
 }
