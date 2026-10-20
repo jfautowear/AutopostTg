@@ -1,22 +1,22 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-20-09:00",
-  "lastPostedAt": "2026-10-20T05:57:08.445Z",
+  "lastPostedSlot": "2026-10-20-13:00",
+  "lastPostedAt": "2026-10-20T11:25:15.063Z",
   "recentContent": [
+    {
+      "key": "spot:OKX:GRVT",
+      "at": "2026-10-20T11:25:15.062Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1248
+    },
     {
       "key": "spot:OKX:PHA",
       "at": "2026-10-20T05:57:08.444Z",
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1247
-    },
-    {
-      "key": "topcoin:2026-10-19:b3",
-      "at": "2026-10-19T14:36:35.371Z",
-      "category": "topcoin",
-      "chatId": "@jfnetworknet",
-      "messageId": 1245
     },
     {
       "key": "spot:Bitget:ARIA",
