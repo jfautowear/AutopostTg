@@ -34,9 +34,9 @@
       "username": null,
       "firstName": "P",
       "lastName": null,
-      "messages": 7,
+      "messages": 9,
       "reactions": 0,
-      "score": 14
+      "score": 18
     },
     "5986077208": {
       "id": 5986077208,
@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 11,
+      "messages": 15,
       "reactions": 0,
-      "score": 22
+      "score": 30
     },
     "7330797950": {
       "id": 7330797950,
@@ -70,9 +70,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "6117005832": {
       "id": 6117005832,
@@ -136,9 +136,36 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7859029890": {
+      "id": 7859029890,
+      "username": "sopandim846",
+      "firstName": "Sopandi",
+      "lastName": "Maulana #Lemonadempire",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8888570015": {
+      "id": 8888570015,
+      "username": "jalpgsoft",
+      "firstName": "Jal",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7332328699": {
+      "id": 7332328699,
+      "username": null,
+      "firstName": "Faisal",
+      "lastName": "Alwani",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-20T10:14:10.368Z",
+  "updatedAt": "2026-10-20T15:11:38.839Z",
   "chatId": -1002232474263
 }
