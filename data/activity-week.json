@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 23,
+      "messages": 35,
       "reactions": 0,
-      "score": 46
+      "score": 70
     },
     "1908245743": {
       "id": 1908245743,
@@ -70,9 +70,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6117005832": {
       "id": 6117005832,
@@ -97,18 +97,18 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "8195913206": {
       "id": 8195913206,
       "username": "BUGIS01",
       "firstName": "Aqu4rius || Web3🇮🇩",
       "lastName": null,
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "6254886482": {
       "id": 6254886482,
@@ -181,9 +181,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7917294462": {
+      "id": 7917294462,
+      "username": "Ukiekay",
+      "firstName": "Ukie",
+      "lastName": "Kay",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-21T05:50:33.129Z",
+  "updatedAt": "2026-10-21T11:27:08.088Z",
   "chatId": -1002232474263
 }
