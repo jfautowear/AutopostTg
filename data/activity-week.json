@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 21,
+      "messages": 23,
       "reactions": 0,
-      "score": 42
+      "score": 46
     },
     "1908245743": {
       "id": 1908245743,
@@ -34,9 +34,9 @@
       "username": null,
       "firstName": "P",
       "lastName": null,
-      "messages": 11,
+      "messages": 12,
       "reactions": 0,
-      "score": 22
+      "score": 24
     },
     "5986077208": {
       "id": 5986077208,
@@ -52,18 +52,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 15,
+      "messages": 16,
       "reactions": 0,
-      "score": 30
+      "score": 32
     },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "8028556373": {
       "id": 8028556373,
@@ -172,9 +172,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7413983731": {
+      "id": 7413983731,
+      "username": null,
+      "firstName": "Yoyon",
+      "lastName": "Suyono",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-21T00:55:28.176Z",
+  "updatedAt": "2026-10-21T05:50:33.129Z",
   "chatId": -1002232474263
 }
