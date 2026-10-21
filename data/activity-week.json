@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 35,
+      "messages": 44,
       "reactions": 0,
-      "score": 70
+      "score": 88
     },
     "1908245743": {
       "id": 1908245743,
@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 16,
+      "messages": 17,
       "reactions": 0,
-      "score": 32
+      "score": 34
     },
     "7330797950": {
       "id": 7330797950,
@@ -70,9 +70,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "6117005832": {
       "id": 6117005832,
@@ -97,18 +97,18 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "8195913206": {
       "id": 8195913206,
       "username": "BUGIS01",
       "firstName": "Aqu4rius || Web3🇮🇩",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6254886482": {
       "id": 6254886482,
@@ -133,9 +133,9 @@
       "username": "Iwanez",
       "firstName": "Captain iwank",
       "lastName": null,
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "7859029890": {
       "id": 7859029890,
@@ -190,9 +190,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6471837534": {
+      "id": 6471837534,
+      "username": null,
+      "firstName": "Rehan",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-21T11:27:08.088Z",
+  "updatedAt": "2026-10-21T16:04:30.816Z",
   "chatId": -1002232474263
 }
