@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-20-21:00",
-  "lastPostedAt": "2026-10-20T16:51:20.001Z",
+  "lastPostedSlot": "2026-10-21-09:00",
+  "lastPostedAt": "2026-10-21T04:32:51.935Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:RBRZE",
+      "at": "2026-10-21T04:32:51.935Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1251
+    },
     {
       "key": "topcoin:2026-10-20:b3",
       "at": "2026-10-20T16:51:20.000Z",
