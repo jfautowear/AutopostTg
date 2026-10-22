@@ -70,9 +70,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "6117005832": {
       "id": 6117005832,
@@ -199,9 +199,36 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8632145845": {
+      "id": 8632145845,
+      "username": null,
+      "firstName": "Maou",
+      "lastName": "@monsterland_bot",
+      "messages": 5,
+      "reactions": 0,
+      "score": 10
+    },
+    "7661802183": {
+      "id": 7661802183,
+      "username": "Roopppi",
+      "firstName": "Roopi",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "7398726478": {
+      "id": 7398726478,
+      "username": null,
+      "firstName": "Agis",
+      "lastName": "Tambunan",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-22T01:37:47.637Z",
+  "updatedAt": "2026-10-22T06:35:13.622Z",
   "chatId": -1002232474263
 }
