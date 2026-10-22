@@ -106,9 +106,9 @@
       "username": "BUGIS01",
       "firstName": "Aqu4rius || Web3🇮🇩",
       "lastName": null,
-      "messages": 4,
+      "messages": 8,
       "reactions": 0,
-      "score": 8
+      "score": 16
     },
     "6254886482": {
       "id": 6254886482,
@@ -205,9 +205,9 @@
       "username": null,
       "firstName": "Maou",
       "lastName": "@monsterland_bot",
-      "messages": 7,
+      "messages": 12,
       "reactions": 0,
-      "score": 14
+      "score": 24
     },
     "7661802183": {
       "id": 7661802183,
@@ -223,12 +223,21 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 3,
+      "messages": 8,
       "reactions": 0,
-      "score": 6
+      "score": 16
+    },
+    "7434001366": {
+      "id": 7434001366,
+      "username": "Zz3b0",
+      "firstName": "Lathif lathifh",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W42",
-  "updatedAt": "2026-10-22T12:24:01.686Z",
+  "updatedAt": "2026-10-22T17:30:47.158Z",
   "chatId": -1002232474263
 }
