@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-23-13:00",
-  "lastPostedAt": "2026-10-23T09:58:34.949Z",
+  "lastPostedSlot": "2026-10-23-21:00",
+  "lastPostedAt": "2026-10-23T14:57:01.435Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-23:b3",
+      "at": "2026-10-23T14:57:01.434Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1264
+    },
     {
       "key": "spot:Bitget:IRYS",
       "at": "2026-10-23T09:58:34.949Z",
