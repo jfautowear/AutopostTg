@@ -244,9 +244,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8624951759": {
+      "id": 8624951759,
+      "username": null,
+      "firstName": "Asep",
+      "lastName": "Sukmara",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7704701141": {
+      "id": 7704701141,
+      "username": "ajiajot",
+      "firstName": "Jhon_starlex",
+      "lastName": "$PERIA",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-23T17:36:55.615Z",
+  "updatedAt": "2026-10-23T20:38:03.452Z",
   "chatId": -1002232474263
 }
