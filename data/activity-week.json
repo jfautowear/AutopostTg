@@ -34,9 +34,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 14,
+      "messages": 15,
       "reactions": 0,
-      "score": 28
+      "score": 30
     },
     "5986077208": {
       "id": 5986077208,
@@ -70,9 +70,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 7,
+      "messages": 8,
       "reactions": 0,
-      "score": 14
+      "score": 16
     },
     "6117005832": {
       "id": 6117005832,
@@ -223,9 +223,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 14,
+      "messages": 15,
       "reactions": 0,
-      "score": 28
+      "score": 30
     },
     "7434001366": {
       "id": 7434001366,
@@ -277,12 +277,12 @@
       "username": "erwansn75",
       "firstName": "Erwan Seti",
       "lastName": "Nugroho",
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-24T07:09:45.389Z",
+  "updatedAt": "2026-10-24T12:01:11.015Z",
   "chatId": -1002232474263
 }
