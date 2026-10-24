@@ -2,6 +2,15 @@
   "weekKey": "2026-W43",
   "chatRef": "@caricuanhp",
   "users": {
+    "1020253292": {
+      "id": 1020253292,
+      "username": "P2earnnn",
+      "firstName": "Rkuzan",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "1836684121": {
       "id": 1836684121,
       "username": "Lumerinx",
@@ -223,9 +232,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 15,
+      "messages": 22,
       "reactions": 0,
-      "score": 30
+      "score": 44
     },
     "7434001366": {
       "id": 7434001366,
@@ -283,6 +292,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-24T12:01:11.015Z",
+  "updatedAt": "2026-10-24T15:52:15.595Z",
   "chatId": -1002232474263
 }
