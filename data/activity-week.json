@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 18,
+      "messages": 19,
       "reactions": 0,
-      "score": 36
+      "score": 38
     },
     "7330797950": {
       "id": 7330797950,
@@ -133,9 +133,9 @@
       "username": "Iwanez",
       "firstName": "Captain iwank",
       "lastName": null,
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "7859029890": {
       "id": 7859029890,
@@ -271,9 +271,18 @@
       "messages": 2,
       "reactions": 0,
       "score": 4
+    },
+    "8665837176": {
+      "id": 8665837176,
+      "username": "erwansn75",
+      "firstName": "Erwan Seti",
+      "lastName": "Nugroho",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-24T05:18:42.941Z",
+  "updatedAt": "2026-10-24T07:09:45.389Z",
   "chatId": -1002232474263
 }
