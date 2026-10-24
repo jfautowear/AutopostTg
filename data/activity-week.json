@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 63,
+      "messages": 64,
       "reactions": 0,
-      "score": 126
+      "score": 128
     },
     "1908245743": {
       "id": 1908245743,
@@ -32,11 +32,11 @@
     "8975933811": {
       "id": 8975933811,
       "username": null,
-      "firstName": "P",
+      "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 12,
+      "messages": 14,
       "reactions": 0,
-      "score": 24
+      "score": 28
     },
     "5986077208": {
       "id": 5986077208,
@@ -52,18 +52,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 17,
+      "messages": 18,
       "reactions": 0,
-      "score": 34
+      "score": 36
     },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "8028556373": {
       "id": 8028556373,
@@ -262,9 +262,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6940051009": {
+      "id": 6940051009,
+      "username": null,
+      "firstName": "ANDIRA",
+      "lastName": "Andira Dira",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-24T01:57:12.655Z",
+  "updatedAt": "2026-10-24T05:18:42.941Z",
   "chatId": -1002232474263
 }
