@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 69,
+      "messages": 70,
       "reactions": 0,
-      "score": 138
+      "score": 140
     },
     "1908245743": {
       "id": 1908245743,
@@ -142,9 +142,9 @@
       "username": "Iwanez",
       "firstName": "Captain iwank",
       "lastName": null,
-      "messages": 5,
+      "messages": 7,
       "reactions": 0,
-      "score": 10
+      "score": 14
     },
     "7859029890": {
       "id": 7859029890,
@@ -289,9 +289,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "8710461435": {
+      "id": 8710461435,
+      "username": null,
+      "firstName": "Gafuri",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-24T23:22:48.084Z",
+  "updatedAt": "2026-10-25T05:35:41.230Z",
   "chatId": -1002232474263
 }
