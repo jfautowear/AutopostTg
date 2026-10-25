@@ -79,9 +79,9 @@
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "6117005832": {
       "id": 6117005832,
@@ -232,9 +232,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 22,
+      "messages": 25,
       "reactions": 0,
-      "score": 44
+      "score": 50
     },
     "7434001366": {
       "id": 7434001366,
@@ -298,9 +298,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7087128574": {
+      "id": 7087128574,
+      "username": null,
+      "firstName": "Qwerty",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-25T05:35:41.230Z",
+  "updatedAt": "2026-10-25T12:05:37.266Z",
   "chatId": -1002232474263
 }
