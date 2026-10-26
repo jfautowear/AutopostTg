@@ -2,6 +2,15 @@
   "weekKey": "2026-W44",
   "chatRef": "@caricuanhp",
   "users": {
+    "1836684121": {
+      "id": 1836684121,
+      "username": "Lumerinx",
+      "firstName": "Lumerinx",
+      "lastName": null,
+      "messages": 6,
+      "reactions": 0,
+      "score": 12
+    },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
@@ -19,9 +28,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "8975933811": {
+      "id": 8975933811,
+      "username": null,
+      "firstName": "PEMBURU CUAN",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-25T21:43:21.099Z",
+  "updatedAt": "2026-10-26T05:43:02.469Z",
   "chatId": -1002232474263
 }
