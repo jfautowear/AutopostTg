@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-27-13:00",
-  "lastPostedAt": "2026-10-27T10:25:02.192Z",
+  "lastPostedSlot": "2026-10-27-21:00",
+  "lastPostedAt": "2026-10-27T16:27:35.013Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-10-27:b3",
+      "at": "2026-10-27T16:27:35.012Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1292
+    },
     {
       "key": "spot:Bitget:HUMA",
       "at": "2026-10-27T10:25:02.191Z",
