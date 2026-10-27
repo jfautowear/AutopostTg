@@ -55,9 +55,45 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6046806167": {
+      "id": 6046806167,
+      "username": "Andrehalim77",
+      "firstName": "Budi",
+      "lastName": "Santoso PIXLANDS",
+      "messages": 10,
+      "reactions": 0,
+      "score": 20
+    },
+    "8028556373": {
+      "id": 8028556373,
+      "username": "Hanuunal",
+      "firstName": "Flying",
+      "lastName": "'S",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5826653300": {
+      "id": 5826653300,
+      "username": "PointBlank4",
+      "firstName": "Abyss",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "6642380056": {
+      "id": 6642380056,
+      "username": null,
+      "firstName": "Shandy",
+      "lastName": "Farhan",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-27T08:19:39.451Z",
+  "updatedAt": "2026-10-27T14:44:03.505Z",
   "chatId": -1002232474263
 }
