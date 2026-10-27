@@ -7,18 +7,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 20,
+      "messages": 21,
       "reactions": 0,
-      "score": 40
+      "score": 42
     },
     "7330797950": {
       "id": 7330797950,
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "7083070595": {
       "id": 7083070595,
@@ -79,9 +79,9 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "6642380056": {
       "id": 6642380056,
@@ -94,6 +94,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-27T14:44:03.505Z",
+  "updatedAt": "2026-10-27T23:14:56.809Z",
   "chatId": -1002232474263
 }
