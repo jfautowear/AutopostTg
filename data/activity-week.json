@@ -2,6 +2,15 @@
   "weekKey": "2026-W44",
   "chatRef": "@caricuanhp",
   "users": {
+    "1344817226": {
+      "id": 1344817226,
+      "username": "Saikuro08",
+      "firstName": "Saikuro",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
+    },
     "1836684121": {
       "id": 1836684121,
       "username": "Lumerinx",
@@ -103,6 +112,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-28T08:53:35.675Z",
+  "updatedAt": "2026-10-28T15:49:18.291Z",
   "chatId": -1002232474263
 }
