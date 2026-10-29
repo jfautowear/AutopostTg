@@ -34,9 +34,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "7083070595": {
       "id": 7083070595,
@@ -70,9 +70,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6046806167": {
       "id": 6046806167,
@@ -157,6 +157,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-29T13:25:50.185Z",
+  "updatedAt": "2026-10-29T23:18:11.202Z",
   "chatId": -1002232474263
 }
