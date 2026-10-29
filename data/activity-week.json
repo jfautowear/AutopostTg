@@ -16,9 +16,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 28,
+      "messages": 29,
       "reactions": 0,
-      "score": 56
+      "score": 58
+    },
+    "1908245743": {
+      "id": 1908245743,
+      "username": "Dedisyahputra11",
+      "firstName": "Dedi#CrownVillage👑#Grassland@VictorsCompanyBot⚡️",
+      "lastName": "Syahputra | InterLink Ambassador👁️|🐾 #Lemonadempire",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     },
     "7330797950": {
       "id": 7330797950,
@@ -43,9 +52,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "5203244900": {
       "id": 5203244900,
@@ -61,9 +70,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "6046806167": {
       "id": 6046806167,
@@ -127,9 +136,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8368832872": {
+      "id": 8368832872,
+      "username": "vvhawz",
+      "firstName": "ldya",
+      "lastName": "rahmi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-29T06:42:14.935Z",
+  "updatedAt": "2026-10-29T13:25:50.185Z",
   "chatId": -1002232474263
 }
