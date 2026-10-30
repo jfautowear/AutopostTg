@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 29,
+      "messages": 31,
       "reactions": 0,
-      "score": 58
+      "score": 62
     },
     "1908245743": {
       "id": 1908245743,
@@ -52,9 +52,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 2,
+      "messages": 4,
       "reactions": 0,
-      "score": 4
+      "score": 8
     },
     "5203244900": {
       "id": 5203244900,
@@ -70,9 +70,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "6046806167": {
       "id": 6046806167,
@@ -133,9 +133,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8368832872": {
       "id": 8368832872,
@@ -154,9 +154,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7661802183": {
+      "id": 7661802183,
+      "username": "Roopppi",
+      "firstName": "Roopi",
+      "lastName": null,
+      "messages": 8,
+      "reactions": 0,
+      "score": 16
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-29T23:18:11.202Z",
+  "updatedAt": "2026-10-30T02:42:23.760Z",
   "chatId": -1002232474263
 }
