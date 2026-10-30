@@ -70,27 +70,27 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 5,
+      "messages": 7,
       "reactions": 0,
-      "score": 10
+      "score": 14
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 20,
+      "messages": 21,
       "reactions": 0,
-      "score": 40
+      "score": 42
     },
     "8028556373": {
       "id": 8028556373,
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "5826653300": {
       "id": 5826653300,
@@ -151,18 +151,18 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "7434001366": {
       "id": 7434001366,
@@ -175,6 +175,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W43",
-  "updatedAt": "2026-10-30T06:43:30.090Z",
+  "updatedAt": "2026-10-30T15:52:52.760Z",
   "chatId": -1002232474263
 }
