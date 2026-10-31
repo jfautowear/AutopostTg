@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-10-31-09:00",
-  "lastPostedAt": "2026-10-31T05:24:30.342Z",
+  "lastPostedSlot": "2026-10-31-19:00",
+  "lastPostedAt": "2026-10-31T12:12:57.617Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:RFMC",
+      "at": "2026-10-31T12:12:57.616Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1313
+    },
     {
       "key": "spot:Bitget:AIN",
       "at": "2026-10-31T05:24:30.342Z",
