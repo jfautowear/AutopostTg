@@ -70,9 +70,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "6046806167": {
       "id": 6046806167,
@@ -115,9 +115,9 @@
       "username": null,
       "firstName": "Maou@EgglandGameBot",
       "lastName": "@monsterland_bot",
-      "messages": 9,
+      "messages": 15,
       "reactions": 0,
-      "score": 18
+      "score": 30
     },
     "6190948524": {
       "id": 6190948524,
@@ -202,6 +202,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-01T07:04:24.390Z",
+  "updatedAt": "2026-11-01T09:38:43.550Z",
   "chatId": -1002232474263
 }
