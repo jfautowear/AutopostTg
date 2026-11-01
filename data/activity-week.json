@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 34,
+      "messages": 35,
       "reactions": 0,
-      "score": 68
+      "score": 70
     },
     "1908245743": {
       "id": 1908245743,
@@ -34,18 +34,18 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "7083070595": {
       "id": 7083070595,
       "username": "dipdia123",
       "firstName": "Dia",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "8975933811": {
       "id": 8975933811,
@@ -124,9 +124,9 @@
       "username": "adrew7777",
       "firstName": "Achai",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "7704701141": {
       "id": 7704701141,
@@ -202,6 +202,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-10-31T23:21:22.059Z",
+  "updatedAt": "2026-11-01T02:29:16.779Z",
   "chatId": -1002232474263
 }
