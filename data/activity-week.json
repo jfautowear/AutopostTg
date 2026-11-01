@@ -10,9 +10,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8665837176": {
+      "id": 8665837176,
+      "username": "erwansn75",
+      "firstName": "Erwan Seti",
+      "lastName": "Nugroho",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7398726478": {
+      "id": 7398726478,
+      "username": null,
+      "firstName": "Agis",
+      "lastName": "Tambunan",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-01T20:43:27.646Z",
+  "updatedAt": "2026-11-01T23:57:22.307Z",
   "chatId": -1002232474263
 }
