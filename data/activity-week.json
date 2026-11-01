@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 35,
+      "messages": 38,
       "reactions": 0,
-      "score": 70
+      "score": 76
     },
     "1908245743": {
       "id": 1908245743,
@@ -79,18 +79,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 23,
+      "messages": 24,
       "reactions": 0,
-      "score": 46
+      "score": 48
     },
     "8028556373": {
       "id": 8028556373,
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "5826653300": {
       "id": 5826653300,
@@ -113,11 +113,11 @@
     "8632145845": {
       "id": 8632145845,
       "username": null,
-      "firstName": "Maou",
+      "firstName": "Maou@EgglandGameBot",
       "lastName": "@monsterland_bot",
-      "messages": 1,
+      "messages": 9,
       "reactions": 0,
-      "score": 2
+      "score": 18
     },
     "6190948524": {
       "id": 6190948524,
@@ -160,9 +160,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 11,
+      "messages": 12,
       "reactions": 0,
-      "score": 22
+      "score": 24
     },
     "7434001366": {
       "id": 7434001366,
@@ -202,6 +202,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-01T02:29:16.779Z",
+  "updatedAt": "2026-11-01T07:04:24.390Z",
   "chatId": -1002232474263
 }
