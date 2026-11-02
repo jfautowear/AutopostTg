@@ -7,18 +7,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 2,
+      "messages": 4,
       "reactions": 0,
-      "score": 4
+      "score": 8
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8665837176": {
       "id": 8665837176,
@@ -34,9 +34,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "8975933811": {
       "id": 8975933811,
@@ -52,9 +52,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 6,
+      "messages": 9,
       "reactions": 0,
-      "score": 12
+      "score": 18
     },
     "8632145845": {
       "id": 8632145845,
@@ -79,9 +79,9 @@
       "username": "Bizz1r",
       "firstName": "Mf",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "5978663615": {
       "id": 5978663615,
@@ -91,9 +91,18 @@
       "messages": 3,
       "reactions": 0,
       "score": 6
+    },
+    "8605081573": {
+      "id": 8605081573,
+      "username": null,
+      "firstName": "Gina",
+      "lastName": "Oconnell",
+      "messages": 7,
+      "reactions": 0,
+      "score": 14
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-02T13:53:35.375Z",
+  "updatedAt": "2026-11-02T22:39:03.513Z",
   "chatId": -1002232474263
 }
