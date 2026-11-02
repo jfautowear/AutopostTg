@@ -2,6 +2,15 @@
   "weekKey": "2026-W45",
   "chatRef": "@caricuanhp",
   "users": {
+    "1836684121": {
+      "id": 1836684121,
+      "username": "Lumerinx",
+      "firstName": "Lumerinx",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
@@ -16,9 +25,9 @@
       "username": "erwansn75",
       "firstName": "Erwan Seti",
       "lastName": "Nugroho",
-      "messages": 1,
+      "messages": 4,
       "reactions": 0,
-      "score": 2
+      "score": 8
     },
     "7398726478": {
       "id": 7398726478,
@@ -28,9 +37,36 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8975933811": {
+      "id": 8975933811,
+      "username": null,
+      "firstName": "PEMBURU CUAN",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
+    },
+    "6046806167": {
+      "id": 6046806167,
+      "username": "Andrehalim77",
+      "firstName": "Budi",
+      "lastName": "Santoso PIXLANDS",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "8632145845": {
+      "id": 8632145845,
+      "username": "Maousensei",
+      "firstName": "Maou@EgglandGameBot",
+      "lastName": "@monsterland_bot",
+      "messages": 12,
+      "reactions": 0,
+      "score": 24
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-01T23:57:22.307Z",
+  "updatedAt": "2026-11-02T05:47:41.536Z",
   "chatId": -1002232474263
 }
