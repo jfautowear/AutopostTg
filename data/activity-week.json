@@ -43,27 +43,27 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 6,
+      "messages": 9,
       "reactions": 0,
-      "score": 12
+      "score": 18
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 10,
+      "messages": 11,
       "reactions": 0,
-      "score": 20
+      "score": 22
     },
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
       "firstName": "Maou@EgglandGameBot",
       "lastName": "@monsterland_bot",
-      "messages": 29,
+      "messages": 32,
       "reactions": 0,
-      "score": 58
+      "score": 64
     },
     "8028556373": {
       "id": 8028556373,
@@ -121,6 +121,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-03T03:43:21.920Z",
+  "updatedAt": "2026-11-03T11:24:36.128Z",
   "chatId": -1002232474263
 }
