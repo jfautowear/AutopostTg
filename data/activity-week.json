@@ -7,9 +7,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 4,
+      "messages": 6,
       "reactions": 0,
-      "score": 8
+      "score": 12
     },
     "7661802183": {
       "id": 7661802183,
@@ -52,18 +52,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
       "firstName": "Maou@EgglandGameBot",
       "lastName": "@monsterland_bot",
-      "messages": 19,
+      "messages": 29,
       "reactions": 0,
-      "score": 38
+      "score": 58
     },
     "8028556373": {
       "id": 8028556373,
@@ -100,9 +100,27 @@
       "messages": 7,
       "reactions": 0,
       "score": 14
+    },
+    "7330797950": {
+      "id": 7330797950,
+      "username": "Hari_pornomo",
+      "firstName": "Kotaro 👁️",
+      "lastName": "Minami",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5826653300": {
+      "id": 5826653300,
+      "username": "PointBlank4",
+      "firstName": "Abyss",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-02T22:39:03.513Z",
+  "updatedAt": "2026-11-03T03:43:21.920Z",
   "chatId": -1002232474263
 }
