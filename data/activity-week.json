@@ -43,9 +43,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 16,
+      "messages": 17,
       "reactions": 0,
-      "score": 32
+      "score": 34
     },
     "6046806167": {
       "id": 6046806167,
@@ -59,11 +59,11 @@
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
-      "firstName": "Maou@EgglandGameBot",
+      "firstName": "Maou",
       "lastName": "@monsterland_bot",
-      "messages": 40,
+      "messages": 42,
       "reactions": 0,
-      "score": 80
+      "score": 84
     },
     "8028556373": {
       "id": 8028556373,
@@ -88,9 +88,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 8,
+      "messages": 11,
       "reactions": 0,
-      "score": 16
+      "score": 22
     },
     "8605081573": {
       "id": 8605081573,
@@ -130,6 +130,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-04T07:11:00.284Z",
+  "updatedAt": "2026-11-04T11:26:27.788Z",
   "chatId": -1002232474263
 }
