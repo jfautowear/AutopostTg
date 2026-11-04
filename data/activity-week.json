@@ -16,9 +16,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 2,
+      "messages": 4,
       "reactions": 0,
-      "score": 4
+      "score": 8
     },
     "8665837176": {
       "id": 8665837176,
@@ -52,18 +52,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 15,
+      "messages": 16,
       "reactions": 0,
-      "score": 30
+      "score": 32
     },
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
       "firstName": "Maou",
       "lastName": "@monsterland_bot",
-      "messages": 42,
+      "messages": 43,
       "reactions": 0,
-      "score": 84
+      "score": 86
     },
     "8028556373": {
       "id": 8028556373,
@@ -88,9 +88,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 11,
+      "messages": 13,
       "reactions": 0,
-      "score": 22
+      "score": 26
     },
     "8605081573": {
       "id": 8605081573,
@@ -124,12 +124,30 @@
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 5,
+      "messages": 7,
       "reactions": 0,
-      "score": 10
+      "score": 14
+    },
+    "7434001366": {
+      "id": 7434001366,
+      "username": "Zz3b0",
+      "firstName": "Lathif lathifh",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7071899311": {
+      "id": 7071899311,
+      "username": "byinsom1",
+      "firstName": "By",
+      "lastName": "Insom",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-04T11:26:27.788Z",
+  "updatedAt": "2026-11-04T18:48:00.616Z",
   "chatId": -1002232474263
 }
