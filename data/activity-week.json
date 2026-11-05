@@ -59,20 +59,20 @@
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
-      "firstName": "Maou@EgglandGameBot",
+      "firstName": "Maou@EgglandGameBot@VictorEmpireBot",
       "lastName": "@monsterland_bot",
-      "messages": 53,
+      "messages": 63,
       "reactions": 0,
-      "score": 106
+      "score": 126
     },
     "8028556373": {
       "id": 8028556373,
       "username": "Hanuunal",
       "firstName": "Flying",
       "lastName": "'S",
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6382350860": {
       "id": 6382350860,
@@ -151,9 +151,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 3,
+      "messages": 6,
       "reactions": 0,
-      "score": 6
+      "score": 12
     },
     "6774650380": {
       "id": 6774650380,
@@ -166,6 +166,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-05T07:38:45.950Z",
+  "updatedAt": "2026-11-05T14:54:16.447Z",
   "chatId": -1002232474263
 }
