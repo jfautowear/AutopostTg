@@ -1,9 +1,16 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-05-09:00",
-  "lastPostedAt": "2026-11-05T03:26:30.387Z",
+  "lastPostedSlot": "2026-11-05-19:00",
+  "lastPostedAt": "2026-11-05T12:11:22.350Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-11-05:b3",
+      "at": "2026-11-05T12:11:22.349Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1340
+    },
     {
       "key": "spot:Bitget:RSEZL",
       "at": "2026-11-05T03:26:30.367Z",
