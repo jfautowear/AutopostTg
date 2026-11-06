@@ -1,15 +1,15 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-05-19:00",
-  "lastPostedAt": "2026-11-05T12:11:22.350Z",
+  "lastPostedSlot": "2026-11-06-13:00",
+  "lastPostedAt": "2026-11-06T09:16:47.574Z",
   "recentContent": [
     {
-      "key": "topcoin:2026-11-05:b3",
-      "at": "2026-11-05T12:11:22.349Z",
-      "category": "topcoin",
+      "key": "spot:OKX:XUVXY",
+      "at": "2026-11-06T09:16:47.574Z",
+      "category": "spot",
       "chatId": "@jfnetworknet",
-      "messageId": 1340
+      "messageId": 1342
     },
     {
       "key": "spot:Bitget:RSEZL",
@@ -17,13 +17,6 @@
       "category": "spot",
       "chatId": "@jfnetworknet",
       "messageId": 1337
-    },
-    {
-      "key": "spot:OKX:VVV",
-      "at": "2026-11-04T09:00:20.709Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1335
     },
     {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
