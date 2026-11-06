@@ -7,18 +7,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 18,
+      "messages": 19,
       "reactions": 0,
-      "score": 36
+      "score": 38
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 6,
+      "messages": 9,
       "reactions": 0,
-      "score": 12
+      "score": 18
     },
     "8665837176": {
       "id": 8665837176,
@@ -88,9 +88,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 13,
+      "messages": 14,
       "reactions": 0,
-      "score": 26
+      "score": 28
     },
     "8605081573": {
       "id": 8605081573,
@@ -133,9 +133,9 @@
       "username": "Zz3b0",
       "firstName": "Lathif lathifh",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7071899311": {
       "id": 7071899311,
@@ -163,9 +163,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8710461435": {
+      "id": 8710461435,
+      "username": null,
+      "firstName": "Gafuri@ClarksonMinerBot",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W44",
-  "updatedAt": "2026-11-06T07:35:31.967Z",
+  "updatedAt": "2026-11-06T16:16:19.881Z",
   "chatId": -1002232474263
 }
