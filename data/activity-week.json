@@ -7,18 +7,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 21,
+      "messages": 22,
       "reactions": 0,
-      "score": 42
+      "score": 44
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "8665837176": {
       "id": 8665837176,
@@ -43,18 +43,18 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 21,
+      "messages": 26,
       "reactions": 0,
-      "score": 42
+      "score": 52
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 18,
+      "messages": 23,
       "reactions": 0,
-      "score": 36
+      "score": 46
     },
     "8632145845": {
       "id": 8632145845,
@@ -172,9 +172,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7486062183": {
+      "id": 7486062183,
+      "username": "Wanzy_manjiro",
+      "firstName": "Wanzyy",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-07T01:13:32.105Z",
+  "updatedAt": "2026-11-07T06:46:58.801Z",
   "chatId": -1002232474263
 }
