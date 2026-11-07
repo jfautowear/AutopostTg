@@ -178,9 +178,9 @@
       "username": null,
       "firstName": "Gafuri@ClarksonMinerBot",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7486062183": {
       "id": 7486062183,
@@ -226,9 +226,18 @@
       "messages": 2,
       "reactions": 0,
       "score": 4
+    },
+    "7637259037": {
+      "id": 7637259037,
+      "username": null,
+      "firstName": "Xworld",
+      "lastName": "Id",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-07T18:52:29.210Z",
+  "updatedAt": "2026-11-07T22:34:17.095Z",
   "chatId": -1002232474263
 }
