@@ -7,18 +7,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 22,
+      "messages": 24,
       "reactions": 0,
-      "score": 44
+      "score": 48
     },
     "1837441018": {
       "id": 1837441018,
       "username": "Ricksatriai",
       "firstName": "Rick",
       "lastName": null,
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "7661802183": {
       "id": 7661802183,
@@ -52,18 +52,18 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 29,
+      "messages": 30,
       "reactions": 0,
-      "score": 58
+      "score": 60
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
-      "lastName": "Santoso PIXLANDS",
-      "messages": 28,
+      "lastName": "Santoso",
+      "messages": 36,
       "reactions": 0,
-      "score": 56
+      "score": 72
     },
     "8632145845": {
       "id": 8632145845,
@@ -97,9 +97,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 18,
+      "messages": 20,
       "reactions": 0,
-      "score": 36
+      "score": 40
     },
     "8605081573": {
       "id": 8605081573,
@@ -124,9 +124,9 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 7,
+      "messages": 12,
       "reactions": 0,
-      "score": 14
+      "score": 24
     },
     "8447065352": {
       "id": 8447065352,
@@ -214,9 +214,9 @@
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 2,
+      "messages": 6,
       "reactions": 0,
-      "score": 4
+      "score": 12
     },
     "8135265158": {
       "id": 8135265158,
@@ -235,9 +235,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6925007342": {
+      "id": 6925007342,
+      "username": null,
+      "firstName": "Pepsodent",
+      "lastName": "99",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-08T01:48:41.844Z",
+  "updatedAt": "2026-11-08T06:53:30.408Z",
   "chatId": -1002232474263
 }
