@@ -16,9 +16,9 @@
       "username": "Ricksatriai",
       "firstName": "Rick",
       "lastName": null,
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "7661802183": {
       "id": 7661802183,
@@ -52,9 +52,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 30,
+      "messages": 31,
       "reactions": 0,
-      "score": 60
+      "score": 62
     },
     "6046806167": {
       "id": 6046806167,
@@ -97,9 +97,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 20,
+      "messages": 22,
       "reactions": 0,
-      "score": 40
+      "score": 44
     },
     "8605081573": {
       "id": 8605081573,
@@ -115,9 +115,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "5826653300": {
       "id": 5826653300,
@@ -214,9 +214,9 @@
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 6,
+      "messages": 7,
       "reactions": 0,
-      "score": 12
+      "score": 14
     },
     "8135265158": {
       "id": 8135265158,
@@ -256,6 +256,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-08T08:07:40.475Z",
+  "updatedAt": "2026-11-08T15:10:57.200Z",
   "chatId": -1002232474263
 }
