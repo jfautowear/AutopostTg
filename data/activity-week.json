@@ -7,27 +7,27 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 2,
+      "messages": 4,
       "reactions": 0,
-      "score": 4
+      "score": 8
     },
     "8447065352": {
       "id": 8447065352,
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 1,
+      "messages": 8,
       "reactions": 0,
-      "score": 2
+      "score": 16
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
-      "lastName": "Santoso",
-      "messages": 3,
+      "lastName": "Santoso PIXLANDS",
+      "messages": 9,
       "reactions": 0,
-      "score": 6
+      "score": 18
     },
     "7596705608": {
       "id": 7596705608,
@@ -79,12 +79,57 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
+      "messages": 9,
+      "reactions": 0,
+      "score": 18
+    },
+    "8028556373": {
+      "id": 8028556373,
+      "username": "Hanuunal",
+      "firstName": "Flying",
+      "lastName": "'S",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5826653300": {
+      "id": 5826653300,
+      "username": "PointBlank4",
+      "firstName": "Abyss",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "7217581703": {
+      "id": 7217581703,
+      "username": "ahongsigma",
+      "firstName": "ahong",
+      "lastName": null,
+      "messages": 5,
+      "reactions": 0,
+      "score": 10
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 4,
+      "reactions": 0,
+      "score": 8
+    },
+    "8014790966": {
+      "id": 8014790966,
+      "username": "Mas_irul",
+      "firstName": "Mas",
+      "lastName": "i",
       "messages": 1,
       "reactions": 0,
       "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-09T02:44:41.517Z",
+  "updatedAt": "2026-11-09T10:26:04.199Z",
   "chatId": -1002232474263
 }
