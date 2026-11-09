@@ -25,9 +25,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso",
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "7596705608": {
       "id": 7596705608,
@@ -46,9 +46,45 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8263705448": {
+      "id": 8263705448,
+      "username": null,
+      "firstName": "marco",
+      "lastName": "💰XWorld",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7330797950": {
+      "id": 7330797950,
+      "username": "Hari_pornomo",
+      "firstName": "Kotaro 👁️",
+      "lastName": "Minami",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7434001366": {
+      "id": 7434001366,
+      "username": "Zz3b0",
+      "firstName": "Lathif lathifh",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8975933811": {
+      "id": 8975933811,
+      "username": null,
+      "firstName": "PEMBURU CUAN",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-08T23:12:47.854Z",
+  "updatedAt": "2026-11-09T02:44:41.517Z",
   "chatId": -1002232474263
 }
