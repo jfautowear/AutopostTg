@@ -2,6 +2,15 @@
   "weekKey": "2026-W46",
   "chatRef": "@caricuanhp",
   "users": {
+    "652192072": {
+      "id": 652192072,
+      "username": "ZayJII",
+      "firstName": "Perlubangan",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "1836684121": {
       "id": 1836684121,
       "username": "Lumerinx",
@@ -142,9 +151,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": "⏳MY AGE APP",
-      "messages": 6,
+      "messages": 8,
       "reactions": 0,
-      "score": 12
+      "score": 16
     },
     "7083070595": {
       "id": 7083070595,
@@ -172,9 +181,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8195913206": {
+      "id": 8195913206,
+      "username": "BUGIS01",
+      "firstName": "Aqu4rius || Web3🇮🇩",
+      "lastName": null,
+      "messages": 4,
+      "reactions": 0,
+      "score": 8
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-10T11:38:36.585Z",
+  "updatedAt": "2026-11-10T18:50:24.716Z",
   "chatId": -1002232474263
 }
