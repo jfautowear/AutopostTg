@@ -7,27 +7,27 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 9,
+      "messages": 13,
       "reactions": 0,
-      "score": 18
+      "score": 26
     },
     "8447065352": {
       "id": 8447065352,
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 12,
+      "messages": 14,
       "reactions": 0,
-      "score": 24
+      "score": 28
     },
     "7596705608": {
       "id": 7596705608,
@@ -52,9 +52,9 @@
       "username": null,
       "firstName": "marco",
       "lastName": "💰XWorld",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7330797950": {
       "id": 7330797950,
@@ -106,9 +106,9 @@
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 10,
+      "messages": 14,
       "reactions": 0,
-      "score": 20
+      "score": 28
     },
     "5978663615": {
       "id": 5978663615,
@@ -131,20 +131,20 @@
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
-      "firstName": "Maou@EgglandGameBot@VictorEmpireBot",
+      "firstName": "Maou@EgglandGameBot",
       "lastName": "@ChickenLandBot",
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": "⏳MY AGE APP",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "7083070595": {
       "id": 7083070595,
@@ -163,9 +163,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8665837176": {
+      "id": 8665837176,
+      "username": "erwansn75",
+      "firstName": "Erwan Seti",
+      "lastName": "Nugroho ⏳MY AGE APP",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-10T03:26:18.045Z",
+  "updatedAt": "2026-11-10T07:57:34.931Z",
   "chatId": -1002232474263
 }
