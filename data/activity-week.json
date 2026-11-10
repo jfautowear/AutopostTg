@@ -7,27 +7,27 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 13,
+      "messages": 14,
       "reactions": 0,
-      "score": 26
+      "score": 28
     },
     "8447065352": {
       "id": 8447065352,
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 9,
+      "messages": 11,
       "reactions": 0,
-      "score": 18
+      "score": 22
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 14,
+      "messages": 17,
       "reactions": 0,
-      "score": 28
+      "score": 34
     },
     "7596705608": {
       "id": 7596705608,
@@ -106,9 +106,9 @@
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 14,
+      "messages": 16,
       "reactions": 0,
-      "score": 28
+      "score": 32
     },
     "5978663615": {
       "id": 5978663615,
@@ -175,6 +175,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-10T07:57:34.931Z",
+  "updatedAt": "2026-11-10T11:38:36.585Z",
   "chatId": -1002232474263
 }
