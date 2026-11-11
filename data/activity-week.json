@@ -106,27 +106,27 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 16,
+      "messages": 18,
       "reactions": 0,
-      "score": 32
+      "score": 36
     },
     "7217581703": {
       "id": 7217581703,
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 24,
+      "messages": 27,
       "reactions": 0,
-      "score": 48
+      "score": 54
     },
     "5978663615": {
       "id": 5978663615,
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 15,
+      "messages": 18,
       "reactions": 0,
-      "score": 30
+      "score": 36
     },
     "8014790966": {
       "id": 8014790966,
@@ -199,9 +199,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6774650380": {
+      "id": 6774650380,
+      "username": "Aguslukman17",
+      "firstName": "Lukman88👁️",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "6482084976": {
+      "id": 6482084976,
+      "username": null,
+      "firstName": "Noy",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-11T13:51:04.833Z",
+  "updatedAt": "2026-11-11T21:08:13.123Z",
   "chatId": -1002232474263
 }
