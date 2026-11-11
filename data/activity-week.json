@@ -7,9 +7,9 @@
       "username": "ZayJII",
       "firstName": "Perlubangan",
       "lastName": null,
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "1836684121": {
       "id": 1836684121,
@@ -34,9 +34,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 23,
+      "messages": 25,
       "reactions": 0,
-      "score": 46
+      "score": 50
     },
     "7596705608": {
       "id": 7596705608,
@@ -88,9 +88,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 10,
+      "messages": 11,
       "reactions": 0,
-      "score": 20
+      "score": 22
     },
     "8028556373": {
       "id": 8028556373,
@@ -106,27 +106,27 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 2,
+      "messages": 16,
       "reactions": 0,
-      "score": 4
+      "score": 32
     },
     "7217581703": {
       "id": 7217581703,
       "username": "ahongsigma",
       "firstName": "ahong",
       "lastName": null,
-      "messages": 16,
+      "messages": 24,
       "reactions": 0,
-      "score": 32
+      "score": 48
     },
     "5978663615": {
       "id": 5978663615,
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 12,
+      "messages": 15,
       "reactions": 0,
-      "score": 24
+      "score": 30
     },
     "8014790966": {
       "id": 8014790966,
@@ -140,11 +140,11 @@
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
-      "firstName": "Maou@EgglandGameBot",
+      "firstName": "Maou@monsterland_bot",
       "lastName": "@ChickenLandBot",
-      "messages": 7,
+      "messages": 10,
       "reactions": 0,
-      "score": 14
+      "score": 20
     },
     "7661802183": {
       "id": 7661802183,
@@ -190,9 +190,18 @@
       "messages": 4,
       "reactions": 0,
       "score": 8
+    },
+    "5963422226": {
+      "id": 5963422226,
+      "username": "Zxcv20260",
+      "firstName": "Nda",
+      "lastName": "⏳MY AGE APP",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-11T07:27:28.559Z",
+  "updatedAt": "2026-11-11T13:51:04.833Z",
   "chatId": -1002232474263
 }
