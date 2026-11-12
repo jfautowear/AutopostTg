@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 17,
+      "messages": 19,
       "reactions": 0,
-      "score": 34
+      "score": 38
     },
     "8447065352": {
       "id": 8447065352,
@@ -113,11 +113,11 @@
     "7217581703": {
       "id": 7217581703,
       "username": "ahongsigma",
-      "firstName": "ahong",
+      "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 27,
+      "messages": 28,
       "reactions": 0,
-      "score": 54
+      "score": 56
     },
     "5978663615": {
       "id": 5978663615,
@@ -151,9 +151,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": "⏳MY AGE APP",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "7083070595": {
       "id": 7083070595,
@@ -220,6 +220,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-12T02:16:05.175Z",
+  "updatedAt": "2026-11-12T07:55:14.703Z",
   "chatId": -1002232474263
 }
