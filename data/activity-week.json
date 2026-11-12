@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 18,
+      "messages": 19,
       "reactions": 0,
-      "score": 36
+      "score": 38
     },
     "8014790966": {
       "id": 8014790966,
@@ -142,9 +142,9 @@
       "username": "Maousensei",
       "firstName": "Maou@monsterland_bot",
       "lastName": "@ChickenLandBot",
-      "messages": 12,
+      "messages": 14,
       "reactions": 0,
-      "score": 24
+      "score": 28
     },
     "7661802183": {
       "id": 7661802183,
@@ -229,6 +229,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-12T18:07:44.552Z",
+  "updatedAt": "2026-11-12T23:38:05.351Z",
   "chatId": -1002232474263
 }
