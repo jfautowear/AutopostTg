@@ -7,9 +7,9 @@
       "username": "ZayJII",
       "firstName": "Perlubangan",
       "lastName": null,
-      "messages": 6,
+      "messages": 10,
       "reactions": 0,
-      "score": 12
+      "score": 20
     },
     "1836684121": {
       "id": 1836684121,
@@ -34,9 +34,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 25,
+      "messages": 28,
       "reactions": 0,
-      "score": 50
+      "score": 56
     },
     "7596705608": {
       "id": 7596705608,
@@ -133,9 +133,9 @@
       "username": "Mas_irul",
       "firstName": "Mas",
       "lastName": "i",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8632145845": {
       "id": 8632145845,
@@ -151,9 +151,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": "⏳MY AGE APP",
-      "messages": 9,
+      "messages": 11,
       "reactions": 0,
-      "score": 18
+      "score": 22
     },
     "7083070595": {
       "id": 7083070595,
@@ -217,9 +217,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7340403296": {
+      "id": 7340403296,
+      "username": "Kanzgames",
+      "firstName": "Kanzzgames",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-12T09:57:13.382Z",
+  "updatedAt": "2026-11-12T18:07:44.552Z",
   "chatId": -1002232474263
 }
