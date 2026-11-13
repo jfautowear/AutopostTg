@@ -70,9 +70,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "7434001366": {
       "id": 7434001366,
@@ -115,18 +115,18 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 28,
+      "messages": 30,
       "reactions": 0,
-      "score": 56
+      "score": 60
     },
     "5978663615": {
       "id": 5978663615,
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 27,
+      "messages": 29,
       "reactions": 0,
-      "score": 54
+      "score": 58
     },
     "8014790966": {
       "id": 8014790966,
@@ -140,11 +140,11 @@
     "8632145845": {
       "id": 8632145845,
       "username": "Maousensei",
-      "firstName": "Maou@monsterland_bot",
+      "firstName": "Maou@monsterland_bot@Victors_Company_bot",
       "lastName": "@ChickenLandBot",
-      "messages": 14,
+      "messages": 16,
       "reactions": 0,
-      "score": 28
+      "score": 32
     },
     "7661802183": {
       "id": 7661802183,
@@ -226,9 +226,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7936262416": {
+      "id": 7936262416,
+      "username": null,
+      "firstName": "Aldo",
+      "lastName": "Rewaldi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-13T20:10:18.327Z",
+  "updatedAt": "2026-11-13T23:56:28.457Z",
   "chatId": -1002232474263
 }
