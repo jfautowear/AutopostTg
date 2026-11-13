@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 24,
+      "messages": 26,
       "reactions": 0,
-      "score": 48
+      "score": 52
     },
     "8447065352": {
       "id": 8447065352,
@@ -106,9 +106,9 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 25,
+      "messages": 26,
       "reactions": 0,
-      "score": 50
+      "score": 52
     },
     "7217581703": {
       "id": 7217581703,
@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 24,
+      "messages": 27,
       "reactions": 0,
-      "score": 48
+      "score": 54
     },
     "8014790966": {
       "id": 8014790966,
@@ -151,9 +151,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": "⏳MY AGE APP",
-      "messages": 12,
+      "messages": 13,
       "reactions": 0,
-      "score": 24
+      "score": 26
     },
     "7083070595": {
       "id": 7083070595,
@@ -229,6 +229,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-13T11:33:19.364Z",
+  "updatedAt": "2026-11-13T18:44:53.263Z",
   "chatId": -1002232474263
 }
