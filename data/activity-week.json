@@ -16,9 +16,9 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 23,
+      "messages": 24,
       "reactions": 0,
-      "score": 46
+      "score": 48
     },
     "8447065352": {
       "id": 8447065352,
@@ -70,9 +70,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "7434001366": {
       "id": 7434001366,
@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 21,
+      "messages": 23,
       "reactions": 0,
-      "score": 42
+      "score": 46
     },
     "8014790966": {
       "id": 8014790966,
@@ -229,6 +229,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-13T03:36:24.252Z",
+  "updatedAt": "2026-11-13T07:33:26.271Z",
   "chatId": -1002232474263
 }
