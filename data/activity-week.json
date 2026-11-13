@@ -88,9 +88,9 @@
       "username": null,
       "firstName": "PEMBURU CUAN",
       "lastName": null,
-      "messages": 11,
+      "messages": 12,
       "reactions": 0,
-      "score": 22
+      "score": 24
     },
     "8028556373": {
       "id": 8028556373,
@@ -106,9 +106,9 @@
       "username": "PointBlank4",
       "firstName": "Abyss",
       "lastName": null,
-      "messages": 19,
+      "messages": 25,
       "reactions": 0,
-      "score": 38
+      "score": 50
     },
     "7217581703": {
       "id": 7217581703,
@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 23,
+      "messages": 24,
       "reactions": 0,
-      "score": 46
+      "score": 48
     },
     "8014790966": {
       "id": 8014790966,
@@ -229,6 +229,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W45",
-  "updatedAt": "2026-11-13T07:33:26.271Z",
+  "updatedAt": "2026-11-13T11:33:19.364Z",
   "chatId": -1002232474263
 }
