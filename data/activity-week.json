@@ -7,9 +7,9 @@
       "username": "ZayJII",
       "firstName": "Perlubangan",
       "lastName": null,
-      "messages": 10,
+      "messages": 11,
       "reactions": 0,
-      "score": 20
+      "score": 22
     },
     "1836684121": {
       "id": 1836684121,
@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 31,
+      "messages": 34,
       "reactions": 0,
-      "score": 62
+      "score": 68
     },
     "8014790966": {
       "id": 8014790966,
@@ -256,6 +256,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-14T07:17:37.687Z",
+  "updatedAt": "2026-11-14T13:25:50.793Z",
   "chatId": -1002232474263
 }
