@@ -25,18 +25,18 @@
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 15,
+      "messages": 16,
       "reactions": 0,
-      "score": 30
+      "score": 32
     },
     "6046806167": {
       "id": 6046806167,
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 32,
+      "messages": 33,
       "reactions": 0,
-      "score": 64
+      "score": 66
     },
     "7596705608": {
       "id": 7596705608,
@@ -124,9 +124,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 34,
+      "messages": 35,
       "reactions": 0,
-      "score": 68
+      "score": 70
     },
     "8014790966": {
       "id": 8014790966,
@@ -256,6 +256,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-14T13:25:50.793Z",
+  "updatedAt": "2026-11-14T18:48:56.166Z",
   "chatId": -1002232474263
 }
