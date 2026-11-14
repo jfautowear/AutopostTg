@@ -142,9 +142,9 @@
       "username": "Maousensei",
       "firstName": "Maou@monsterland_bot@Victors_Company_bot",
       "lastName": "@ChickenLandBot",
-      "messages": 16,
+      "messages": 18,
       "reactions": 0,
-      "score": 32
+      "score": 36
     },
     "7661802183": {
       "id": 7661802183,
@@ -244,9 +244,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8902717883": {
+      "id": 8902717883,
+      "username": "teohussen",
+      "firstName": "wegh",
+      "lastName": "gehhh",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-14T06:01:32.590Z",
+  "updatedAt": "2026-11-14T07:17:37.687Z",
   "chatId": -1002232474263
 }
