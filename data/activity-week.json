@@ -1,164 +1,11 @@
 {
-  "weekKey": "2026-W46",
+  "weekKey": "2026-W47",
   "chatRef": "@caricuanhp",
   "users": {
-    "652192072": {
-      "id": 652192072,
-      "username": "ZayJII",
-      "firstName": "Perlubangan",
-      "lastName": null,
-      "messages": 11,
-      "reactions": 0,
-      "score": 22
-    },
-    "1836684121": {
-      "id": 1836684121,
-      "username": "Lumerinx",
-      "firstName": "Lumerinx",
-      "lastName": null,
-      "messages": 30,
-      "reactions": 0,
-      "score": 60
-    },
-    "8447065352": {
-      "id": 8447065352,
-      "username": null,
-      "firstName": "Denys",
-      "lastName": "Cydo",
-      "messages": 19,
-      "reactions": 0,
-      "score": 38
-    },
-    "6046806167": {
-      "id": 6046806167,
-      "username": "Andrehalim77",
-      "firstName": "Budi",
-      "lastName": "Santoso PIXLANDS",
-      "messages": 33,
-      "reactions": 0,
-      "score": 66
-    },
-    "7596705608": {
-      "id": 7596705608,
-      "username": "VJklopph",
-      "firstName": "Link Tempat Beli Nokos/otp Shopee Via Whatsapp/SMS Cek Bio",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "6116364621": {
-      "id": 6116364621,
-      "username": "lisyah_isyah",
-      "firstName": "Lisyah",
-      "lastName": "Isyah 🐾",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8263705448": {
-      "id": 8263705448,
-      "username": null,
-      "firstName": "marco",
-      "lastName": "💰XWorld",
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
-    },
-    "7330797950": {
-      "id": 7330797950,
-      "username": "Hari_pornomo",
-      "firstName": "Kotaro 👁️",
-      "lastName": "Minami",
-      "messages": 7,
-      "reactions": 0,
-      "score": 14
-    },
-    "7434001366": {
-      "id": 7434001366,
-      "username": "Zz3b0",
-      "firstName": "Lathif lathifh",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8975933811": {
-      "id": 8975933811,
-      "username": null,
-      "firstName": "PEMBURU CUAN",
-      "lastName": null,
-      "messages": 12,
-      "reactions": 0,
-      "score": 24
-    },
-    "8028556373": {
-      "id": 8028556373,
-      "username": "Hanuunal",
-      "firstName": "Flying",
-      "lastName": "'S",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "5826653300": {
-      "id": 5826653300,
-      "username": "PointBlank4",
-      "firstName": "Abyss",
-      "lastName": null,
-      "messages": 26,
-      "reactions": 0,
-      "score": 52
-    },
-    "7217581703": {
-      "id": 7217581703,
-      "username": "ahongsigma",
-      "firstName": "ahong #pixelAFK",
-      "lastName": null,
-      "messages": 30,
-      "reactions": 0,
-      "score": 60
-    },
-    "5978663615": {
-      "id": 5978663615,
-      "username": "Shirou01",
-      "firstName": "Shiro",
-      "lastName": "#TelomonBot",
-      "messages": 35,
-      "reactions": 0,
-      "score": 70
-    },
-    "8014790966": {
-      "id": 8014790966,
-      "username": "Mas_irul",
-      "firstName": "Mas",
-      "lastName": "i",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "8632145845": {
-      "id": 8632145845,
-      "username": "Maousensei",
-      "firstName": "Maou@monsterland_bot@Victors_Company_bot",
-      "lastName": "@ChickenLandBot#GrambieBot",
-      "messages": 20,
-      "reactions": 0,
-      "score": 40
-    },
-    "7661802183": {
-      "id": 7661802183,
-      "username": "Roopppi",
-      "firstName": "Roopi",
-      "lastName": "⏳MY AGE APP",
-      "messages": 15,
-      "reactions": 0,
-      "score": 30
-    },
-    "7083070595": {
-      "id": 7083070595,
-      "username": "dipdia123",
-      "firstName": "Dia",
+    "1129802030": {
+      "id": 1129802030,
+      "username": "hazura0",
+      "firstName": "Miu",
       "lastName": null,
       "messages": 1,
       "reactions": 0,
@@ -173,89 +20,17 @@
       "reactions": 0,
       "score": 4
     },
-    "8665837176": {
-      "id": 8665837176,
-      "username": "erwansn75",
-      "firstName": "Erwan Seti",
-      "lastName": "Nugroho ⏳MY AGE APP",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8195913206": {
-      "id": 8195913206,
-      "username": "BUGIS01",
-      "firstName": "Aqu4rius || Web3🇮🇩",
-      "lastName": null,
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
-    },
-    "5963422226": {
-      "id": 5963422226,
-      "username": "Zxcv20260",
-      "firstName": "Nda",
-      "lastName": "⏳MY AGE APP",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "6774650380": {
-      "id": 6774650380,
-      "username": "Aguslukman17",
-      "firstName": "Lukman88👁️",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "6482084976": {
-      "id": 6482084976,
-      "username": null,
-      "firstName": "Noy",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "7340403296": {
-      "id": 7340403296,
-      "username": "Kanzgames",
-      "firstName": "Kanzzgames",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "7936262416": {
-      "id": 7936262416,
-      "username": null,
-      "firstName": "Aldo",
-      "lastName": "Rewaldi",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "6829642057": {
-      "id": 6829642057,
-      "username": "Shintradesss",
-      "firstName": "sʜɪɴɴxᴛ",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8902717883": {
-      "id": 8902717883,
-      "username": "teohussen",
-      "firstName": "wegh",
-      "lastName": "gehhh",
+    "7704701141": {
+      "id": 7704701141,
+      "username": "ajiajot",
+      "firstName": "Jhon_starlex",
+      "lastName": "$PERIA",
       "messages": 1,
       "reactions": 0,
       "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-15T16:35:51.895Z",
+  "updatedAt": "2026-11-15T21:16:09.064Z",
   "chatId": -1002232474263
 }
