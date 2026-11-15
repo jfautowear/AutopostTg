@@ -16,18 +16,18 @@
       "username": "Lumerinx",
       "firstName": "Lumerinx",
       "lastName": null,
-      "messages": 28,
+      "messages": 30,
       "reactions": 0,
-      "score": 56
+      "score": 60
     },
     "8447065352": {
       "id": 8447065352,
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 16,
+      "messages": 17,
       "reactions": 0,
-      "score": 32
+      "score": 34
     },
     "6046806167": {
       "id": 6046806167,
@@ -70,9 +70,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 6,
+      "messages": 7,
       "reactions": 0,
-      "score": 12
+      "score": 14
     },
     "7434001366": {
       "id": 7434001366,
@@ -256,6 +256,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-14T22:46:54.339Z",
+  "updatedAt": "2026-11-15T02:12:13.947Z",
   "chatId": -1002232474263
 }
