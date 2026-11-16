@@ -64,9 +64,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "6930996458": {
+      "id": 6930996458,
+      "username": "AlmendarezChris",
+      "firstName": "Christian",
+      "lastName": "Almendarez",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-16T01:08:49.681Z",
+  "updatedAt": "2026-11-16T07:34:07.251Z",
   "chatId": -1002232474263
 }
