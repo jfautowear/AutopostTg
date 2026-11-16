@@ -98,6 +98,32 @@ function main() {
     ok += 1;
   }
 
+  // Referral forward topic — repo variable (bukan secret)
+  const referralThread =
+    env.TELEGRAM_FORWARD_REFERRAL_THREAD_ID &&
+    !looksLikePlaceholder(env.TELEGRAM_FORWARD_REFERRAL_THREAD_ID)
+      ? env.TELEGRAM_FORWARD_REFERRAL_THREAD_ID
+      : '341';
+  try {
+    execFileSync(
+      'gh',
+      [
+        'variable',
+        'set',
+        'TELEGRAM_FORWARD_REFERRAL_THREAD_ID',
+        '--repo',
+        REPO,
+        '--body',
+        referralThread,
+      ],
+      { stdio: ['pipe', 'inherit', 'inherit'] }
+    );
+    console.log(`SET  var TELEGRAM_FORWARD_REFERRAL_THREAD_ID=${referralThread}`);
+    ok += 1;
+  } catch (err) {
+    console.warn('SKIP var TELEGRAM_FORWARD_REFERRAL_THREAD_ID:', err.message);
+  }
+
   console.log(`\nSelesai: ${ok} secrets di-set, ${skip} di-skip → ${REPO}`);
 }
 

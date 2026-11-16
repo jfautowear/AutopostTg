@@ -122,10 +122,6 @@ function getUpcomingSlots(schedule = loadSchedule(), now = new Date(), count = 4
   return out;
 }
 
-function categoryForHour() {
-  return 'acak (topcoin/spot/airdrop/news/event/listing)';
-}
-
 /**
  * Status lengkap — data yang sama dipakai GitHub Actions (schedule.json + runtime.json).
  */
@@ -144,9 +140,17 @@ function formatStatusText(extra = {}) {
       })
     : '—';
 
-  const slotPlan = (schedule.times || [])
-    .map((t) => `  • ${t} → ${categoryForHour()}`)
-    .join('\n');
+  let slotPlan = '  (belum digenerate — akan dibuat saat post pertama hari ini)';
+  try {
+    const { formatDailyPlanText, ensureDailyPlan } = require('./referralService');
+    ensureDailyPlan(schedule);
+    slotPlan = formatDailyPlanText(schedule)
+      .split('\n')
+      .slice(1)
+      .join('\n');
+  } catch {
+    // ignore
+  }
 
   return [
     '📊 Status Autopost',
@@ -156,7 +160,7 @@ function formatStatusText(extra = {}) {
     '',
     formatScheduleText(schedule),
     '',
-    '🗂 Rotasi konten (sesuai jam):',
+    '🗂 Rencana hari ini (1 crypto + 3 referral):',
     slotPlan || '  (jadwal kosong)',
     '',
     `⏭ Slot berikutnya:`,
@@ -165,7 +169,9 @@ function formatStatusText(extra = {}) {
     `✅ Last post slot: ${lastSlot}`,
     `⏱ Last post at: ${lastAt}`,
     `📡 EXCHANGE_SOURCE: ${runtime.exchangeSource || process.env.EXCHANGE_SOURCE || 'auto'}`,
-    `🏷 POST_CATEGORY: ${runtime.postCategory || process.env.POST_CATEGORY || 'auto'} (auto = acak)`,
+    `🏷 Mode: 1× crypto (spot/topcoin) + 3× referral acak / hari`,
+    `↩️ Forward crypto → topik ${process.env.TELEGRAM_FORWARD_THREAD_ID || '80483'}`,
+    `↩️ Forward referral → topik ${process.env.TELEGRAM_FORWARD_REFERRAL_THREAD_ID || '341'}`,
     `♻️ Dedupe: aktif (konten lama tidak diulang)`,
     `🤖 AI_PROVIDER: ${process.env.AI_PROVIDER || 'free'}`,
     `📢 Channel: ${process.env.TELEGRAM_CHANNEL_ID || '@jfnetworknet'}`,

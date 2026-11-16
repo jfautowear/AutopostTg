@@ -26,13 +26,15 @@ on:
           - okx
           - bitget
       category:
-        description: 'spot | airdrop | news | auto'
+        description: 'auto (1 crypto+3 referral) | spot | topcoin | referral | airdrop | news'
         required: false
         default: 'auto'
         type: choice
         options:
           - auto
           - spot
+          - topcoin
+          - referral
           - airdrop
           - news
 
@@ -95,6 +97,7 @@ jobs:
           TELEGRAM_FORWARD_ENABLED: 'true'
           TELEGRAM_FORWARD_CHAT_ID: ${{ secrets.TELEGRAM_FORWARD_CHAT_ID }}
           TELEGRAM_FORWARD_THREAD_ID: ${{ secrets.TELEGRAM_FORWARD_THREAD_ID }}
+          TELEGRAM_FORWARD_REFERRAL_THREAD_ID: ${{ vars.TELEGRAM_FORWARD_REFERRAL_THREAD_ID || '341' }}
           TEST_CHAT_ID: ${{ secrets.TEST_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -108,7 +111,7 @@ jobs:
           POLLINATIONS_ENABLED: ${{ vars.POLLINATIONS_ENABLED || 'true' }}
           CRON_TIMEZONE: Asia/Jakarta
           SCHEDULE_WINDOW_MINUTES: '360'
-          MAX_CAPTION_CHARS: '700'
+          MAX_CAPTION_CHARS: '850'
           MAX_HOOK_CHARS: '60'
           MAX_INFO_CHARS: '220'
           MAX_CTA_CHARS: '80'

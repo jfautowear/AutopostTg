@@ -15,6 +15,8 @@ const TTL_HOURS = {
   event: Number(process.env.DEDUP_NEWS_HOURS) || 720,
   listing: Number(process.env.DEDUP_NEWS_HOURS) || 720,
   airdrop: Number(process.env.DEDUP_AIRDROP_HOURS) || 168,
+  // Referral: jangan ulang proyek+angle yang sama dalam ~36 jam
+  referral: Number(process.env.DEDUP_REFERRAL_HOURS) || 36,
   default: 72,
 };
 
@@ -98,6 +100,16 @@ function buildContentKey(snapshot) {
     return null;
   }
 
+  if (cat === 'referral') {
+    const day = new Date().toLocaleDateString('en-CA', {
+      timeZone: process.env.CRON_TIMEZONE || 'Asia/Jakarta',
+    });
+    const projectId = snapshot.projectId || snapshot.project?.id || 'ref';
+    const angle = snapshot.angle || 'default';
+    // Sama proyek + angle di hari yang sama = duplikat; variant beda di hari beda OK
+    return `referral:${projectId}:${angle}:${day}`;
+  }
+
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
   const ex = snapshot.primaryLabel || snapshot.primarySource || 'cex';
   if (hot?.base) return `spot:${ex}:${String(hot.base).toUpperCase()}`;
@@ -114,6 +126,9 @@ function isFreshSnapshot(snapshot) {
   }
   if (snapshot.category === 'airdrop' && !snapshot.hotGem) return false;
   if (snapshot.category === 'topcoin' && !(snapshot.topCoins || []).length) return false;
+  if (snapshot.category === 'referral' && !(snapshot.projectId || snapshot.project?.id)) {
+    return false;
+  }
   if (snapshot.category === 'spot' && !(snapshot.hotCoin || snapshot.primary?.hotCoin)) {
     return false;
   }

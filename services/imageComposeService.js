@@ -462,6 +462,7 @@ function buildOverlaySvg({
   singleLogo = false,
   exchange = 'OKX',
   pctLabel = '',
+  watermark = 'T.me/jfnetworknet',
 }) {
   const accent = brandAccent(exchange);
   const isSpotlight = layout === 'spotlight' && singleLogo;
@@ -556,6 +557,13 @@ function buildOverlaySvg({
       <text x="${hookX}" y="${hookYAdj}" text-anchor="${hookAnchor}"
         font-family="DejaVu Sans, Arial, sans-serif" font-size="${hookFont}" font-weight="600"
         fill="#fde68a" filter="url(#shadow)">${hookSpans}</text>
+      ${
+        watermark
+          ? `<text x="${width - 16}" y="${height - 14}" text-anchor="end"
+               font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="600"
+               fill="#ffffff" fill-opacity="0.72">${escapeXml(watermark)}</text>`
+          : ''
+      }
     </svg>`
   );
 }
@@ -666,6 +674,7 @@ async function composePromoImage(backgroundBuffer, meta = {}) {
     singleLogo,
     exchange,
     pctLabel,
+    watermark: meta.watermark || 'T.me/jfnetworknet',
   });
 
   const composites = [{ input: overlaySvg, left: 0, top: 0 }];

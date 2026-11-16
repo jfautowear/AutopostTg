@@ -8,6 +8,14 @@ const {
   formatPct,
 } = require('./cryptoService');
 const { composePromoImage } = require('./imageComposeService');
+const {
+  pickCopyStyle,
+  sanitizeMarketingText,
+  clipHeadline,
+  buildStrictPromptBlock,
+  buildImagePromptRules,
+  containsBannedPhrase,
+} = require('./contentRules');
 
 /** Batas ketat agar total caption (HTML+emoji) aman di channel gratis. */
 const LIMITS = {
@@ -92,15 +100,16 @@ function isQuotaOrLimitError(err) {
   );
 }
 
-/** Prinsip editorial: akurat, kontekstual, CTA jelas — AI hanya variasi wording. */
+/** Prinsip editorial ketat — AI hanya variasi wording dari DATA. */
 const ACCURACY_RULES = `
-PRINSIP (WAJIB):
-1) Hanya pakai fakta dari blok DATA di bawah. Dilarang mengarang harga, %, volume, reward, tanggal, atau nama token.
-2) AI boleh memvariasikan gaya bahasa, hook, saran hati-hati, dan CTA — tapi HARUS sesuai konteks DATA.
-3) Bukan saran investasi. Jangan jamin profit / "aman" / "pasti cuan".
-4) CTA harus actionable (ajak cek chart / baca info resmi / buka app) tanpa menulis URL.
-5) Bahasa Indonesia natural; emoji 1–3 per bagian; bedakan wording tiap kali (jangan template kaku).
-6) Satu post = satu fokus. Jangan campur banyak ticker di hook kecuali memang bandingkan 2 peer secara sengaja.
+PRINSIP KETAT (WAJIB — anti-ngasal):
+1) Hanya pakai fakta dari blok DATA. Dilarang mengarang harga, %, volume, reward, saldo, APR, tanggal, atau nama token.
+2) Variasikan gaya bahasa sesuai GAYA yang diminta — tapi isi HARUS sesuai DATA.
+3) Bukan saran investasi. DILARANG: "pasti kaya", "jaminan profit", "auto sultan", "tanpa risiko", "pasti cuan".
+4) CTA actionable (cek chart / buka app / klik tombol) TANPA menulis URL/link.
+5) Bahasa Indonesia natural; emoji 1–3 per bagian; jangan template kaku.
+6) Satu post = satu fokus.
+7) JANGAN tulis Disclaimer/NFA/DYOR di JSON — sistem menambahkan teks resmi.
 `.trim();
 
 const CTA_POOL = {
@@ -121,6 +130,12 @@ const CTA_POOL = {
     'Buka chart dulu di OKX Web3 — high risk, pantau masuk! ⚡',
     'Verifikasi kontrak & volume di OKX Web3 sebelum entry. 🔎',
     'Lihat pair-nya di OKX Web3 DEX. Semoga untung! 🚀',
+  ],
+  referral: [
+    'Klik tombol di bawah & mulai langkahnya sekarang. 🚀',
+    'Mau coba? Tekan tombol di bawah. ✅',
+    'Gabung lewat tombol di bawah. Hasil tidak dijamin. 👀',
+    'Mulai dari tombol di bawah. Pantau sendiri, jangan FOMO. ⚡',
   ],
 };
 
@@ -227,21 +242,114 @@ DATA (sumber: ${exchange} Announcements — fakta wajib dihormati):
 ${summary}`;
 }
 
+function buildReferralSummaryText(snapshot) {
+  const p = snapshot.project || {};
+  const facts = (p.facts || []).map((f, i) => `${i + 1}. ${f}`).join('\n');
+  const buttons = (p.buttons || []).map((b) => `- ${b.text}`).join('\n');
+  return [
+    `Proyek: ${p.name || snapshot.projectId}`,
+    `Tipe: ${p.type || 'promo'}`,
+    `Angle fokus: ${snapshot.angle || 'default'}`,
+    `Variant seed: ${snapshot.variant || 0}`,
+    `Tagline: ${p.tagline || '-'}`,
+    'Fakta yang BOLEH dipakai (jangan menambah klaim di luar ini):',
+    facts || '- (kosong)',
+    'Tombol CTA di post (jangan tulis URL di teks):',
+    buttons || '- (kosong)',
+  ].join('\n');
+}
+
+function buildReferralPrompt(snapshot) {
+  const p = snapshot.project || {};
+  const summary = buildReferralSummaryText(snapshot);
+  const style = snapshot.copyStyle || pickCopyStyle(snapshot.variant);
+  const buttonNames = (p.buttons || []).map((b) => b.text).join(' | ') || 'tombol di bawah';
+
+  return `${buildStrictPromptBlock({ style, kind: 'referral' })}
+
+Buat caption PROJECT_PROMO untuk: ${p.name || snapshot.projectId}.
+Angle konten: ${snapshot.angle || 'default'}.
+Tombol yang akan ditampilkan sistem (sebut namanya di CTA bila relevan, JANGAN tulis URL): ${buttonNames}.
+
+WAJIB balas HANYA JSON valid (tanpa markdown):
+{"hook":"...","info":"...","cta":"...","copywriting_angle":"${style.name}","image_headline":"...","image_prompt":"..."}
+
+${ACCURACY_RULES}
+- hook ≤${LIMITS.hook} chars: pembuka sesuai ${style.name}.
+- info ≤${LIMITS.info} chars: HANYA dari FAKTA di DATA. Tidak boleh invent angka earnings/saldo/APR.
+- cta ≤${LIMITS.cta} chars: ajak klik tombol (${buttonNames}), tanpa URL.
+- image_headline: maksimal 4–6 kata Bahasa Indonesia, tajam, untuk overlay gambar.
+- image_prompt: English, detail, 16:9, tema warna & motif sesuai proyek, split left text-space / right mockup, vary device angle, mask wallet addresses as 0x814••••••••••013, NO invented readable balances, leave bottom-right for T.me/jfnetworknet watermark.
+
+DATA (satu-satunya sumber fakta):
+${summary}`;
+}
+
+function fallbackReferralContent(snapshot) {
+  const p = snapshot.project || {};
+  const name = p.shortName || p.name || 'Proyek';
+  const angle = snapshot.angle || 'default';
+  const style = snapshot.copyStyle || pickCopyStyle(snapshot.variant);
+  const hooks = {
+    passive_bandwidth: `🐝 Internet menganggur? ${name} bisa dimanfaatkan`,
+    bonus_daftar: `🎁 Mulai dari daftar ${name} dulu`,
+    cair_ke_crypto: `💵 ${name}: jalur cair sesuai aturan app`,
+    tinggal_jalan: `😴 ${name} bisa ditinggal jalan di background`,
+    airdrop_cuan: `🌿 ${name} DePIN — pantau peluangnya`,
+    bagi_internet: `📡 Monetisasi bandwidth lewat ${name}`,
+    saldo_usdc_sol: `📱 Pantau saldo di app ${name}`,
+    otomatis_gratis: `⚡ ${name}: otomatis, tanpa modal trading`,
+    main_gratis: `🎮 ${name} free-to-play — pelajari ekonominya`,
+    withdraw_pol_bnb: `⛓ ${name}: cek opsi withdraw di app resmi`,
+    urus_kebun: `🌾 Kelola kebun di ${name}, pantau reward`,
+    bukti_withdraw: `✅ ${name}: cek riwayat di app resmi`,
+    airdrop_klaim: `🟣 ${name} — cek eligibility airdrop resmi`,
+    komunitas: `👥 Gabung komunitas ${name}`,
+    wallet_balance: `💼 Cek wallet ${name} di app`,
+    join_sekarang: `🚀 Siap coba ${name}?`,
+    bot_otomatis: `🤖 Spot Grid OKX — otomasi, bukan jaminan`,
+    grid_dca: `📈 Grid OKX: atur rentang & risiko sendiri`,
+    tanpa_pantau_chart: `⏱ Bot OKX jalan — kamu tetap pantau risiko`,
+    fitur_okx: `⚙️ Eksplor Spot Grid Bot di OKX`,
+    default: `✨ Highlight: ${name}`,
+  };
+
+  const headline = clipHeadline(hooks[angle] || hooks.default, 6);
+  return {
+    hook: clip(hooks[angle] || hooks.default, LIMITS.hook),
+    info: clip(
+      p.tagline ||
+        `${name}: ikuti langkah di tombol. Hasil tidak dijamin — baca syarat resmi.`,
+      LIMITS.info
+    ),
+    cta: clip(pickCta(CTA_POOL.referral), LIMITS.cta),
+    copywriting_angle: style.name,
+    image_headline: headline,
+    image_prompt: buildImagePromptRules({
+      projectId: snapshot.projectId || p.id || 'crypto',
+      headline,
+    }),
+    provider: 'fallback-referral',
+  };
+}
+
 function buildTopCoinsPrompt(snapshot) {
   const summary = buildTopCoinsSummaryText(snapshot);
   const exchange = snapshot.primaryLabel || 'CEX';
   const stats = snapshot.topCoinStats || {};
-  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat update singkat Top Koin (harga + naik/turun).
+  const style = snapshot.copyStyle || pickCopyStyle();
+  return `${buildStrictPromptBlock({ style, kind: 'crypto' })}
+
+Buat CRYPTO_UPDATE Top Koin singkat (harga + naik/turun).
 
 WAJIB balas HANYA JSON valid (tanpa markdown):
-{"hook":"...","info":"...","cta":"..."}
+{"hook":"...","info":"...","cta":"...","copywriting_angle":"${style.name}","image_headline":"...","image_prompt":"..."}
 
 ${ACCURACY_RULES}
-- hook: ringkas soal kondisi market major (bullish/bearish/campur) berdasarkan DATA (Naik ${stats.up || 0} / Turun ${stats.down || 0}).
-- info: 1–2 kalimat highlight koin yang paling naik & paling turun dari DATA (sebut ticker + arah, JANGAN invent angka).
-- cta: ajak cek chart di ${exchange}, tanpa URL.
-- Jangan sebut airdrop/listing di post ini.
+- hook: kondisi market major dari DATA (Naik ${stats.up || 0} / Turun ${stats.down || 0}).
+- info: highlight koin paling naik & turun dari DATA saja (jangan invent %).
+- cta: ajak cek chart di ${exchange}, tanpa URL (tombol OKX/Bitget dari sistem).
+- image_headline 4–6 kata; image_prompt English 16:9 black/neon emerald fintech.
 
 Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
 
@@ -276,6 +384,9 @@ function isNewsLike(category) {
 }
 
 function buildPostPrompt(snapshot) {
+  if (snapshot.category === 'referral') {
+    return buildReferralPrompt(snapshot);
+  }
   if (snapshot.category === 'airdrop') {
     return buildAirdropPrompt(snapshot);
   }
@@ -289,22 +400,24 @@ function buildPostPrompt(snapshot) {
   const summary = buildMarketSummaryText(snapshot);
   const exchange = snapshot.primaryLabel;
   const hot = snapshot.hotCoin || snapshot.primary?.hotCoin;
+  const style = snapshot.copyStyle || pickCopyStyle();
   const hotHint = hot
     ? `Fokus HOT: ${hot.base} (24h ${Number(hot.changePct).toFixed(2)}% — angka ini sudah di header, jangan diulang di info).`
     : 'Fokus top gainers / volume dari DATA.';
 
-  return `Kamu copywriter channel Telegram kripto Indonesia (@jfnetworknet).
-Buat ringkasan market pulse singkat (mobile).
+  return `${buildStrictPromptBlock({ style, kind: 'crypto' })}
+
+Buat CRYPTO_UPDATE market pulse singkat (mobile) dari DATA ${exchange}.
 
 WAJIB balas HANYA JSON valid (tanpa markdown):
-{"hook":"...","info":"...","cta":"..."}
+{"hook":"...","info":"...","cta":"...","copywriting_angle":"${style.name}","image_headline":"...","image_prompt":"..."}
 
 ${ACCURACY_RULES}
 - ${hotHint}
-- info: 1–2 kalimat soal volume/momentum TOKEN FOKUS saja.
-- JANGAN name-drop BTC/ETH/SOL/ZEC atau koin lain sebagai “konteks pasar” di info — itu mengaburkan fokus.
-- Boleh bandingkan 1 peer gainer HANYA jika disebut juga di hook (contoh hook: "G dan ONE ramai").
-- cta: ajak cek chart token fokus di ${exchange}, tanpa URL.
+- info: 1–2 kalimat volume/momentum TOKEN FOKUS saja dari DATA.
+- JANGAN name-drop BTC/ETH/SOL sebagai “konteks pasar” di info kecuali itu token fokus.
+- cta: ajak cek chart di ${exchange} (tombol OKX/Bitget disediakan sistem), tanpa URL.
+- image_headline: 4–6 kata ID. image_prompt: English 16:9 fintech OKX/Bitget aesthetic.
 
 Panjang: hook≤${LIMITS.hook}, info≤${LIMITS.info}, cta≤${LIMITS.cta}
 
@@ -313,6 +426,9 @@ ${summary}`;
 }
 
 function fallbackPostContent(snapshot) {
+  if (snapshot.category === 'referral') {
+    return fallbackReferralContent(snapshot);
+  }
   if (snapshot.category === 'airdrop') {
     return fallbackAirdropContent(snapshot);
   }
@@ -355,16 +471,41 @@ function parsePostJson(raw, provider) {
     throw new Error('JSON AI tidak lengkap (butuh hook, info, cta)');
   }
 
-  return {
-    hook: clip(parsed.hook, LIMITS.hook),
-    info: clip(parsed.info, LIMITS.info),
-    cta: clip(parsed.cta, LIMITS.cta),
+  const hook = sanitizeMarketingText(clip(parsed.hook, LIMITS.hook));
+  const info = sanitizeMarketingText(clip(parsed.info, LIMITS.info));
+  const cta = sanitizeMarketingText(clip(parsed.cta, LIMITS.cta));
+
+  const banned = containsBannedPhrase(`${hook} ${info} ${cta}`);
+  if (banned.length) {
+    console.warn(`[aiService] Sanitasi klaim terlarang: ${banned.join(', ')}`);
+  }
+
+  const out = {
+    hook,
+    info,
+    cta,
     provider,
   };
+
+  if (parsed.copywriting_angle) {
+    out.copywriting_angle = String(parsed.copywriting_angle).slice(0, 80);
+  }
+  if (parsed.image_headline) {
+    out.image_headline = clipHeadline(parsed.image_headline, 6);
+  }
+  if (parsed.image_prompt) {
+    // Jangan biarkan AI selipkan URL random; potong panjang wajar
+    out.image_prompt = String(parsed.image_prompt)
+      .replace(/https?:\/\/\S+/gi, '')
+      .trim()
+      .slice(0, 1200);
+  }
+
+  return out;
 }
 
 const SYSTEM_JSON =
-  'Balas HANYA JSON valid {"hook":"...","info":"...","cta":"..."} Bahasa Indonesia. Fakta HANYA dari DATA user — dilarang mengarang angka/reward/token. Variasikan wording, CTA actionable, NFA. Emoji secukupnya. Tanpa markdown.';
+  'Balas HANYA JSON valid sesuai skema user. Bahasa Indonesia untuk hook/info/cta. Fakta HANYA dari DATA — dilarang mengarang angka/reward/saldo/URL. Dilarang overclaim (pasti kaya/jaminan profit/tanpa risiko). Jangan tulis Disclaimer di JSON. Emoji secukupnya. Tanpa markdown.';
 
 /** Groq — gratis (rate-limit harian). */
 async function generateWithGroq(prompt) {
@@ -379,15 +520,15 @@ async function generateWithGroq(prompt) {
         { role: 'system', content: SYSTEM_JSON },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.7,
-      max_tokens: 260,
+      temperature: 0.75,
+      max_tokens: 700,
     },
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      timeout: 25000,
+      timeout: 35000,
     }
   );
 
@@ -419,7 +560,7 @@ async function generateWithOpenRouter(prompt, { free = true } = {}) {
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 260,
+        max_tokens: 700,
       };
 
       if (!free) {
@@ -507,13 +648,18 @@ async function generateWithGemini(prompt) {
  * - paid  → OpenRouter paid / Gemini dulu, lalu free
  */
 async function generatePostContent(snapshot) {
-  // Airdrop tetap template (hemat). News/Promo/TopCoin pakai AI.
+  // Airdrop tetap template (hemat). News/Promo/TopCoin/Referral pakai AI.
   if (snapshot.category === 'airdrop') {
     console.log('[aiService] Airdrop → template lokal (skip LLM teks)');
     return fallbackAirdropContent(snapshot);
   }
 
   const prompt = buildPostPrompt(snapshot);
+  if (snapshot.category === 'referral') {
+    console.log(
+      `[aiService] Referral → ${snapshot.projectId} / ${snapshot.angle} (caption AI variatif)`
+    );
+  }
   if (['news', 'event', 'listing'].includes(snapshot.category)) {
     console.log('[aiService] News/Event/Listing → rangkuman AI');
   }
@@ -751,6 +897,35 @@ function resolveFocusLogoEntries({
 function buildImageOverlayMeta(snapshot, content) {
   const { pickLayout } = require('./imageComposeService');
 
+  if (snapshot.category === 'referral') {
+    const p = snapshot.project || {};
+    const badgeMap = {
+      depin: 'DePIN',
+      game: 'GAMEFI',
+      airdrop: 'AIRDROP',
+      trading_bot: 'OKX BOT',
+    };
+    const headline =
+      content?.image_headline ||
+      clipHeadline(content?.hook || p.shortName || 'Promo', 6);
+    const meta = {
+      title: cleanOverlayText(headline, 36),
+      hook: cleanOverlayText(
+        content?.hook || p.tagline || 'Cek peluangnya',
+        56
+      ),
+      tickers: [],
+      logoEntries: [],
+      exchange: p.id === 'okx_bot' ? 'OKX' : 'OKX',
+      badge: cleanOverlayText(badgeMap[p.type] || 'PROMO', 18),
+      watermark: 'T.me/jfnetworknet',
+    };
+    // Split kiri teks / kanan visual — hero atau spotlight
+    const layouts = ['hero', 'spotlight', 'center', 'stack'];
+    meta.layout = layouts[(Number(snapshot.variant) || 0) % layouts.length];
+    return meta;
+  }
+
   if (['news', 'event', 'listing'].includes(snapshot.category)) {
     const n = snapshot.hotNews;
     const kind =
@@ -772,6 +947,7 @@ function buildImageOverlayMeta(snapshot, content) {
       exchange: 'OKX',
       badge: cleanOverlayText(kind, 22),
     };
+    meta.watermark = 'T.me/jfnetworknet';
     meta.layout = pickLayout(meta);
     return meta;
   }
@@ -799,6 +975,7 @@ function buildImageOverlayMeta(snapshot, content) {
           ? `${stats.up} naik · ${stats.down} turun`
           : '',
     };
+    meta.watermark = 'T.me/jfnetworknet';
     meta.layout = pickLayout(meta);
     return meta;
   }
@@ -839,6 +1016,7 @@ function buildImageOverlayMeta(snapshot, content) {
       exchange: 'OKX',
       badge: snapshot.screened || hot?.screened ? 'DEX SAFE' : 'AIRDROP / DEX',
     };
+    meta.watermark = 'T.me/jfnetworknet';
     meta.layout = pickLayout(meta);
     return meta;
   }
@@ -898,6 +1076,7 @@ function buildImageOverlayMeta(snapshot, content) {
         ? `${Number(hot.changePct) >= 0 ? '+' : ''}${Number(hot.changePct).toFixed(1)}% 24h`
         : '',
   };
+  meta.watermark = 'T.me/jfnetworknet';
   meta.layout = pickLayout(meta);
   return meta;
 }
@@ -906,7 +1085,44 @@ function buildImageOverlayMeta(snapshot, content) {
  * Prompt background SAJA — tanpa teks/logo (supaya AI tidak bikin tulisan acak).
  * Brand: Bitget = hitam/putih + cyan · OKX = hitam + hijau neon.
  */
+function buildReferralImagePrompt(snapshot, content) {
+  // Jika AI sudah kirim image_prompt valid, pakai itu (sudah di-sanitize di parsePostJson)
+  if (content?.image_prompt && content.image_prompt.length > 40) {
+    return [
+      content.image_prompt,
+      'aspect ratio 16:9',
+      'Strictly mask/censor any wallet address strings using asterisks like 0x814••••••••••013',
+      'leave bottom-right corner clear for T.me/jfnetworknet watermark overlay',
+    ].join(', ');
+  }
+
+  const headline =
+    content?.image_headline || clipHeadline(content?.hook || '', 6);
+  return buildImagePromptRules({
+    projectId: snapshot.projectId || snapshot.project?.id || 'crypto',
+    headline,
+  });
+}
+
 function buildImagePromptFromContent(snapshot, content) {
+  if (content?.image_prompt && content.image_prompt.length > 40) {
+    const projectId =
+      snapshot.category === 'referral'
+        ? snapshot.projectId || snapshot.project?.id || 'crypto'
+        : 'crypto';
+    return [
+      content.image_prompt,
+      buildImagePromptRules({
+        projectId,
+        headline: content.image_headline || content.hook || '',
+      }),
+    ].join(', ');
+  }
+
+  if (snapshot.category === 'referral') {
+    return buildReferralImagePrompt(snapshot, content);
+  }
+
   if (['news', 'event', 'listing'].includes(snapshot.category)) {
     const n = snapshot.hotNews;
     const kind = n?.typeLabel || 'Promo';
@@ -1020,23 +1236,33 @@ async function generateImageWithPollinations(prompt) {
 
 /** Background solid jika Pollinations gagal — overlay tetap jalan. */
 async function solidFallbackBackground(snapshot) {
+  const isReferral = snapshot.category === 'referral';
   const isAirdrop = snapshot.category === 'airdrop';
   const isNews = ['news', 'event', 'listing'].includes(snapshot.category);
   const isTop = snapshot.category === 'topcoin';
   const isBitget = String(snapshot.primaryLabel || '')
     .toUpperCase()
     .includes('BITGET');
-  const color = isNews
-    ? { r: 8, g: 18, b: 12 }
-    : isAirdrop
-      ? { r: 6, g: 16, b: 10 }
-      : isTop
-        ? isBitget
-          ? { r: 4, g: 24, b: 28 }
-          : { r: 6, g: 16, b: 10 }
-        : isBitget
-          ? { r: 4, g: 28, b: 32 }
-          : { r: 6, g: 18, b: 10 };
+  const referralColors = {
+    honeygain: { r: 12, g: 28, b: 72 },
+    grass: { r: 8, g: 48, b: 24 },
+    chainers: { r: 48, g: 16, b: 72 },
+    beincom: { r: 56, g: 20, b: 88 },
+    okx_bot: { r: 4, g: 12, b: 10 },
+  };
+  const color = isReferral
+    ? referralColors[snapshot.projectId] || { r: 20, g: 24, b: 48 }
+    : isNews
+      ? { r: 8, g: 18, b: 12 }
+      : isAirdrop
+        ? { r: 6, g: 16, b: 10 }
+        : isTop
+          ? isBitget
+            ? { r: 4, g: 24, b: 28 }
+            : { r: 6, g: 16, b: 10 }
+          : isBitget
+            ? { r: 4, g: 28, b: 32 }
+            : { r: 6, g: 18, b: 10 };
   const sharp = require('sharp');
   return sharp({
     create: {
@@ -1117,8 +1343,10 @@ module.exports = {
   fallbackPostContent,
   fallbackAirdropContent,
   fallbackNewsContent,
+  fallbackReferralContent,
   buildAirdropPrompt,
   buildNewsPrompt,
+  buildReferralPrompt,
   isQuotaOrLimitError,
   clip,
   getGroqKey,

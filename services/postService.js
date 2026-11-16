@@ -13,15 +13,27 @@ const {
 } = require('./dexScreen/autopostSnapshot');
 const { generatePostAssets } = require('./aiService');
 const { postToChannel, postToTestChat } = require('./telegramService');
-const { markPostedSlot } = require('./scheduleService');
+const { markPostedSlot, loadSchedule } = require('./scheduleService');
 const {
   buildContentKey,
   isFreshSnapshot,
   markContentPosted,
   wasContentPosted,
 } = require('./contentHistoryService');
+const {
+  resolveSlotPlan,
+  buildReferralSnapshot,
+  ensureDailyPlan,
+  formatDailyPlanText,
+} = require('./referralService');
 
-/** Pool autopost random (weight). */
+/** Pool crypto harian (1×/hari saat auto). */
+const CRYPTO_CATEGORY_POOL = [
+  { id: 'topcoin', weight: 2 },
+  { id: 'spot', weight: 3 },
+];
+
+/** Legacy pool — dipakai jika force kategori lama / override. */
 const CATEGORY_POOL = [
   { id: 'topcoin', weight: 3 },
   { id: 'spot', weight: 3 },
@@ -29,12 +41,13 @@ const CATEGORY_POOL = [
   { id: 'news', weight: 2 },
   { id: 'event', weight: 2 },
   { id: 'listing', weight: 2 },
+  { id: 'referral', weight: 4 },
 ];
 
 const NEWS_TYPE_FILTER = {
   event: ['latest-events', 'announcements-jumpstart'],
   listing: ['announcements-new-listings'],
-  news: null, // semua tipe
+  news: null,
 };
 
 function applyRuntimeEnv() {
@@ -61,7 +74,57 @@ function normalizeCategory(raw) {
   if (v === 'promo' || v === 'announcement') return 'news';
   if (v === 'top' || v === 'top15' || v === 'majors' || v === 'topcoins') return 'topcoin';
   if (v === 'newlisting' || v === 'listings') return 'listing';
-  if (['spot', 'airdrop', 'news', 'event', 'listing', 'topcoin'].includes(v)) return v;
+  // referral / referral:honeygain / honeygain / okx_bot
+  if (
+    v === 'ref' ||
+    v === 'referral' ||
+    v === 'affiliate' ||
+    v.startsWith('referral:') ||
+    v.startsWith('ref:') ||
+    [
+      'depin',
+      'honeygain',
+      'jumptask',
+      'grass',
+      'chainers',
+      'beincom',
+      'okx_bot',
+      'okxbot',
+    ].includes(v)
+  ) {
+    return 'referral';
+  }
+  if (
+    ['spot', 'airdrop', 'news', 'event', 'listing', 'topcoin', 'referral'].includes(v)
+  ) {
+    return v;
+  }
+  return null;
+}
+
+/** Ambil projectId dari forced category seperti "referral:grass" / "honeygain". */
+function extractReferralProjectId(forcedCategory) {
+  const raw = String(forcedCategory || '')
+    .toLowerCase()
+    .trim();
+  if (!raw) return null;
+  const afterColon = raw.includes(':') ? raw.split(':').slice(1).join(':').trim() : raw;
+  const candidates = [
+    afterColon,
+    raw.replace(/^referral:?/, '').replace(/^ref:/, ''),
+  ]
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  for (const c of candidates) {
+    if (
+      ['honeygain', 'jumptask', 'grass', 'chainers', 'beincom', 'okx_bot', 'okxbot'].includes(
+        c
+      )
+    ) {
+      return c === 'okxbot' || c === 'jumptask' ? (c === 'jumptask' ? 'honeygain' : 'okx_bot') : c;
+    }
+  }
   return null;
 }
 
@@ -85,7 +148,8 @@ function shuffled(arr) {
 }
 
 /**
- * Auto = acak dari pool. Forced = kategori pasti.
+ * Auto terjadwal = ikut daily plan (1 crypto + 3 referral).
+ * Forced = kategori pasti.
  */
 function resolvePostCategory(forced) {
   const forcedNorm = normalizeCategory(forced);
@@ -94,12 +158,20 @@ function resolvePostCategory(forced) {
   const raw = normalizeCategory(process.env.POST_CATEGORY || 'auto');
   if (raw) return raw;
 
-  return weightedPick(CATEGORY_POOL);
+  return weightedPick(CRYPTO_CATEGORY_POOL);
 }
 
-/** Urutan fallback jika kategori terpilih kosong / duplikat. */
+/** Urutan fallback crypto jika kategori terpilih kosong / duplikat. */
 function buildTryOrder(primary) {
-  const rest = CATEGORY_POOL.map((p) => p.id).filter((id) => id !== primary);
+  if (primary === 'referral') return ['referral'];
+  const cryptoIds = CRYPTO_CATEGORY_POOL.map((p) => p.id);
+  if (cryptoIds.includes(primary)) {
+    const rest = cryptoIds.filter((id) => id !== primary);
+    return [primary, ...shuffled(rest)];
+  }
+  const rest = CATEGORY_POOL.map((p) => p.id).filter(
+    (id) => id !== primary && id !== 'referral'
+  );
   return [primary, ...shuffled(rest)];
 }
 
@@ -132,7 +204,11 @@ async function fetchFreshSpotSnapshot() {
   return snapshot;
 }
 
-async function fetchCategorySnapshot(category) {
+async function fetchCategorySnapshot(category, referralOpts = null) {
+  if (category === 'referral') {
+    return buildReferralSnapshot(referralOpts || {});
+  }
+
   if (category === 'topcoin') {
     return getTopCoinsSnapshot();
   }
@@ -153,13 +229,71 @@ async function fetchCategorySnapshot(category) {
     });
   }
 
-  // spot
   return fetchFreshSpotSnapshot();
 }
 
 /**
- * Pipeline: pilih kategori (random) → snapshot segar → post.
- * Tidak pernah memposting fingerprint yang sudah ada di riwayat.
+ * Tentukan kind slot dari jadwal harian (kecuali forced category).
+ */
+function resolveScheduledIntent({ slot, forcedCategory }) {
+  if (forcedCategory) {
+    const cat = normalizeCategory(forcedCategory);
+    if (cat === 'referral') {
+      const projectId = extractReferralProjectId(forcedCategory);
+      return {
+        kind: 'referral',
+        category: 'referral',
+        referralOpts: projectId ? { projectId } : {},
+      };
+    }
+    return { kind: 'crypto', category: cat || 'spot', referralOpts: null };
+  }
+
+  // Override env eksplisit (bukan auto) → paksa kategori itu
+  const envCat = normalizeCategory(process.env.POST_CATEGORY || 'auto');
+  if (envCat && process.env.POST_CATEGORY && process.env.POST_CATEGORY !== 'auto') {
+    if (envCat === 'referral') {
+      return { kind: 'referral', category: 'referral', referralOpts: {} };
+    }
+    return { kind: 'crypto', category: envCat, referralOpts: null };
+  }
+
+  const schedule = loadSchedule();
+  ensureDailyPlan(schedule);
+  console.log(formatDailyPlanText(schedule));
+
+  const planEntry = resolveSlotPlan(slot, schedule);
+  if (planEntry?.kind === 'referral') {
+    return {
+      kind: 'referral',
+      category: 'referral',
+      referralOpts: {
+        projectId: planEntry.projectId,
+        angle: planEntry.angle,
+        variant: planEntry.variant,
+        copyStyleId: planEntry.copyStyleId,
+      },
+    };
+  }
+
+  if (planEntry?.kind === 'crypto') {
+    return {
+      kind: 'crypto',
+      category: planEntry.cryptoCategory || weightedPick(CRYPTO_CATEGORY_POOL),
+      referralOpts: null,
+    };
+  }
+
+  // Force / slot tanpa plan → crypto default
+  return {
+    kind: 'crypto',
+    category: weightedPick(CRYPTO_CATEGORY_POOL),
+    referralOpts: null,
+  };
+}
+
+/**
+ * Pipeline: daily plan (1 crypto + 3 referral) → snapshot → AI → post.
  */
 async function runPipeline({
   target = 'channel',
@@ -167,14 +301,18 @@ async function runPipeline({
   category: forcedCategory = null,
 } = {}) {
   applyRuntimeEnv();
-  const primary = resolvePostCategory(forcedCategory);
-  const tryOrder = forcedCategory
-    ? [normalizeCategory(forcedCategory) || primary]
-    : buildTryOrder(primary);
+  const intent = resolveScheduledIntent({ slot, forcedCategory });
+  const primary = intent.category;
+  const tryOrder =
+    intent.kind === 'referral'
+      ? ['referral']
+      : forcedCategory
+        ? [normalizeCategory(forcedCategory) || primary]
+        : buildTryOrder(primary);
 
   const startedAt = new Date().toISOString();
   console.log(
-    `[pipeline] Mulai ${startedAt} | target=${target} | primary=${primary} | try=${tryOrder.join('→')}`
+    `[pipeline] Mulai ${startedAt} | target=${target} | kind=${intent.kind} | primary=${primary} | try=${tryOrder.join('→')}`
   );
 
   let category = null;
@@ -183,10 +321,12 @@ async function runPipeline({
   for (const cat of tryOrder) {
     console.log(`[pipeline] Coba kategori: ${cat}`);
     try {
-      const snap = await fetchCategorySnapshot(cat);
-      snap.category = cat === 'spot' ? 'spot' : cat;
+      const snap = await fetchCategorySnapshot(
+        cat,
+        cat === 'referral' ? intent.referralOpts : null
+      );
+      snap.category = cat;
 
-      // airdrop tanpa token aman → skip
       if (cat === 'airdrop' && !snap.hotGem) {
         console.warn('[pipeline] Airdrop kosong / tidak lolos filter — skip');
         continue;
@@ -194,7 +334,23 @@ async function runPipeline({
 
       if (!isFreshSnapshot(snap)) {
         const key = buildContentKey(snap);
-        console.warn(`[pipeline] Skip ${cat} — konten tidak segar / duplikat (${key || 'no-key'})`);
+        console.warn(
+          `[pipeline] Skip ${cat} — konten tidak segar / duplikat (${key || 'no-key'})`
+        );
+        // Referral: kalau angle/variant bentrok TTL pendek, coba angle baru
+        if (cat === 'referral') {
+          const retry = buildReferralSnapshot({
+            ...(intent.referralOpts || {}),
+            angle: null,
+            variant: Math.floor(Math.random() * 100000),
+          });
+          retry.category = 'referral';
+          if (isFreshSnapshot(retry)) {
+            category = 'referral';
+            snapshot = retry;
+            break;
+          }
+        }
         continue;
       }
 
@@ -214,7 +370,11 @@ async function runPipeline({
 
   console.log(`[pipeline] Pilih kategori=${category} | key=${buildContentKey(snapshot)}`);
 
-  if (category === 'topcoin') {
+  if (category === 'referral') {
+    console.log(
+      `[pipeline] Referral → ${snapshot.projectId} / angle=${snapshot.angle} / v=${snapshot.variant}`
+    );
+  } else if (category === 'topcoin') {
     console.log(
       `[pipeline] TopCoin n=${snapshot.topCoins?.length || 0} | up=${snapshot.topCoinStats?.up} down=${snapshot.topCoinStats?.down}`
     );
@@ -247,7 +407,12 @@ async function runPipeline({
 
   if (target === 'channel') {
     const key = buildContentKey(snapshot);
-    markContentPosted(key, { category, chatId: result.chatId, messageId: result.messageId });
+    markContentPosted(key, {
+      category,
+      chatId: result.chatId,
+      messageId: result.messageId,
+      projectId: snapshot.projectId || null,
+    });
 
     if (['news', 'event', 'listing'].includes(category) && snapshot.hotNews?.url) {
       markNewsPosted(snapshot.hotNews.url);
@@ -271,4 +436,6 @@ module.exports = {
   resolvePostCategory,
   normalizeCategory,
   CATEGORY_POOL,
+  CRYPTO_CATEGORY_POOL,
+  resolveScheduledIntent,
 };

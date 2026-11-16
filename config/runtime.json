@@ -36,5 +36,37 @@
   "recentNewsUrls": [
     "https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration"
   ],
-  "lastNewsAt": "2026-10-26T06:01:41.735Z"
+  "lastNewsAt": "2026-10-26T06:01:41.735Z",
+  "dailyPlan": {
+    "date": "2026-11-16",
+    "slots": [
+      {
+        "time": "09:00",
+        "kind": "referral",
+        "projectId": "grass",
+        "angle": "saldo_usdc_sol",
+        "variant": 98104
+      },
+      {
+        "time": "13:00",
+        "kind": "referral",
+        "projectId": "chainers",
+        "angle": "bukti_withdraw",
+        "variant": 33968
+      },
+      {
+        "time": "19:00",
+        "kind": "crypto",
+        "cryptoCategory": "spot"
+      },
+      {
+        "time": "21:00",
+        "kind": "referral",
+        "projectId": "beincom",
+        "angle": "join_sekarang",
+        "variant": 95544
+      }
+    ],
+    "createdAt": "2026-11-16T09:05:21.568Z"
+  }
 }

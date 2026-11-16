@@ -2,9 +2,9 @@
 
 Repo: https://github.com/jfautowear/AutopostTg
 
-Bot Node.js: fetch **OKX** / **Bitget** / DEX / **pengumuman OKX** → konten → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp).
+Bot Node.js: **1×/hari** update crypto (OKX/Bitget spot atau topcoin) + **3×/hari** promo referral acak → post `@jfnetworknet` → forward [@caricuanhp](https://t.me/caricuanhp) (topik terpisah).
 
-**PC boleh OFF.** Autopost, command admin (`/jadwal`, `/status`, …), berita/promo, dan Top Aktif jalan lewat **GitHub Actions**. PC hanya untuk debug lokal.
+**PC boleh OFF.** Autopost, command admin (`/jadwal`, `/status`, `/rencana`, …), dan Top Aktif jalan lewat **GitHub Actions**. PC hanya untuk debug lokal.
 
 ## Penting: `.env` tidak ikut ke GitHub
 
@@ -21,10 +21,10 @@ Command diproses GHA tiap **±10 menit** (PC OFF OK). Data `/jadwal` & `/status`
 | `/jadwal_add 12:30` | Tambah jam |
 | `/jadwal_del 12:30` | Hapus jam |
 | `/jadwal_on` / `/jadwal_off` | Aktif / nonaktif |
-| `/test` / `/test_airdrop` / `/test_news` | Preview ke `TEST_CHAT_ID` |
-| `/postnow` / `/airdrop` / `/news` | Post ke channel |
+| `/rencana` | Rencana 1 crypto + 3 referral hari ini |
+| `/test` / `/test_topcoin` / `/test_referral [proyek]` | Preview ke `TEST_CHAT_ID` |
+| `/postnow` / `/topcoin` / `/referral [proyek]` | Post ke channel |
 | `/sumber okx\|bitget\|auto` | Sumber data CEX |
-| `/kategori spot\|airdrop\|news\|auto` | Jenis konten |
 | `/status` | Status + last post + slot berikutnya |
 | `/help` | Bantuan |
 
@@ -32,20 +32,18 @@ Akun selain `@jfnetworkindo` ditolak. Jadwal di `config/schedule.json` (sumber k
 
 ⚠️ **Jangan** biarkan `npm start` ON di PC bersamaan GHA — bentrok `getUpdates`.
 
-## Jenis konten (acak tiap slot)
+## Jenis konten (4 slot / hari)
 
-Default `POST_CATEGORY=auto` — tiap post **acak** dari:
+Default `POST_CATEGORY=auto` — tiap hari digenerate **1 slot crypto + 3 slot referral** (acak jam & proyek), lihat `/rencana`.
 
-| Kategori | Isi |
-|----------|-----|
-| **topcoin** | Top 15 harga (BTC, ETH, SOL, BNB, …) + naik/turun |
-| **spot** | Hot gainer / top move CEX |
-| **airdrop** | DEX Safe Screen → OKX Web3 |
-| **news** | Pengumuman OKX umum |
-| **event** | Event / Jumpstart / promo |
-| **listing** | New listing |
+| Jenis | Isi | Forward |
+|-------|-----|---------|
+| **crypto** (1×) | `spot` atau `topcoin` acak (OKX / Bitget) | [topik 80483](https://t.me/caricuanhp/80483) |
+| **referral** (3×) | Honeygain+JumpTask, Grass, Chainers, Beincom, OKX Bot (acak, tanpa ulang proyek di hari yang sama) | [topik 341](https://t.me/caricuanhp/341) |
 
-**Dedupe ketat:** konten yang sudah pernah dipost (URL berita, ticker spot, token DEX, bucket TopCoin) **tidak diulang** sampai TTL habis.
+Referral: caption AI variatif (anti-overclaim) + **Disclaimer: Not financial advice · DYOR**. Gambar digenerate bertema proyek (Pollinations + overlay). Tombol dari `config/referrals.json`.
+
+**Dedupe ketat:** konten yang sudah pernah dipost (ticker spot, bucket TopCoin, proyek+angle referral) **tidak diulang** sampai TTL habis.
 
 ## GitHub Actions (hemat free tier)
 
@@ -74,10 +72,10 @@ Pengumuman Top 10 → topik [t.me/caricuanhp/65640](https://t.me/caricuanhp/6564
 | `OPENROUTER_API_KEY` | ✅ (fallback free) |
 | `TEST_CHAT_ID` | untuk `/test` |
 | `GEMINI_API_KEY` | hanya jika `AI_PROVIDER=auto`/`paid` |
-| `TELEGRAM_FORWARD_CHAT_ID` | opsional |
-| `TELEGRAM_FORWARD_THREAD_ID` | opsional (forward autopost) |
+| `TELEGRAM_FORWARD_CHAT_ID` | opsional (`@caricuanhp`) |
+| `TELEGRAM_FORWARD_THREAD_ID` | forward crypto (default `80483`) |
 
-Repo variable opsional: `ACTIVITY_CHAT_ID`, `ACTIVITY_THREAD_ID` (default `65640`).
+Repo variable opsional: `TELEGRAM_FORWARD_REFERRAL_THREAD_ID` (default `341`), `ACTIVITY_CHAT_ID`, `ACTIVITY_THREAD_ID` (default `65640`).
 
 Repo variable `AI_PROVIDER` default **`free`** (tidak menyentuh Gemini/paid).
 

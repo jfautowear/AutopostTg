@@ -100,17 +100,37 @@ async function safeReply(bot, msg, text, extra = {}) {
   }
 }
 
+function focusFromResult(result, category) {
+  if (String(category || '').startsWith('referral') || result.category === 'referral') {
+    return result.snapshot?.projectId || 'referral';
+  }
+  if (result.category === 'airdrop') {
+    return result.snapshot?.hotGem
+      ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
+      : '—';
+  }
+  if (['news', 'event', 'listing'].includes(result.category)) {
+    return result.snapshot?.hotNews?.title?.slice(0, 40) || '—';
+  }
+  if (result.category === 'topcoin') {
+    return `top${result.snapshot?.topCoins?.length || 15}`;
+  }
+  return result.snapshot?.hotCoin?.base || '—';
+}
+
 async function executeTest(bot, msg, category = 'spot') {
   let statusMsg;
   try {
     statusMsg = await safeReply(
       bot,
       msg,
-      category === 'airdrop'
-        ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-        : category === 'news'
-          ? '⏳ Ambil pengumuman OKX (listing/event/promo)...'
-          : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
+      String(category || '').startsWith('referral')
+        ? '⏳ Generate caption + gambar referral...'
+        : category === 'airdrop'
+          ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
+          : category === 'news'
+            ? '⏳ Ambil pengumuman OKX (listing/event/promo)...'
+            : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
     );
   } catch (err) {
     console.error('[commands] gagal kirim status:', err.message);
@@ -122,16 +142,9 @@ async function executeTest(bot, msg, category = 'spot') {
       throw new Error('TEST_CHAT_ID belum di-set (ID numerik grup private).');
     }
     const result = await runPipeline({ target: 'test', category });
-    const label =
-      category === 'airdrop'
-        ? result.snapshot?.hotGem
-          ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
-          : '—'
-        : category === 'news'
-          ? result.snapshot?.hotNews?.title?.slice(0, 40) || '—'
-          : result.snapshot?.hotCoin?.base || '—';
+    const label = focusFromResult(result, category);
     await bot.editMessageText(
-      `✅ Tes berhasil (${category})!\n📦 Preview → grup private\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
+      `✅ Tes berhasil (${result.category})!\n📦 Preview → grup private\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {
@@ -152,11 +165,13 @@ async function executePostNow(bot, msg, category = 'spot') {
     statusMsg = await safeReply(
       bot,
       msg,
-      category === 'airdrop'
-        ? '⏳ Posting Airdrop/DEX ke channel...'
-        : category === 'news'
-          ? '⏳ Posting berita/promo OKX ke channel...'
-          : '⏳ Posting ke channel utama...'
+      String(category || '').startsWith('referral')
+        ? '⏳ Posting referral ke channel...'
+        : category === 'airdrop'
+          ? '⏳ Posting Airdrop/DEX ke channel...'
+          : category === 'news'
+            ? '⏳ Posting berita/promo OKX ke channel...'
+            : '⏳ Posting ke channel utama...'
     );
   } catch (err) {
     console.error('[commands] gagal kirim status:', err.message);
@@ -169,8 +184,9 @@ async function executePostNow(bot, msg, category = 'spot') {
       slot: `cmd-${Date.now()}`,
       category,
     });
+    const focus = focusFromResult(result, category);
     await bot.editMessageText(
-      `✅ Post berhasil (${result.category})!\n🆔 ${result.chatId}#${result.messageId}`,
+      `✅ Post berhasil (${result.category}${focus !== '—' ? ` · ${focus}` : ''})!\n🆔 ${result.chatId}#${result.messageId}`,
       { chat_id: msg.chat.id, message_id: statusMsg.message_id }
     );
   } catch (err) {

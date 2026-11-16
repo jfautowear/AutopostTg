@@ -1,0 +1,163 @@
+{
+  "projects": [
+    {
+      "id": "honeygain",
+      "name": "Honeygain + JumpTask",
+      "shortName": "Honeygain",
+      "type": "depin",
+      "tagline": "Passive income dari berbagi bandwidth internet menganggur, cair via crypto/JumpTask",
+      "theme": {
+        "colors": "warm golden yellow & royal blue cyber aesthetic",
+        "motifs": "cute 3D bees, honeycomb, Wi-Fi signals, floating coins, desktop dashboard mockup, rocket trails",
+        "mood": "friendly passive earning, cozy tech"
+      },
+      "angles": [
+        "passive_bandwidth",
+        "bonus_daftar",
+        "cair_ke_crypto",
+        "tinggal_jalan"
+      ],
+      "facts": [
+        "Berbagi koneksi internet / bandwidth yang menganggur secara otomatis",
+        "Bisa jalan di latar belakang (PC/device)",
+        "Reward dapat diarahkan ke JumpTask / jalur crypto sesuai aturan app",
+        "Tanpa modal trading — bukan jaminan profit",
+        "Cocok sebagai alternatif passive income ringan"
+      ],
+      "buttons": [
+        {
+          "text": "Daftar JUMPTASK",
+          "url": "https://www.jumptask.io/r/curijirogixy"
+        },
+        {
+          "text": "Download Honeygain",
+          "url": "https://join.honeygain.com/JEFFR7C795"
+        }
+      ]
+    },
+    {
+      "id": "grass",
+      "name": "Grass",
+      "shortName": "Grass",
+      "type": "depin",
+      "tagline": "Monetisasi bandwidth untuk jaringan AI/DePIN terdesentralisasi — ringan di background",
+      "theme": {
+        "colors": "deep forest cyber-green & neon lime glow",
+        "motifs": "smartphone Grass wallet UI silhouette, Solana and USDC coins, floating leaves, network nodes, soft rockets",
+        "mood": "growth, clean DePIN, fresh tech"
+      },
+      "angles": [
+        "airdrop_cuan",
+        "bagi_internet",
+        "saldo_usdc_sol",
+        "otomatis_gratis"
+      ],
+      "facts": [
+        "DePIN: berbagi bandwidth untuk jaringan data/AI terdesentralisasi",
+        "App dapat berjalan ringan di latar belakang",
+        "Saldo & withdraw mengikuti aturan resmi di app Grass",
+        "Tanpa modal trading — hasil tidak dijamin",
+        "Fokus jangka panjang; selalu DYOR"
+      ],
+      "buttons": [
+        {
+          "text": "Download Grass",
+          "url": "https://app.grass.io/register?referralCode=bwYKxS5cOMkC3oC"
+        }
+      ]
+    },
+    {
+      "id": "chainers",
+      "name": "Chainers",
+      "shortName": "Chainers",
+      "type": "game",
+      "tagline": "Game NFT/Web3 free-to-play — kelola kebun virtual, pantau klaim/withdraw POL atau BNB di app",
+      "theme": {
+        "colors": "vibrant purple, golden harvest, playful 3D voxel farm aesthetic",
+        "motifs": "voxel farmer characters, farm animals, POL and BNB icons, tablet withdraw history mockup, CFB coins",
+        "mood": "playful GameFi, colorful, energetic"
+      },
+      "angles": [
+        "main_gratis",
+        "withdraw_pol_bnb",
+        "urus_kebun",
+        "bukti_withdraw"
+      ],
+      "facts": [
+        "Game Web3 / NFT farming (free-to-play sesuai aturan proyek)",
+        "Aktivitas in-game: kelola kebun / farm virtual",
+        "Withdraw token (mis. POL / BNB) tergantung aturan & ketersediaan di app — bukan jaminan",
+        "Bukan saran investasi; ekonomi game bisa berubah",
+        "Selalu cek detail di app resmi Chainers"
+      ],
+      "buttons": [
+        {
+          "text": "Main Chainers Gratis",
+          "url": "https://chainers.io/?r=mc56apg7"
+        }
+      ]
+    },
+    {
+      "id": "beincom",
+      "name": "Beincom",
+      "shortName": "Beincom",
+      "type": "airdrop",
+      "tagline": "SocialFi / komunitas Web3 — peluang reward airdrop token BIC bagi pengguna aktif sesuai aturan resmi",
+      "theme": {
+        "colors": "futuristic violet, magenta, glowing silver Web3 aesthetic",
+        "motifs": "BIC coins, purple tokens, smartphone wallet mockup, rockets, stars, upward chart glow",
+        "mood": "celebratory airdrop, premium community"
+      },
+      "angles": [
+        "airdrop_klaim",
+        "komunitas",
+        "wallet_balance",
+        "join_sekarang"
+      ],
+      "facts": [
+        "Platform komunitas / SocialFi berbasis Web3",
+        "Reward & airdrop BIC mengikuti aturan resmi Beincom untuk user aktif",
+        "Nilai token bisa naik/turun — tidak dijamin",
+        "Verifikasi info di channel/app resmi sebelum ikut",
+        "Bukan jaminan profit"
+      ],
+      "buttons": [
+        {
+          "text": "Gabung Beincom Airdrop",
+          "url": "https://group.beincom.com/ref/MjHHVP?type=personal"
+        }
+      ]
+    },
+    {
+      "id": "okx_bot",
+      "name": "OKX Spot Grid Trading Bot",
+      "shortName": "OKX Bot",
+      "type": "trading_bot",
+      "tagline": "Otomasi Spot Grid 24/7 — beli di area lebih rendah & jual di area lebih tinggi tanpa pantau chart terus-menerus (risiko trading tetap ada)",
+      "theme": {
+        "colors": "sleek obsidian black, neon emerald green, metallic silver fintech aesthetic",
+        "motifs": "tablet trading bots dashboard, BTC ETH USDT coins, circuit lines, upward green arrow, futuristic fintech",
+        "mood": "high-tech automation, serious trading tools"
+      },
+      "angles": [
+        "bot_otomatis",
+        "grid_dca",
+        "tanpa_pantau_chart",
+        "fitur_okx"
+      ],
+      "facts": [
+        "Fitur Trading Bots resmi di OKX (termasuk Spot Grid)",
+        "Konsep grid: otomasi order di rentang harga yang kamu set",
+        "Bisa berjalan 24/7 di akun OKX — tetap pantau risiko & modal",
+        "Backtest / APR historis di app ≠ hasil masa depan",
+        "Bukan jaminan profit; atur ukuran posisi & stop sendiri"
+      ],
+      "buttons": [
+        {
+          "text": "Coba Bot OKX Sekarang",
+          "url": "https://okx.ac/join/76785925"
+        }
+      ]
+    }
+  ]
+}

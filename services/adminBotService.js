@@ -17,13 +17,16 @@ const HELP_TEXT = `🛠 *Admin Autopost* (@${ADMIN_USERNAME})
 
 Test & post:
 /test — preview spot CEX
-/test\\_airdrop — preview Airdrop/DEX
-/test\\_news — preview berita/promo OKX
 /test\\_topcoin — preview Top 15 harga
+/test\\_referral — preview referral acak
+/test\\_referral honeygain|grass|chainers|beincom|okx\\_bot
 /postnow — post spot ke channel
-/airdrop — post Airdrop/DEX
-/news — post berita/promo OKX
 /topcoin — post Top 15 koin
+/referral — post referral acak ke channel
+/referral grass — post proyek tertentu
+
+Legacy (opsional):
+/test\\_airdrop / /airdrop / /test\\_news / /news
 
 Top aktif grup (@caricuanhp):
 /topaktif — lihat ranking minggu ini
@@ -38,35 +41,34 @@ Jadwal:
 /jadwal\\_del 12:30 — hapus jam
 /jadwal\\_on — aktifkan
 /jadwal\\_off — nonaktifkan
+/rencana — rencana 1 crypto + 3 referral hari ini
 
 Lainnya:
 /sumber okx|bitget|auto — sumber CEX
-/kategori spot|topcoin|airdrop|news|event|listing|auto — jenis konten
 /status — status bot
 /help — bantuan
 
 Hanya @${ADMIN_USERNAME} yang bisa memakai command ini.
 PC boleh OFF — autopost + command via GitHub Actions (poll ±10 mnt).
-Konten tidak diulang (dedupe). Autopost acak: TopCoin / Spot / Airdrop / News / Event / Listing.
+Autopost: *1× crypto/hari* + *3× referral acak* (Honeygain, Grass, Chainers, Beincom, OKX Bot).
+Forward crypto → topik 80483 · referral → topik 341.
 Jangan biarkan npm start ON di PC bersamaan (bentrok getUpdates).`;
 
 /** Menu slash Telegram (BotFather-style) — agar daftar command selalu lengkap. */
 const BOT_COMMANDS = [
   { command: 'help', description: 'Bantuan command admin' },
   { command: 'status', description: 'Status bot & jadwal' },
+  { command: 'rencana', description: 'Rencana 1 crypto + 3 referral hari ini' },
   { command: 'test', description: 'Preview spot CEX' },
-  { command: 'test_airdrop', description: 'Preview Airdrop/DEX' },
-  { command: 'test_news', description: 'Preview berita/promo OKX' },
   { command: 'test_topcoin', description: 'Preview Top 15 harga' },
+  { command: 'test_referral', description: 'Preview referral / promo' },
   { command: 'postnow', description: 'Post spot ke channel' },
-  { command: 'airdrop', description: 'Post Airdrop/DEX ke channel' },
-  { command: 'news', description: 'Post berita/promo OKX' },
   { command: 'topcoin', description: 'Post Top 15 koin harga' },
+  { command: 'referral', description: 'Post referral ke channel' },
   { command: 'topaktif', description: 'Ranking Top Aktif minggu ini' },
   { command: 'topaktif_post', description: 'Kirim Top 10 ke grup' },
   { command: 'topaktif_test', description: 'Preview Top 10' },
   { command: 'jadwal', description: 'Lihat jadwal autopost' },
-  { command: 'kategori', description: 'Set spot|topcoin|news|event|listing|airdrop|auto' },
   { command: 'sumber', description: 'Set okx|bitget|auto' },
 ];
 
@@ -264,6 +266,44 @@ function handleAdminCommand(msg) {
         category: 'spot',
       };
 
+    case '/referral':
+    case '/ref':
+    case '/post_referral': {
+      const projectArg = String(args || '').toLowerCase().trim();
+      const category = projectArg ? `referral:${projectArg}` : 'referral';
+      return {
+        reply: null,
+        allowed: true,
+        forcePost: true,
+        runPostNow: true,
+        category,
+      };
+    }
+
+    case '/test_referral':
+    case '/testreferral':
+    case '/test_ref': {
+      const projectArg = String(args || '').toLowerCase().trim();
+      const category = projectArg ? `referral:${projectArg}` : 'referral';
+      return {
+        reply: null,
+        allowed: true,
+        runTest: true,
+        category,
+      };
+    }
+
+    case '/rencana':
+    case '/plan':
+    case '/daily_plan': {
+      const { formatDailyPlanText, ensureDailyPlan } = require('./referralService');
+      ensureDailyPlan(schedule);
+      return {
+        reply: formatDailyPlanText(schedule),
+        allowed: true,
+      };
+    }
+
     case '/test':
       return {
         reply: null,
@@ -368,7 +408,8 @@ function handleAdminCommand(msg) {
       const { normalizeCategory } = require('./postService');
       if (val === 'auto') {
         return {
-          reply: '✅ Kategori konten → *auto* (acak tiap post)',
+          reply:
+            '✅ Mode → *auto* (1× crypto + 3× referral per hari sesuai /rencana)',
           allowed: true,
           parseMode: 'Markdown',
           postCategory: 'auto',
@@ -378,7 +419,7 @@ function handleAdminCommand(msg) {
       if (!normalized) {
         return {
           reply:
-            'Format: /kategori spot | topcoin | airdrop | news | event | listing | auto',
+            'Format: /kategori spot | topcoin | referral | airdrop | news | event | listing | auto',
           allowed: true,
         };
       }

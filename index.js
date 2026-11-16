@@ -46,19 +46,39 @@ async function runAutoPost(slot = null, category = null) {
   return runPipeline({ target: 'channel', slot, category });
 }
 
+function statusLabelForCategory(category) {
+  const c = String(category || '');
+  if (c.startsWith('referral')) return '⏳ Generate caption + gambar referral...';
+  if (c === 'airdrop') return '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...';
+  if (c === 'news' || c === 'event' || c === 'listing') {
+    return '⏳ Ambil pengumuman OKX (listing/event/promo)...';
+  }
+  if (c === 'topcoin') return '⏳ Ambil Top Koin & generate konten AI...';
+  return '⏳ Sedang mengambil data market terbaru & generate konten AI...';
+}
+
+function resultFocusLabel(result, category) {
+  if (String(category || '').startsWith('referral') || result.category === 'referral') {
+    return result.snapshot?.projectId || 'referral';
+  }
+  if (result.category === 'airdrop') {
+    return result.snapshot?.hotGem
+      ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
+      : '—';
+  }
+  if (['news', 'event', 'listing'].includes(result.category)) {
+    return result.snapshot?.hotNews?.title?.slice(0, 40) || '—';
+  }
+  if (result.category === 'topcoin') {
+    return `top${result.snapshot?.topCoins?.length || 15}`;
+  }
+  return result.snapshot?.hotCoin?.base || '—';
+}
+
 async function runTestCommand(msg, category = 'spot') {
   const bot = getBot();
   const chatId = msg.chat.id;
-  const statusMsg = await safeReply(
-    bot,
-    msg,
-    category === 'airdrop'
-      ? '⏳ Scan DEX trending & generate konten Airdrop/Early Gem...'
-      : category === 'news'
-        ? '⏳ Ambil pengumuman OKX (listing/event/promo)...'
-        : '⏳ Sedang mengambil data market terbaru & generate konten AI...'
-  );
-
+  const statusMsg = await safeReply(bot, msg, statusLabelForCategory(category));
 
   try {
     if (!getTestChatId()) {
@@ -68,17 +88,10 @@ async function runTestCommand(msg, category = 'spot') {
     }
 
     const result = await runPipeline({ target: 'test', category });
-    const label =
-      category === 'airdrop'
-        ? result.snapshot?.hotGem
-          ? `${result.snapshot.hotGem.symbol}@${result.snapshot.hotGem.chain}`
-          : '—'
-        : category === 'news'
-          ? result.snapshot?.hotNews?.title?.slice(0, 40) || '—'
-          : result.snapshot?.hotCoin?.base || '—';
+    const label = resultFocusLabel(result, category);
 
     await bot.editMessageText(
-      `✅ Tes berhasil (${category})!\n📦 Preview dikirim ke grup private testing.\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
+      `✅ Tes berhasil (${result.category})!\n📦 Preview dikirim ke grup private testing.\n🔥 ${label}\n📝 ${result.captionLength} karakter`,
       { chat_id: chatId, message_id: statusMsg.message_id }
     );
     return result;
@@ -102,13 +115,14 @@ async function runPostNowCommand(msg, category = 'spot') {
   const statusMsg = await safeReply(
     bot,
     msg,
-    category === 'airdrop'
-      ? '⏳ Posting Airdrop/DEX ke channel...'
-      : category === 'news'
-        ? '⏳ Posting berita/promo OKX ke channel...'
-        : '⏳ Posting ke channel utama...'
+    String(category || '').startsWith('referral')
+      ? '⏳ Posting referral ke channel...'
+      : category === 'airdrop'
+        ? '⏳ Posting Airdrop/DEX ke channel...'
+        : category === 'news'
+          ? '⏳ Posting berita/promo OKX ke channel...'
+          : '⏳ Posting ke channel utama...'
   );
-
 
   try {
     const result = await runPipeline({
@@ -116,8 +130,9 @@ async function runPostNowCommand(msg, category = 'spot') {
       slot: `manual-${Date.now()}`,
       category,
     });
+    const focus = resultFocusLabel(result, category);
     await bot.editMessageText(
-      `✅ Post berhasil (${result.category})!\n🆔 ${result.chatId}#${result.messageId}`,
+      `✅ Post berhasil (${result.category}${focus !== '—' ? ` · ${focus}` : ''})!\n🆔 ${result.chatId}#${result.messageId}`,
       { chat_id: chatId, message_id: statusMsg.message_id }
     );
     return result;
@@ -185,11 +200,31 @@ async function handleIncomingMessage(msg) {
   }
 
   if (
+    parsed.cmd === '/test_referral' ||
+    parsed.cmd === '/testreferral' ||
+    parsed.cmd === '/test_ref'
+  ) {
+    const project = parsed.args ? `referral:${parsed.args}` : 'referral';
+    await runTestCommand(msg, project);
+    return;
+  }
+
+  if (
     parsed.cmd === '/postnow' ||
     parsed.cmd === '/post_sekarang' ||
     parsed.cmd === '/post_now'
   ) {
     await runPostNowCommand(msg, 'spot');
+    return;
+  }
+
+  if (
+    parsed.cmd === '/referral' ||
+    parsed.cmd === '/ref' ||
+    parsed.cmd === '/post_referral'
+  ) {
+    const project = parsed.args ? `referral:${parsed.args}` : 'referral';
+    await runPostNowCommand(msg, project);
     return;
   }
 

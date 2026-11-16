@@ -1,4 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api');
+const {
+  MANDATORY_DISCLAIMER,
+  OKX_TRADE_URL,
+  pickBitgetUrl,
+  sanitizeMarketingText,
+} = require('./contentRules');
 
 /**
  * Channel gratis = limit API Telegram standar.
@@ -16,10 +22,11 @@ function pickOkxWeb3Url() {
   return OKX_WEB3_URLS[Math.floor(Math.random() * OKX_WEB3_URLS.length)];
 }
 
+/** Tombol crypto update — OKX fixed + Bitget random (2 URL resmi). */
 function buildAffiliateButtons() {
   return [
-    { text: '📈 Trade OKX', url: 'https://okx.ac/join/76785925' },
-    { text: '⚡ Trade Bitget', url: 'https://partner.bitgetapp.com/bg/CSGH1P' },
+    { text: '📈 Trade OKX', url: OKX_TRADE_URL },
+    { text: '⚡ Trade Bitget', url: pickBitgetUrl() },
   ];
 }
 
@@ -29,12 +36,12 @@ function buildRegisterButton(source = 'OKX') {
   if (isBitget) {
     return {
       text: '✨ Daftar Bitget',
-      url: 'https://partner.bitgetapp.com/bg/CSGH1P',
+      url: pickBitgetUrl(),
     };
   }
   return {
     text: '✨ Daftar OKX',
-    url: 'https://okx.ac/join/76785925',
+    url: OKX_TRADE_URL,
   };
 }
 
@@ -43,8 +50,9 @@ const JOIN_GROUP_BTN = {
   url: 'https://t.me/caricuanhp',
 };
 
-const AIRDROP_DISCLAIMER = '⚠️ HIGH RISK · NFA & DYOR.';
-const DISCLAIMER = '⚠️ NFA & DYOR.';
+/** Disclaimer resmi — selalu dari contentRules, bukan dari AI. */
+const DISCLAIMER = MANDATORY_DISCLAIMER;
+const AIRDROP_DISCLAIMER = MANDATORY_DISCLAIMER;
 
 let botInstance = null;
 
@@ -94,16 +102,40 @@ function getForwardChatId() {
   return process.env.TELEGRAM_FORWARD_CHAT_ID || '@caricuanhp';
 }
 
-function getForwardThreadId() {
-  const raw =
-    process.env.TELEGRAM_FORWARD_THREAD_ID ||
-    process.env.TELEGRAM_FORWARD_TOPIC_ID ||
-    '80483';
-  if (raw === '' || raw === '0' || String(raw).toLowerCase() === 'none') {
+function parseThreadId(raw, fallback) {
+  const value =
+    raw === undefined || raw === null || raw === ''
+      ? fallback
+      : raw;
+  if (value === '' || value === '0' || String(value).toLowerCase() === 'none') {
     return null;
   }
-  const id = Number(raw);
+  const id = Number(value);
   return Number.isFinite(id) && id > 0 ? id : null;
+}
+
+/** Forward crypto update → topik default (80483). */
+function getForwardThreadId() {
+  return parseThreadId(
+    process.env.TELEGRAM_FORWARD_THREAD_ID || process.env.TELEGRAM_FORWARD_TOPIC_ID,
+    '80483'
+  );
+}
+
+/** Forward referral/promo → topik terpisah (341). */
+function getReferralForwardThreadId() {
+  return parseThreadId(
+    process.env.TELEGRAM_FORWARD_REFERRAL_THREAD_ID ||
+      process.env.TELEGRAM_FORWARD_REFERRAL_TOPIC_ID,
+    '341'
+  );
+}
+
+function resolveForwardThreadId(snapshot) {
+  if (snapshot?.category === 'referral') {
+    return getReferralForwardThreadId();
+  }
+  return getForwardThreadId();
 }
 
 function telegramLength(text) {
@@ -182,6 +214,38 @@ function buildAirdropInlineKeyboard(snapshot) {
 }
 
 /**
+ * Keyboard referral — tombol dari config/referrals.json + JOIN GROUP.
+ */
+function buildReferralInlineKeyboard(snapshot) {
+  const buttons = Array.isArray(snapshot?.project?.buttons)
+    ? snapshot.project.buttons.filter((b) => b?.text && b?.url)
+    : [];
+
+  const rows = [];
+  if (buttons.length >= 2) {
+    rows.push(
+      buttons.slice(0, 2).map((b) => ({ text: String(b.text).slice(0, 40), url: b.url }))
+    );
+    if (buttons.length > 2) {
+      rows.push(
+        buttons.slice(2).map((b) => ({ text: String(b.text).slice(0, 40), url: b.url }))
+      );
+    }
+  } else if (buttons.length === 1) {
+    rows.push([{ text: String(buttons[0].text).slice(0, 40), url: buttons[0].url }]);
+  } else {
+    rows.push([{ text: '🔗 Buka Link', url: 'https://t.me/jfnetworknet' }]);
+  }
+  rows.push([JOIN_GROUP_BTN]);
+
+  console.log(
+    `[telegram] Referral keyboard → ${snapshot?.projectId || '-'} | ${buttons.map((b) => b.text).join(' | ')}`
+  );
+
+  return { inline_keyboard: rows };
+}
+
+/**
  * Keyboard berita/promo — Daftar OKX/Bitget | Baca Info | JOIN GROUP.
  */
 function buildNewsInlineKeyboard(snapshot) {
@@ -233,6 +297,9 @@ function formatShortTime(iso) {
  * Caption spot/CEX — hook kuat di baris pertama, bullets gainer, CTA jelas.
  */
 function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
+  if (snapshot.category === 'referral') {
+    return formatReferralMessage(snapshot, content, { isTest });
+  }
   if (snapshot.category === 'airdrop') {
     return formatAirdropMessage(snapshot, content, { isTest });
   }
@@ -256,6 +323,15 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
       ? `🚀 Lonjakan ekstrem: ${hot.base} ${pct}!`
       : `🔥 Breaking: ${hot.base} jadi fokusasi utama di ${exchange}`
     : `🔥 Breaking Market Pulse · ${exchange}`;
+
+  const safeContent = {
+    hook: sanitizeMarketingText(content?.hook || defaultHook),
+    info: sanitizeMarketingText(content?.info || ''),
+    cta: sanitizeMarketingText(
+      content?.cta ||
+        `Buka app ${exchange} untuk analisis ${hot?.base || 'pasar'} sekarang. 📊`
+    ),
+  };
 
   const build = (hook, info, cta) => {
     const gainerBlock = gainers.length
@@ -288,9 +364,7 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
       ...gainerBlock,
       escapeHtml(info),
       '',
-      escapeHtml(
-        cta || `Buka app ${exchange} untuk analisis ${hot?.base || 'pasar'} sekarang. 📊`
-      ),
+      escapeHtml(cta),
       '',
       `<i>${escapeHtml(DISCLAIMER)}</i>`,
     ]
@@ -298,7 +372,7 @@ function formatMarketMessage(snapshot, content, { isTest = false } = {}) {
       .join('\n');
   };
 
-  return finalizeCaption(build, content);
+  return finalizeCaption(build, safeContent);
 }
 
 /**
@@ -309,10 +383,13 @@ function formatTopCoinsMessage(snapshot, content, { isTest = false } = {}) {
   const stats = snapshot.topCoinStats || {};
   const exchange = snapshot.primaryLabel || 'CEX';
   const when = formatShortTime(snapshot.fetchedAt);
-  const hook = content?.hook || `📊 Top ${coins.length} koin update`;
-  const info = content?.info || '';
-  const cta =
-    content?.cta || `Cek chart di app ${exchange} sekarang 📊`;
+  const hook = sanitizeMarketingText(
+    content?.hook || `📊 Top ${coins.length} koin update`
+  );
+  const info = sanitizeMarketingText(content?.info || '');
+  const cta = sanitizeMarketingText(
+    content?.cta || `Cek chart di app ${exchange} sekarang 📊`
+  );
 
   const rows = coins.map((t) => {
     const arrow = (t.changePct || 0) >= 0 ? '🟢' : '🔴';
@@ -347,6 +424,57 @@ function formatTopCoinsMessage(snapshot, content, { isTest = false } = {}) {
 }
 
 /**
+ * Caption referral/promo — marketing variatif + disclaimer NFA & DYOR wajib.
+ */
+function formatReferralMessage(snapshot, content, { isTest = false } = {}) {
+  const project = snapshot.project || {};
+  const name = project.shortName || project.name || 'Proyek';
+  const typeLabel =
+    {
+      depin: 'DePIN',
+      game: 'GameFi',
+      airdrop: 'Airdrop',
+      trading_bot: 'Trading Bot',
+    }[project.type] || 'Promo';
+
+  const styleHint = content?.copywriting_angle
+    ? `<i>${escapeHtml(String(content.copywriting_angle))}</i>`
+    : null;
+
+  const hook = sanitizeMarketingText(
+    content?.hook || `${name} — cek peluangnya`
+  );
+  const info = sanitizeMarketingText(
+    content?.info ||
+      project.tagline ||
+      'Ikuti langkah di tombol. Hasil tidak dijamin.'
+  );
+  const cta = sanitizeMarketingText(
+    content?.cta || 'Klik tombol di bawah untuk mulai. 🚀'
+  );
+
+  const build = (h, i, c) =>
+    [
+      isTest ? '<b>🧪 [TEST REFERRAL]</b>' : null,
+      isTest ? '' : null,
+      `<b>${escapeHtml(h)}</b>`,
+      '',
+      `<b>🔗 ${escapeHtml(typeLabel)}</b> · ${escapeHtml(name)}`,
+      styleHint && isTest ? styleHint : null,
+      '',
+      escapeHtml(i),
+      '',
+      escapeHtml(c),
+      '',
+      `<i>${escapeHtml(DISCLAIMER)}</i>`,
+    ]
+      .filter((line) => line != null)
+      .join('\n');
+
+  return finalizeCaption(build, { hook, info, cta });
+}
+
+/**
  * Caption berita/promo — marketing natural; fakta dari pengumuman, tanpa label kaku.
  */
 function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
@@ -355,6 +483,12 @@ function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
   const typeLabel = n?.typeLabel || 'Update';
   const exchange = n?.exchange || snapshot.primaryLabel || 'OKX';
   const when = formatShortTime(n?.publishedAt || snapshot.fetchedAt);
+
+  const safeContent = {
+    hook: sanitizeMarketingText(content?.hook || ''),
+    info: sanitizeMarketingText(content?.info || ''),
+    cta: sanitizeMarketingText(content?.cta || ''),
+  };
 
   const build = (hook, info, cta) =>
     [
@@ -374,7 +508,7 @@ function formatNewsMessage(snapshot, content, { isTest = false } = {}) {
       .filter((line) => line != null)
       .join('\n');
 
-  return finalizeCaption(build, content);
+  return finalizeCaption(build, safeContent);
 }
 
 /** Volume ringkas untuk mobile: $1.17M / $85.2K */
@@ -423,12 +557,16 @@ function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
       ? `LP locked: ${Number(sec.lpLockedPct).toFixed(0)}%`
       : null;
 
-  const hook = content?.hook || `${token} lolos screen aman`;
-  const info =
+  const hook = sanitizeMarketingText(
+    content?.hook || `${token} lolos screen aman`
+  );
+  const info = sanitizeMarketingText(
     content?.info ||
-    'Token lolos filter keamanan & likuiditas. Tetap DYOR — bukan saran investasi.';
-  const cta =
-    content?.cta || 'Trade / cek pair di OKX Web3 DEX sekarang. 🌐';
+      'Token lolos filter keamanan & likuiditas. Filter ≠ bebas risiko.'
+  );
+  const cta = sanitizeMarketingText(
+    content?.cta || 'Trade / cek pair di OKX Web3 DEX sekarang. 🌐'
+  );
 
   const title = screened
     ? '<b>🛡️ DEX SAFE · LOLOS FILTER</b>'
@@ -463,7 +601,6 @@ function formatAirdropMessage(snapshot, content, { isTest = false } = {}) {
       escapeHtml(c),
       '',
       '<b>Trade via:</b> OKX Web3 DEX',
-      '<b>Disclaimer:</b> Filter ketat ≠ bebas risiko. DYOR &amp; NFA.',
       '',
       `<i>${escapeHtml(AIRDROP_DISCLAIMER)}</i>`,
     ]
@@ -510,7 +647,7 @@ function formatPctSafe(value) {
   return `${sign}${n.toFixed(2)}%`;
 }
 
-async function forwardToGroup(fromChatId, messageId) {
+async function forwardToGroup(fromChatId, messageId, snapshot = null) {
   const enabled = process.env.TELEGRAM_FORWARD_ENABLED !== 'false';
   if (!enabled) {
     console.log('[telegram] Forward dimatikan (TELEGRAM_FORWARD_ENABLED=false)');
@@ -519,7 +656,7 @@ async function forwardToGroup(fromChatId, messageId) {
 
   const bot = getBot();
   const toChatId = getForwardChatId();
-  const threadId = getForwardThreadId();
+  const threadId = resolveForwardThreadId(snapshot);
 
   const tryForward = async (opts, label) => {
     console.log(`[telegram] Forward ${fromChatId}#${messageId} → ${toChatId}${label}`);
@@ -574,7 +711,9 @@ async function sendMarketPost({
 
   const caption = formatMarketMessage(snapshot, content, { isTest });
   let reply_markup;
-  if (snapshot.category === 'airdrop') {
+  if (snapshot.category === 'referral') {
+    reply_markup = buildReferralInlineKeyboard(snapshot);
+  } else if (snapshot.category === 'airdrop') {
     reply_markup = buildAirdropInlineKeyboard(snapshot);
   } else if (['news', 'event', 'listing'].includes(snapshot.category)) {
     reply_markup = buildNewsInlineKeyboard(snapshot);
@@ -582,13 +721,14 @@ async function sendMarketPost({
     reply_markup = buildInlineKeyboard(snapshot);
   }
   const len = telegramLength(caption);
+  const forwardThreadId = resolveForwardThreadId(snapshot);
 
   if (len > 1024) {
     throw new Error(`Caption terlalu panjang (${len} > 1024) — cek MAX_CAPTION_CHARS`);
   }
 
   console.log(
-    `[telegram] → ${chatId} | ${len}/${MAX_CAPTION_CHARS} chars | test=${isTest}`
+    `[telegram] → ${chatId} | ${len}/${MAX_CAPTION_CHARS} chars | test=${isTest} | cat=${snapshot.category || '-'}`
   );
 
   let sent;
@@ -609,7 +749,7 @@ async function sendMarketPost({
   let forwarded = null;
   if (forward && target === 'channel') {
     try {
-      forwarded = await forwardToGroup(chatId, sent.message_id);
+      forwarded = await forwardToGroup(chatId, sent.message_id, snapshot);
     } catch (err) {
       console.error('[telegram] Forward ke grup gagal:', err.message);
     }
@@ -624,7 +764,7 @@ async function sendMarketPost({
     isTest,
     forwarded: Boolean(forwarded),
     forwardChatId: getForwardChatId(),
-    forwardThreadId: getForwardThreadId(),
+    forwardThreadId,
   };
 }
 
@@ -642,13 +782,17 @@ module.exports = {
   getTestChatId,
   getForwardChatId,
   getForwardThreadId,
+  getReferralForwardThreadId,
+  resolveForwardThreadId,
   formatMarketMessage,
   formatAirdropMessage,
   formatNewsMessage,
   formatTopCoinsMessage,
+  formatReferralMessage,
   buildInlineKeyboard,
   buildAirdropInlineKeyboard,
   buildNewsInlineKeyboard,
+  buildReferralInlineKeyboard,
   forwardToGroup,
   sendMarketPost,
   postToChannel,
