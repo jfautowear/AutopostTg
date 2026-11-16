@@ -11,6 +11,15 @@
       "reactions": 0,
       "score": 2
     },
+    "1836684121": {
+      "id": 1836684121,
+      "username": "Lumerinx",
+      "firstName": "Lumerinx",
+      "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
+    },
     "6046999198": {
       "id": 6046999198,
       "username": "Riswwan",
@@ -28,9 +37,36 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8632145845": {
+      "id": 8632145845,
+      "username": "Maousensei",
+      "firstName": "Maou@monsterland_bot@Victors_Company_bot",
+      "lastName": "@ChickenLandBot#GrambieBot",
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
+    },
+    "7330797950": {
+      "id": 7330797950,
+      "username": "Hari_pornomo",
+      "firstName": "Kotaro 👁️",
+      "lastName": "Minami",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-15T21:16:09.064Z",
+  "updatedAt": "2026-11-16T01:08:49.681Z",
   "chatId": -1002232474263
 }
