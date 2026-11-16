@@ -34,18 +34,18 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 1,
+      "messages": 4,
       "reactions": 0,
-      "score": 2
+      "score": 8
     },
     "5978663615": {
       "id": 5978663615,
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "8632145845": {
       "id": 8632145845,
@@ -79,12 +79,12 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 2,
+      "messages": 8,
       "reactions": 0,
-      "score": 4
+      "score": 16
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-16T09:30:36.225Z",
+  "updatedAt": "2026-11-16T18:20:48.127Z",
   "chatId": -1002232474263
 }
