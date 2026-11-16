@@ -443,13 +443,28 @@ function pickLayout(meta = {}) {
   return ['center', 'bottom', 'stack'][hash % 3];
 }
 
-function brandAccent(exchange) {
-  // Bitget: hitam/putih + cyan · OKX: hitam + hijau neon
-  return String(exchange || '')
-    .toUpperCase()
-    .includes('BITGET')
-    ? { fill: '#00F0FF', soft: 'rgba(0,240,255,0.35)', badge: '#0d9488' }
-    : { fill: '#00FF66', soft: 'rgba(0,255,102,0.35)', badge: '#16a34a' };
+function brandAccent(exchangeOrBrand) {
+  const key = String(exchangeOrBrand || '').toUpperCase();
+  if (key.includes('BITGET')) {
+    return { fill: '#00F0FF', soft: 'rgba(0,240,255,0.35)', badge: '#0d9488' };
+  }
+  if (key.includes('GRASS')) {
+    return { fill: '#A3E635', soft: 'rgba(163,230,53,0.35)', badge: '#3f6212' };
+  }
+  if (key.includes('HONEY') || key.includes('JUMP')) {
+    return { fill: '#FBBF24', soft: 'rgba(251,191,36,0.35)', badge: '#b45309' };
+  }
+  if (key.includes('CHAIN')) {
+    return { fill: '#E9D5FF', soft: 'rgba(168,85,247,0.35)', badge: '#6b21a8' };
+  }
+  if (key.includes('BEIN') || key.includes('BIC')) {
+    return { fill: '#F0ABFC', soft: 'rgba(217,70,239,0.35)', badge: '#86198f' };
+  }
+  if (key.includes('NONE') || key.includes('REFERRAL')) {
+    return { fill: '#FDE68A', soft: 'rgba(253,230,138,0.3)', badge: '#334155' };
+  }
+  // Default OKX: hitam + hijau neon
+  return { fill: '#00FF66', soft: 'rgba(0,255,102,0.35)', badge: '#16a34a' };
 }
 
 function buildOverlaySvg({
@@ -476,7 +491,17 @@ function buildOverlaySvg({
   let hookX = '50%';
   let hookAnchor = 'middle';
 
-  if (isSpotlight) {
+  if (layout === 'referral') {
+    // Panel kiri aman — teks tidak nabrak mockup kanan / pojok
+    titleFont = 38;
+    hookFont = 20;
+    titleY = 150;
+    titleX = '5%';
+    titleAnchor = 'start';
+    hookY = height - 78;
+    hookX = '5%';
+    hookAnchor = 'start';
+  } else if (isSpotlight) {
     // Teks kiri terklaster, koin kanan besar (kartu listing)
     titleFont = 58;
     hookFont = 26;
@@ -498,16 +523,17 @@ function buildOverlaySvg({
     hookY = 250;
   }
 
+  const titleDy = layout === 'referral' ? 44 : 52;
   const titleSpans = titleLines
     .map(
       (line, i) =>
-        `<tspan x="${titleX}" dy="${i === 0 ? 0 : 52}">${escapeXml(line)}</tspan>`
+        `<tspan x="${titleX}" dy="${i === 0 ? 0 : titleDy}">${escapeXml(line)}</tspan>`
     )
     .join('');
   const hookSpans = hookLines
     .map(
       (line, i) =>
-        `<tspan x="${hookX}" dy="${i === 0 ? 0 : 30}">${escapeXml(line)}</tspan>`
+        `<tspan x="${hookX}" dy="${i === 0 ? 0 : 28}">${escapeXml(line)}</tspan>`
     )
     .join('');
 
@@ -523,14 +549,19 @@ function buildOverlaySvg({
 
   const titleYAdj = isSpotlight && pctLabel ? titleY - 8 : titleY;
   const hookYAdj = hookY;
+  const hasText = Boolean(
+    (titleLines && titleLines.length) || (hookLines && hookLines.length) || badge
+  );
+  // Banner referensi penuh: jangan gelapin gambar — watermark saja
+  const lightOverlay = layout === 'referral' && !hasText;
 
   return Buffer.from(
     `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="topFade" x1="0" y1="0" x2="${isSpotlight ? '1' : '0'}" y2="${isSpotlight ? '0' : '1'}">
-          <stop offset="0%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.78' : '0.70'}"/>
-          <stop offset="55%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.22' : '0.25'}"/>
-          <stop offset="100%" stop-color="#000000" stop-opacity="${isSpotlight ? '0.55' : '0.78'}"/>
+          <stop offset="0%" stop-color="#000000" stop-opacity="${lightOverlay ? '0' : isSpotlight ? '0.78' : '0.70'}"/>
+          <stop offset="55%" stop-color="#000000" stop-opacity="${lightOverlay ? '0' : isSpotlight ? '0.22' : '0.25'}"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="${lightOverlay ? '0' : isSpotlight ? '0.55' : '0.78'}"/>
         </linearGradient>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.85"/>
@@ -541,8 +572,8 @@ function buildOverlaySvg({
           <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
         </radialGradient>
       </defs>
-      <rect width="${width}" height="${height}" fill="url(#topFade)"/>
-      ${isSpotlight ? `<rect width="${width}" height="${height}" fill="url(#coinGlow)"/>` : ''}
+      ${lightOverlay ? '' : `<rect width="${width}" height="${height}" fill="url(#topFade)"/>`}
+      ${isSpotlight && !lightOverlay ? `<rect width="${width}" height="${height}" fill="url(#coinGlow)"/>` : ''}
       ${
         badge
           ? `<rect x="${width - 200}" y="22" width="172" height="36" rx="18" fill="${accent.badge}" fill-opacity="0.95"/>
@@ -550,18 +581,26 @@ function buildOverlaySvg({
                font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">${escapeXml(badge)}</text>`
           : ''
       }
-      <text x="${titleX}" y="${titleYAdj}" text-anchor="${titleAnchor}"
+      ${
+        titleSpans
+          ? `<text x="${titleX}" y="${titleYAdj}" text-anchor="${titleAnchor}"
         font-family="DejaVu Sans, Arial, sans-serif" font-size="${titleFont}" font-weight="800"
-        fill="#ffffff" filter="url(#shadow)">${titleSpans}</text>
+        fill="#ffffff" filter="url(#shadow)">${titleSpans}</text>`
+          : ''
+      }
       ${pctBlock}
-      <text x="${hookX}" y="${hookYAdj}" text-anchor="${hookAnchor}"
+      ${
+        hookSpans
+          ? `<text x="${hookX}" y="${hookYAdj}" text-anchor="${hookAnchor}"
         font-family="DejaVu Sans, Arial, sans-serif" font-size="${hookFont}" font-weight="600"
-        fill="#fde68a" filter="url(#shadow)">${hookSpans}</text>
+        fill="#fde68a" filter="url(#shadow)">${hookSpans}</text>`
+          : ''
+      }
       ${
         watermark
           ? `<text x="${width - 16}" y="${height - 14}" text-anchor="end"
                font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="600"
-               fill="#ffffff" fill-opacity="0.72">${escapeXml(watermark)}</text>`
+               fill="#ffffff" fill-opacity="0.85">${escapeXml(watermark)}</text>`
           : ''
       }
     </svg>`
@@ -630,11 +669,17 @@ async function prepareBackground(backgroundBuffer) {
  * }} meta
  */
 async function composePromoImage(backgroundBuffer, meta = {}) {
-  const title = String(meta.title || 'Crypto Update').trim();
-  const hook = String(meta.hook || '').trim();
+  // Jangan fallback ke "Crypto Update" jika title sengaja dikosongkan (banner referensi)
+  const title =
+    meta.title == null
+      ? 'Crypto Update'
+      : String(meta.title).trim();
+  const hook = meta.hook == null ? '' : String(meta.hook).trim();
   const exchange = meta.exchange || 'OKX';
-  const badge = meta.badge || '';
+  const badge = meta.badge == null ? '' : String(meta.badge).trim();
   const layout = meta.layout || pickLayout(meta);
+  const showExchangeLogo = meta.showExchangeLogo !== false &&
+    !['NONE', 'REFERRAL', 'NOLOGO'].includes(String(exchange).toUpperCase());
 
   /** @type {Array<{ symbol: string, imageUrl?: string|null }>} */
   let entries = Array.isArray(meta.logoEntries) ? [...meta.logoEntries] : [];
@@ -657,35 +702,50 @@ async function composePromoImage(backgroundBuffer, meta = {}) {
     })
     .slice(0, 6);
 
+  // Referral: jangan pakai spotlight 1-logo (bikin teks besar + logo exchange OKX)
+  const isReferral = layout === 'referral' || meta.kind === 'referral';
+  if (isReferral) {
+    entries = [];
+  }
+
   const bg = await prepareBackground(backgroundBuffer);
   const singleLogo = entries.length <= 1;
-  const isSpotlight = layout === 'spotlight' && singleLogo;
+  const isSpotlight = !isReferral && layout === 'spotlight' && singleLogo;
   const pctLabel = String(meta.pctLabel || '').trim();
-  const titleMax = isSpotlight ? 22 : layout === 'hero' && singleLogo ? 28 : 36;
-  const titleLines = wrapLines(title, titleMax, 2);
-  const hookLines = wrapLines(hook, isSpotlight ? 36 : 48, 2);
+  // Referral: wrap ketat di panel kiri (~45% lebar) agar tidak terpotong
+  const titleMax = isReferral
+    ? 18
+    : isSpotlight
+      ? 22
+      : layout === 'hero' && singleLogo
+        ? 28
+        : 36;
+  const titleLines = wrapLines(title, titleMax, isReferral ? 3 : 2);
+  const hookLines = wrapLines(hook, isReferral ? 28 : isSpotlight ? 36 : 48, isReferral ? 3 : 2);
   const overlaySvg = buildOverlaySvg({
     titleLines,
     hookLines,
     badge,
     width: WIDTH,
     height: HEIGHT,
-    layout,
+    layout: isReferral ? 'referral' : layout,
     singleLogo,
-    exchange,
-    pctLabel,
+    exchange: isReferral ? meta.brand || 'REFERRAL' : exchange,
+    pctLabel: isReferral ? '' : pctLabel,
     watermark: meta.watermark || 'T.me/jfnetworknet',
   });
 
   const composites = [{ input: overlaySvg, left: 0, top: 0 }];
 
-  try {
-    // Bitget wordmark lebar → height lebih kecil agar proporsional di pojok
-    const isBitget = String(exchange).toUpperCase().includes('BITGET');
-    const exLogo = await loadExchangeLogo(exchange, isBitget ? 36 : 40);
-    composites.push({ input: exLogo, left: 28, top: 22 });
-  } catch {
-    // ignore
+  if (showExchangeLogo && !isReferral) {
+    try {
+      // Bitget wordmark lebar → height lebih kecil agar proporsional di pojok
+      const isBitget = String(exchange).toUpperCase().includes('BITGET');
+      const exLogo = await loadExchangeLogo(exchange, isBitget ? 36 : 40);
+      composites.push({ input: exLogo, left: 28, top: 22 });
+    } catch {
+      // ignore
+    }
   }
 
   if (entries.length) {

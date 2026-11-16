@@ -905,24 +905,33 @@ function buildImageOverlayMeta(snapshot, content) {
       airdrop: 'AIRDROP',
       trading_bot: 'OKX BOT',
     };
-    const headline =
-      content?.image_headline ||
-      clipHeadline(content?.hook || p.shortName || 'Promo', 6);
+    const brandMap = {
+      honeygain: 'HONEYGAIN',
+      grass: 'GRASS',
+      chainers: 'CHAINERS',
+      beincom: 'BEINCOM',
+      okx_bot: 'OKX',
+    };
+    const projectId = p.id || snapshot.projectId || '';
+    // Headline pendek agar tidak terpotong di panel kiri
+    const headline = clipHeadline(
+      content?.image_headline || content?.hook || p.shortName || 'Promo',
+      5
+    );
     const meta = {
-      title: cleanOverlayText(headline, 36),
-      hook: cleanOverlayText(
-        content?.hook || p.tagline || 'Cek peluangnya',
-        56
-      ),
+      kind: 'referral',
+      title: cleanOverlayText(headline, 28),
+      hook: cleanOverlayText(p.shortName || p.name || 'JF Network', 32),
       tickers: [],
       logoEntries: [],
-      exchange: p.id === 'okx_bot' ? 'OKX' : 'OKX',
+      // JANGAN pakai exchange OKX kecuali proyek okx_bot
+      exchange: projectId === 'okx_bot' ? 'OKX' : 'NONE',
+      brand: brandMap[projectId] || 'REFERRAL',
+      showExchangeLogo: projectId === 'okx_bot',
       badge: cleanOverlayText(badgeMap[p.type] || 'PROMO', 18),
       watermark: 'T.me/jfnetworknet',
+      layout: 'referral',
     };
-    // Split kiri teks / kanan visual — hero atau spotlight
-    const layouts = ['hero', 'spotlight', 'center', 'stack'];
-    meta.layout = layouts[(Number(snapshot.variant) || 0) % layouts.length];
     return meta;
   }
 
@@ -1086,22 +1095,17 @@ function buildImageOverlayMeta(snapshot, content) {
  * Brand: Bitget = hitam/putih + cyan · OKX = hitam + hijau neon.
  */
 function buildReferralImagePrompt(snapshot, content) {
-  // Jika AI sudah kirim image_prompt valid, pakai itu (sudah di-sanitize di parsePostJson)
+  const { buildReferralStylePrompt } = require('./referralImageService');
+  // Utamakan style guide dari contoh banner user
+  const base = buildReferralStylePrompt(snapshot, content);
   if (content?.image_prompt && content.image_prompt.length > 40) {
     return [
-      content.image_prompt,
-      'aspect ratio 16:9',
-      'Strictly mask/censor any wallet address strings using asterisks like 0x814••••••••••013',
-      'leave bottom-right corner clear for T.me/jfnetworknet watermark overlay',
+      base,
+      content.image_prompt.replace(/https?:\/\/\S+/gi, ''),
+      'no OKX logo unless project is OKX Bot',
     ].join(', ');
   }
-
-  const headline =
-    content?.image_headline || clipHeadline(content?.hook || '', 6);
-  return buildImagePromptRules({
-    projectId: snapshot.projectId || snapshot.project?.id || 'crypto',
-    headline,
-  });
+  return base;
 }
 
 function buildImagePromptFromContent(snapshot, content) {
@@ -1277,13 +1281,55 @@ async function solidFallbackBackground(snapshot) {
 }
 
 async function generateMarketImage(snapshot, content) {
-  const prompt = buildImagePromptFromContent(snapshot, content);
   const overlayMeta = buildImageOverlayMeta(snapshot, content);
-
+  let prompt = buildImagePromptFromContent(snapshot, content);
   let bgBuffer = null;
   let provider = null;
 
-  if (process.env.POLLINATIONS_ENABLED === 'false') {
+  // Referral: utamakan banner referensi user (mirip contoh), atau AI bergaya sama
+  if (snapshot.category === 'referral') {
+    const {
+      pickReferenceBuffer,
+      buildReferralStylePrompt,
+      shouldUseReference,
+    } = require('./referralImageService');
+    prompt = buildReferralStylePrompt(snapshot, content);
+
+    if (shouldUseReference(snapshot)) {
+      const ref = pickReferenceBuffer(
+        snapshot.projectId || snapshot.project?.id,
+        snapshot.variant
+      );
+      if (ref) {
+        bgBuffer = ref;
+        provider = 'referral-reference';
+      }
+    }
+
+    if (!bgBuffer) {
+      if (process.env.POLLINATIONS_ENABLED === 'false') {
+        const ref = pickReferenceBuffer(
+          snapshot.projectId || snapshot.project?.id,
+          snapshot.variant
+        );
+        bgBuffer = ref || (await solidFallbackBackground(snapshot));
+        provider = ref ? 'referral-reference' : 'solid';
+      } else {
+        try {
+          bgBuffer = await generateImageWithPollinations(prompt);
+          provider = 'pollinations-referral';
+        } catch (err) {
+          console.warn('[aiService] Pollinations referral gagal:', err.message);
+          const ref = pickReferenceBuffer(
+            snapshot.projectId || snapshot.project?.id,
+            snapshot.variant
+          );
+          bgBuffer = ref || (await solidFallbackBackground(snapshot));
+          provider = ref ? 'referral-reference-fallback' : 'solid-fallback';
+        }
+      }
+    }
+  } else if (process.env.POLLINATIONS_ENABLED === 'false') {
     console.warn('[aiService] Pollinations dimatikan — pakai background solid');
     bgBuffer = await solidFallbackBackground(snapshot);
     provider = 'solid';
@@ -1299,15 +1345,32 @@ async function generateMarketImage(snapshot, content) {
   }
 
   try {
+    // Referensi user = banner lengkap — jangan tambah teks/logo/badge (hanya watermark)
+    const metaForCompose =
+      provider && String(provider).startsWith('referral-reference')
+        ? {
+            ...overlayMeta,
+            title: '',
+            hook: '',
+            badge: '',
+            showExchangeLogo: false,
+            exchange: 'NONE',
+            layout: 'referral',
+            kind: 'referral',
+            logoEntries: [],
+            tickers: [],
+          }
+        : overlayMeta;
+
     console.log(
-      `[aiService] Compose overlay: title="${clip(overlayMeta.title, 40)}" tickers=${(overlayMeta.tickers || []).join(',') || '-'}`
+      `[aiService] Compose overlay: title="${clip(metaForCompose.title, 40)}" provider=${provider} tickers=${(metaForCompose.tickers || []).join(',') || '-'}`
     );
-    const buffer = await composePromoImage(bgBuffer, overlayMeta);
+    const buffer = await composePromoImage(bgBuffer, metaForCompose);
     return {
       buffer,
       prompt,
       provider: `${provider}+compose`,
-      overlayMeta,
+      overlayMeta: metaForCompose,
     };
   } catch (err) {
     console.warn('[aiService] Compose gagal:', err.message);
