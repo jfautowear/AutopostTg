@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-17-09:00",
-  "lastPostedAt": "2026-11-17T03:42:47.188Z",
+  "lastPostedSlot": "2026-11-17-19:00",
+  "lastPostedAt": "2026-11-17T13:08:47.691Z",
   "recentContent": [
+    {
+      "key": "spot:Bitget:PWT",
+      "at": "2026-11-17T13:08:47.690Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1397,
+      "projectId": null
+    },
     {
       "key": "referral:beincom:airdrop_klaim:2026-11-17",
       "at": "2026-11-17T03:42:47.187Z",
