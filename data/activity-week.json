@@ -97,12 +97,21 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
+    },
+    "6455423491": {
+      "id": 6455423491,
+      "username": "Agoezh",
+      "firstName": "A 👁️ ⏳MY AGE APP",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-17T08:45:05.528Z",
+  "updatedAt": "2026-11-17T10:31:30.827Z",
   "chatId": -1002232474263
 }
