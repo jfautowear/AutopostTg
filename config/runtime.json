@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-16-13:00",
-  "lastPostedAt": "2026-11-16T09:28:55.788Z",
+  "lastPostedSlot": "2026-11-17-09:00",
+  "lastPostedAt": "2026-11-17T03:42:47.188Z",
   "recentContent": [
+    {
+      "key": "referral:beincom:airdrop_klaim:2026-11-17",
+      "at": "2026-11-17T03:42:47.187Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1396,
+      "projectId": "beincom"
+    },
     {
       "key": "referral:chainers:bukti_withdraw:2026-11-16",
       "at": "2026-11-16T09:28:55.788Z",
@@ -20,13 +28,6 @@
       "messageId": 1392
     },
     {
-      "key": "spot:OKX:SOPH",
-      "at": "2026-11-14T16:59:07.426Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1387
-    },
-    {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
       "at": "2026-10-26T06:01:41.734Z",
       "category": "news",
@@ -39,21 +40,25 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "grass",
-        "angle": "saldo_usdc_sol",
-        "variant": 98104
+        "projectId": "beincom",
+        "angle": "airdrop_klaim",
+        "variant": 17284,
+        "copyStyleId": "E",
+        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
         "time": "13:00",
         "kind": "referral",
-        "projectId": "chainers",
-        "angle": "bukti_withdraw",
-        "variant": 33968
+        "projectId": "grass",
+        "angle": "otomatis_gratis",
+        "variant": 34247,
+        "copyStyleId": "C",
+        "copyStyleName": "Gaya C (Update / Social Proof)"
       },
       {
         "time": "19:00",
@@ -63,11 +68,13 @@
       {
         "time": "21:00",
         "kind": "referral",
-        "projectId": "beincom",
-        "angle": "join_sekarang",
-        "variant": 95544
+        "projectId": "honeygain",
+        "angle": "cair_ke_crypto",
+        "variant": 31866,
+        "copyStyleId": "B",
+        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       }
     ],
-    "createdAt": "2026-11-16T09:05:21.568Z"
+    "createdAt": "2026-11-17T03:42:39.278Z"
   }
 }
