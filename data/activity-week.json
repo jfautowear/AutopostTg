@@ -2,6 +2,15 @@
   "weekKey": "2026-W47",
   "chatRef": "@caricuanhp",
   "users": {
+    "652192072": {
+      "id": 652192072,
+      "username": "ZayJII",
+      "firstName": "Perlubangan",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "1129802030": {
       "id": 1129802030,
       "username": "hazura0",
@@ -43,9 +52,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 5,
+      "messages": 7,
       "reactions": 0,
-      "score": 10
+      "score": 14
     },
     "8632145845": {
       "id": 8632145845,
@@ -112,6 +121,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-17T10:31:30.827Z",
+  "updatedAt": "2026-11-17T19:23:14.565Z",
   "chatId": -1002232474263
 }
