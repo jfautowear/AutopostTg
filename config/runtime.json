@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-18-09:00",
-  "lastPostedAt": "2026-11-18T04:10:23.551Z",
+  "lastPostedSlot": "2026-11-18-19:00",
+  "lastPostedAt": "2026-11-18T13:49:53.034Z",
   "recentContent": [
+    {
+      "key": "referral:beincom:wallet_balance:2026-11-18",
+      "at": "2026-11-18T13:49:53.034Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1401,
+      "projectId": "beincom"
+    },
     {
       "key": "referral:honeygain:bonus_daftar:2026-11-18",
       "at": "2026-11-18T04:10:23.550Z",
