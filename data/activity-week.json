@@ -106,9 +106,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 8,
+      "messages": 9,
       "reactions": 0,
-      "score": 16
+      "score": 18
     },
     "6455423491": {
       "id": 6455423491,
@@ -160,12 +160,39 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
+    },
+    "6953094293": {
+      "id": 6953094293,
+      "username": "Agnes1712",
+      "firstName": "Fiqah",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7178978906": {
+      "id": 7178978906,
+      "username": "yanzteji",
+      "firstName": "Nguyễn Gia Lạc",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "5945597430": {
+      "id": 5945597430,
+      "username": null,
+      "firstName": "Franco",
+      "lastName": "hoki",
       "messages": 2,
       "reactions": 0,
       "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W46",
-  "updatedAt": "2026-11-19T00:31:02.261Z",
+  "updatedAt": "2026-11-19T07:55:09.627Z",
   "chatId": -1002232474263
 }
