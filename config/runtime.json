@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-18-19:00",
-  "lastPostedAt": "2026-11-18T13:49:53.034Z",
+  "lastPostedSlot": "2026-11-19-09:00",
+  "lastPostedAt": "2026-11-19T03:14:00.024Z",
   "recentContent": [
+    {
+      "key": "referral:grass:saldo_usdc_sol:2026-11-19",
+      "at": "2026-11-19T03:14:00.024Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1402,
+      "projectId": "grass"
+    },
     {
       "key": "referral:beincom:wallet_balance:2026-11-18",
       "at": "2026-11-18T13:49:53.034Z",
@@ -29,14 +37,6 @@
       "projectId": null
     },
     {
-      "key": "referral:beincom:airdrop_klaim:2026-11-17",
-      "at": "2026-11-17T03:42:47.187Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1396,
-      "projectId": "beincom"
-    },
-    {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
       "at": "2026-10-26T06:01:41.734Z",
       "category": "news",
@@ -49,41 +49,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-18",
+    "date": "2026-11-19",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "honeygain",
-        "angle": "bonus_daftar",
-        "variant": 45196,
-        "copyStyleId": "B",
-        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
+        "projectId": "grass",
+        "angle": "saldo_usdc_sol",
+        "variant": 41145,
+        "copyStyleId": "A",
+        "copyStyleName": "Gaya A (Storytelling / Relatable)"
       },
       {
         "time": "13:00",
-        "kind": "crypto",
-        "cryptoCategory": "spot"
-      },
-      {
-        "time": "19:00",
         "kind": "referral",
-        "projectId": "beincom",
-        "angle": "wallet_balance",
-        "variant": 95223,
+        "projectId": "chainers",
+        "angle": "withdraw_pol_bnb",
+        "variant": 42118,
         "copyStyleId": "D",
         "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
       },
       {
+        "time": "19:00",
+        "kind": "crypto",
+        "cryptoCategory": "topcoin"
+      },
+      {
         "time": "21:00",
         "kind": "referral",
-        "projectId": "grass",
-        "angle": "bagi_internet",
-        "variant": 45836,
+        "projectId": "okx_bot",
+        "angle": "bot_otomatis",
+        "variant": 45126,
         "copyStyleId": "B",
         "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       }
     ],
-    "createdAt": "2026-11-18T04:10:06.000Z"
+    "createdAt": "2026-11-19T03:13:54.746Z"
   }
 }
