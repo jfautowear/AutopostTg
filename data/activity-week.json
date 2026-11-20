@@ -52,9 +52,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "5978663615": {
       "id": 5978663615,
@@ -115,9 +115,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 9,
+      "messages": 11,
       "reactions": 0,
-      "score": 18
+      "score": 22
     },
     "6455423491": {
       "id": 6455423491,
@@ -142,9 +142,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 1,
+      "messages": 3,
       "reactions": 0,
-      "score": 2
+      "score": 6
     },
     "5826653300": {
       "id": 5826653300,
@@ -169,9 +169,9 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6953094293": {
       "id": 6953094293,
@@ -211,6 +211,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-20T20:51:45.434Z",
+  "updatedAt": "2026-11-20T21:18:39.046Z",
   "chatId": -1002232474263
 }
