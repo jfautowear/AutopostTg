@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-19-19:00",
-  "lastPostedAt": "2026-11-19T12:51:56.369Z",
+  "lastPostedSlot": "2026-11-20-09:00",
+  "lastPostedAt": "2026-11-20T03:01:45.485Z",
   "recentContent": [
+    {
+      "key": "referral:okx_bot:bot_otomatis:2026-11-20",
+      "at": "2026-11-20T03:01:45.485Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1408,
+      "projectId": "okx_bot"
+    },
     {
       "key": "topcoin:2026-11-19:b3",
       "at": "2026-11-19T12:51:56.368Z",
@@ -21,30 +29,6 @@
       "projectId": "grass"
     },
     {
-      "key": "referral:beincom:wallet_balance:2026-11-18",
-      "at": "2026-11-18T13:49:53.034Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1401,
-      "projectId": "beincom"
-    },
-    {
-      "key": "referral:honeygain:bonus_daftar:2026-11-18",
-      "at": "2026-11-18T04:10:23.550Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1399,
-      "projectId": "honeygain"
-    },
-    {
-      "key": "spot:Bitget:PWT",
-      "at": "2026-11-17T13:08:47.690Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1397,
-      "projectId": null
-    },
-    {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
       "at": "2026-10-26T06:01:41.734Z",
       "category": "news",
@@ -57,41 +41,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-19",
+    "date": "2026-11-20",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "grass",
-        "angle": "saldo_usdc_sol",
-        "variant": 41145,
-        "copyStyleId": "A",
-        "copyStyleName": "Gaya A (Storytelling / Relatable)"
+        "projectId": "okx_bot",
+        "angle": "bot_otomatis",
+        "variant": 94091,
+        "copyStyleId": "B",
+        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       },
       {
         "time": "13:00",
         "kind": "referral",
-        "projectId": "chainers",
-        "angle": "withdraw_pol_bnb",
-        "variant": 42118,
-        "copyStyleId": "D",
-        "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
+        "projectId": "honeygain",
+        "angle": "passive_bandwidth",
+        "variant": 99856,
+        "copyStyleId": "B",
+        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       },
       {
         "time": "19:00",
         "kind": "crypto",
-        "cryptoCategory": "topcoin"
+        "cryptoCategory": "spot"
       },
       {
         "time": "21:00",
         "kind": "referral",
-        "projectId": "okx_bot",
-        "angle": "bot_otomatis",
-        "variant": 45126,
+        "projectId": "beincom",
+        "angle": "airdrop_klaim",
+        "variant": 29241,
         "copyStyleId": "B",
         "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       }
     ],
-    "createdAt": "2026-11-19T03:13:54.746Z"
+    "createdAt": "2026-11-20T03:01:33.340Z"
   }
 }
