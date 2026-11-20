@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-20-09:00",
-  "lastPostedAt": "2026-11-20T03:01:45.485Z",
+  "lastPostedSlot": "2026-11-20-13:00",
+  "lastPostedAt": "2026-11-20T11:23:13.238Z",
   "recentContent": [
+    {
+      "key": "referral:honeygain:passive_bandwidth:2026-11-20",
+      "at": "2026-11-20T11:23:13.238Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1411,
+      "projectId": "honeygain"
+    },
     {
       "key": "referral:okx_bot:bot_otomatis:2026-11-20",
       "at": "2026-11-20T03:01:45.485Z",
@@ -11,14 +19,6 @@
       "chatId": "@jfnetworknet",
       "messageId": 1408,
       "projectId": "okx_bot"
-    },
-    {
-      "key": "topcoin:2026-11-19:b3",
-      "at": "2026-11-19T12:51:56.368Z",
-      "category": "topcoin",
-      "chatId": "@jfnetworknet",
-      "messageId": 1405,
-      "projectId": null
     },
     {
       "key": "referral:grass:saldo_usdc_sol:2026-11-19",
