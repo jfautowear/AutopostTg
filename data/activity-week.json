@@ -61,9 +61,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 17,
+      "messages": 18,
       "reactions": 0,
-      "score": 34
+      "score": 36
     },
     "8632145845": {
       "id": 8632145845,
@@ -97,9 +97,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 21,
+      "messages": 23,
       "reactions": 0,
-      "score": 42
+      "score": 46
     },
     "6774650380": {
       "id": 6774650380,
@@ -115,9 +115,9 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 11,
+      "messages": 14,
       "reactions": 0,
-      "score": 22
+      "score": 28
     },
     "6455423491": {
       "id": 6455423491,
@@ -178,9 +178,9 @@
       "username": "Agnes1712",
       "firstName": "Fiqah",
       "lastName": null,
-      "messages": 2,
+      "messages": 3,
       "reactions": 0,
-      "score": 4
+      "score": 6
     },
     "7178978906": {
       "id": 7178978906,
@@ -217,9 +217,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7947129467": {
+      "id": 7947129467,
+      "username": "yuxzzalien",
+      "firstName": "⏤͟͟͞͞𝖞𝗎𝗑𝗓𝗓🪽",
+      "lastName": null,
+      "messages": 2,
+      "reactions": 0,
+      "score": 4
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-21T10:11:38.674Z",
+  "updatedAt": "2026-11-21T17:38:25.028Z",
   "chatId": -1002232474263
 }
