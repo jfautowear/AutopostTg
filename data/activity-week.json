@@ -61,9 +61,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 16,
+      "messages": 17,
       "reactions": 0,
-      "score": 32
+      "score": 34
     },
     "8632145845": {
       "id": 8632145845,
@@ -79,9 +79,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "6930996458": {
       "id": 6930996458,
@@ -97,9 +97,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 17,
+      "messages": 20,
       "reactions": 0,
-      "score": 34
+      "score": 40
     },
     "6774650380": {
       "id": 6774650380,
@@ -142,9 +142,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 3,
+      "messages": 5,
       "reactions": 0,
-      "score": 6
+      "score": 10
     },
     "5826653300": {
       "id": 5826653300,
@@ -178,9 +178,9 @@
       "username": "Agnes1712",
       "firstName": "Fiqah",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7178978906": {
       "id": 7178978906,
@@ -208,9 +208,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "8014790966": {
+      "id": 8014790966,
+      "username": "Mas_irul",
+      "firstName": "Mas",
+      "lastName": "i",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-20T21:18:39.046Z",
+  "updatedAt": "2026-11-21T07:56:05.586Z",
   "chatId": -1002232474263
 }
