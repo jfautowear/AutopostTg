@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-20-13:00",
-  "lastPostedAt": "2026-11-20T11:23:13.238Z",
+  "lastPostedSlot": "2026-11-21-13:00",
+  "lastPostedAt": "2026-11-21T09:38:11.740Z",
   "recentContent": [
+    {
+      "key": "referral:honeygain:passive_bandwidth:2026-11-21",
+      "at": "2026-11-21T09:38:11.739Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1414,
+      "projectId": "honeygain"
+    },
     {
       "key": "referral:honeygain:passive_bandwidth:2026-11-20",
       "at": "2026-11-20T11:23:13.238Z",
@@ -21,14 +29,6 @@
       "projectId": "okx_bot"
     },
     {
-      "key": "referral:grass:saldo_usdc_sol:2026-11-19",
-      "at": "2026-11-19T03:14:00.024Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1402,
-      "projectId": "grass"
-    },
-    {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
       "at": "2026-10-26T06:01:41.734Z",
       "category": "news",
@@ -41,41 +41,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-20",
+    "date": "2026-11-21",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "okx_bot",
-        "angle": "bot_otomatis",
-        "variant": 94091,
-        "copyStyleId": "B",
-        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
+        "projectId": "chainers",
+        "angle": "withdraw_pol_bnb",
+        "variant": 75260,
+        "copyStyleId": "A",
+        "copyStyleName": "Gaya A (Storytelling / Relatable)"
       },
       {
         "time": "13:00",
         "kind": "referral",
         "projectId": "honeygain",
         "angle": "passive_bandwidth",
-        "variant": 99856,
+        "variant": 25216,
         "copyStyleId": "B",
         "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       },
       {
         "time": "19:00",
-        "kind": "crypto",
-        "cryptoCategory": "spot"
+        "kind": "referral",
+        "projectId": "okx_bot",
+        "angle": "tanpa_pantau_chart",
+        "variant": 80532,
+        "copyStyleId": "C",
+        "copyStyleName": "Gaya C (Update / Social Proof)"
       },
       {
         "time": "21:00",
-        "kind": "referral",
-        "projectId": "beincom",
-        "angle": "airdrop_klaim",
-        "variant": 29241,
-        "copyStyleId": "B",
-        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
+        "kind": "crypto",
+        "cryptoCategory": "spot"
       }
     ],
-    "createdAt": "2026-11-20T03:01:33.340Z"
+    "createdAt": "2026-11-21T09:38:07.951Z"
   }
 }
