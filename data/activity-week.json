@@ -97,9 +97,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 20,
+      "messages": 21,
       "reactions": 0,
-      "score": 40
+      "score": 42
     },
     "6774650380": {
       "id": 6774650380,
@@ -220,6 +220,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-21T07:56:05.586Z",
+  "updatedAt": "2026-11-21T10:11:38.674Z",
   "chatId": -1002232474263
 }
