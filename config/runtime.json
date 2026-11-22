@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-22-09:00",
-  "lastPostedAt": "2026-11-22T03:02:00.834Z",
+  "lastPostedSlot": "2026-11-22-13:00",
+  "lastPostedAt": "2026-11-22T11:07:10.333Z",
   "recentContent": [
+    {
+      "key": "spot:OKX:MENGO",
+      "at": "2026-11-22T11:07:10.333Z",
+      "category": "spot",
+      "chatId": "@jfnetworknet",
+      "messageId": 1418,
+      "projectId": null
+    },
     {
       "key": "referral:okx_bot:tanpa_pantau_chart:2026-11-22",
       "at": "2026-11-22T03:02:00.834Z",
