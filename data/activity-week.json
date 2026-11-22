@@ -79,9 +79,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 6,
+      "messages": 7,
       "reactions": 0,
-      "score": 12
+      "score": 14
     },
     "6930996458": {
       "id": 6930996458,
@@ -244,9 +244,18 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7342944272": {
+      "id": 7342944272,
+      "username": "Ton_spacce",
+      "firstName": "Ansor👑",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-21T22:25:03.605Z",
+  "updatedAt": "2026-11-22T02:32:45.618Z",
   "chatId": -1002232474263
 }
