@@ -1,16 +1,7 @@
 {
-  "weekKey": "2026-W47",
+  "weekKey": "2026-W48",
   "chatRef": "@caricuanhp",
   "users": {
-    "652192072": {
-      "id": 652192072,
-      "username": "ZayJII",
-      "firstName": "Perlubangan",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
     "1129802030": {
       "id": 1129802030,
       "username": "hazura0",
@@ -20,242 +11,62 @@
       "reactions": 0,
       "score": 2
     },
-    "1796233671": {
-      "id": 1796233671,
-      "username": "Newbee_2",
-      "firstName": "Newbee💰XWorld",
-      "lastName": null,
+    "6046806167": {
+      "id": 6046806167,
+      "username": "Andrehalim77",
+      "firstName": "Budi",
+      "lastName": "Santoso PIXLANDS",
       "messages": 1,
       "reactions": 0,
       "score": 2
-    },
-    "1836684121": {
-      "id": 1836684121,
-      "username": "Lumerinx",
-      "firstName": "Lumerinx",
-      "lastName": null,
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "6046999198": {
-      "id": 6046999198,
-      "username": "Riswwan",
-      "firstName": "@Riswan",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7704701141": {
-      "id": 7704701141,
-      "username": "ajiajot",
-      "firstName": "Jhon_starlex",
-      "lastName": "$PERIA",
-      "messages": 5,
-      "reactions": 0,
-      "score": 10
-    },
-    "5978663615": {
-      "id": 5978663615,
-      "username": "Shirou01",
-      "firstName": "Shiro",
-      "lastName": "#TelomonBot",
-      "messages": 18,
-      "reactions": 0,
-      "score": 36
-    },
-    "8632145845": {
-      "id": 8632145845,
-      "username": "Maousensei",
-      "firstName": "Maou@monsterland_bot@Victors_Company_bot",
-      "lastName": "@ChickenLandBot#GrambieBot",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7330797950": {
-      "id": 7330797950,
-      "username": "Hari_pornomo",
-      "firstName": "Kotaro 👁️",
-      "lastName": "Minami",
-      "messages": 7,
-      "reactions": 0,
-      "score": 14
-    },
-    "6930996458": {
-      "id": 6930996458,
-      "username": "AlmendarezChris",
-      "firstName": "Christian",
-      "lastName": "Almendarez",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 24,
-      "reactions": 0,
-      "score": 48
-    },
-    "6774650380": {
-      "id": 6774650380,
-      "username": "Aguslukman17",
-      "firstName": "Lukman88👁️",
-      "lastName": "GRAM MASTER",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "6046806167": {
-      "id": 6046806167,
-      "username": "Andrehalim77",
-      "firstName": "Budi",
-      "lastName": "Santoso PIXLANDS",
-      "messages": 14,
-      "reactions": 0,
-      "score": 28
-    },
-    "6455423491": {
-      "id": 6455423491,
-      "username": "Agoezh",
-      "firstName": "A 👁️ ⏳MY AGE APP",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "8028556373": {
-      "id": 8028556373,
-      "username": "Hanuunal",
-      "firstName": "Flying",
-      "lastName": "'S",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7398726478": {
-      "id": 7398726478,
-      "username": null,
-      "firstName": "Agis",
-      "lastName": "Tambunan",
       "messages": 5,
       "reactions": 0,
       "score": 10
-    },
-    "5826653300": {
-      "id": 5826653300,
-      "username": "PointBlank4",
-      "firstName": "Savior",
-      "lastName": null,
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
-    },
-    "8300107386": {
-      "id": 8300107386,
-      "username": null,
-      "firstName": "Elby Ikbal Febiyn",
-      "lastName": null,
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7217581703": {
-      "id": 7217581703,
-      "username": "ahongsigma",
-      "firstName": "ahong #pixelAFK",
-      "lastName": null,
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
-    },
-    "6953094293": {
-      "id": 6953094293,
-      "username": "Agnes1712",
-      "firstName": "Fiqah",
-      "lastName": null,
-      "messages": 3,
-      "reactions": 0,
-      "score": 6
-    },
-    "7178978906": {
-      "id": 7178978906,
-      "username": "yanzteji",
-      "firstName": "Nguyễn Gia Lạc",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "5945597430": {
-      "id": 5945597430,
-      "username": null,
-      "firstName": "Franco",
-      "lastName": "hoki",
-      "messages": 2,
-      "reactions": 0,
-      "score": 4
-    },
-    "7434001366": {
-      "id": 7434001366,
-      "username": "Zz3b0",
-      "firstName": "Lathif lathifh",
-      "lastName": null,
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
-    },
-    "8014790966": {
-      "id": 8014790966,
-      "username": "Mas_irul",
-      "firstName": "Mas",
-      "lastName": "i",
-      "messages": 1,
-      "reactions": 0,
-      "score": 2
     },
     "7947129467": {
       "id": 7947129467,
       "username": "yuxzzalien",
       "firstName": "⏤͟͟͞͞𝖞𝗎𝗑𝗓𝗓🪽",
       "lastName": null,
-      "messages": 4,
-      "reactions": 0,
-      "score": 8
-    },
-    "6401923121": {
-      "id": 6401923121,
-      "username": "Tuanputri100199",
-      "firstName": "Tuan putri 🐈‍⬛",
-      "lastName": null,
       "messages": 1,
       "reactions": 0,
       "score": 2
     },
-    "7237483033": {
-      "id": 7237483033,
-      "username": "hajthorku",
-      "firstName": "bagus setra",
-      "lastName": null,
+    "8447065352": {
+      "id": 8447065352,
+      "username": null,
+      "firstName": "Denys",
+      "lastName": "Cydo",
+      "messages": 5,
+      "reactions": 0,
+      "score": 10
+    },
+    "7953256868": {
+      "id": 7953256868,
+      "username": "Patanggung",
+      "firstName": "Essang",
+      "lastName": "Patanggung",
       "messages": 1,
       "reactions": 0,
       "score": 2
     },
-    "7342944272": {
-      "id": 7342944272,
-      "username": "Ton_spacce",
-      "firstName": "Ansor👑",
-      "lastName": null,
-      "messages": 1,
+    "7704701141": {
+      "id": 7704701141,
+      "username": "ajiajot",
+      "firstName": "Jhon_starlex",
+      "lastName": "$PERIA",
+      "messages": 7,
       "reactions": 0,
-      "score": 2
+      "score": 14
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-22T10:16:29.838Z",
+  "updatedAt": "2026-11-22T17:54:11.243Z",
   "chatId": -1002232474263
 }
