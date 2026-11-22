@@ -64,9 +64,18 @@
       "messages": 7,
       "reactions": 0,
       "score": 14
+    },
+    "6953094293": {
+      "id": 6953094293,
+      "username": "Agnes1712",
+      "firstName": "Fiqah",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-22T17:54:11.243Z",
+  "updatedAt": "2026-11-22T23:25:44.708Z",
   "chatId": -1002232474263
 }
