@@ -34,9 +34,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 6,
+      "messages": 7,
       "reactions": 0,
-      "score": 12
+      "score": 14
     },
     "7947129467": {
       "id": 7947129467,
@@ -100,9 +100,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "7342944272": {
+      "id": 7342944272,
+      "username": "Ton_spacce",
+      "firstName": "Ansor👑",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7217581703": {
+      "id": 7217581703,
+      "username": "ahongsigma",
+      "firstName": "ahong #pixelAFK",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-23T03:55:00.443Z",
+  "updatedAt": "2026-11-23T08:31:15.096Z",
   "chatId": -1002232474263
 }
