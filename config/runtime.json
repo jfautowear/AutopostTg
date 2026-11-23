@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-22-13:00",
-  "lastPostedAt": "2026-11-22T11:07:10.333Z",
+  "lastPostedSlot": "2026-11-23-13:00",
+  "lastPostedAt": "2026-11-23T08:55:08.715Z",
   "recentContent": [
+    {
+      "key": "referral:okx_bot:fitur_okx:2026-11-23",
+      "at": "2026-11-23T08:55:08.715Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1421,
+      "projectId": "okx_bot"
+    },
     {
       "key": "spot:OKX:MENGO",
       "at": "2026-11-22T11:07:10.333Z",
@@ -21,14 +29,6 @@
       "projectId": "okx_bot"
     },
     {
-      "key": "referral:honeygain:passive_bandwidth:2026-11-21",
-      "at": "2026-11-21T09:38:11.739Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1414,
-      "projectId": "honeygain"
-    },
-    {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
       "at": "2026-10-26T06:01:41.734Z",
       "category": "news",
@@ -41,41 +41,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-22",
+    "date": "2026-11-23",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "okx_bot",
-        "angle": "tanpa_pantau_chart",
-        "variant": 70669,
+        "projectId": "honeygain",
+        "angle": "passive_bandwidth",
+        "variant": 61744,
         "copyStyleId": "E",
         "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
         "time": "13:00",
-        "kind": "crypto",
-        "cryptoCategory": "spot"
+        "kind": "referral",
+        "projectId": "okx_bot",
+        "angle": "fitur_okx",
+        "variant": 64035,
+        "copyStyleId": "A",
+        "copyStyleName": "Gaya A (Storytelling / Relatable)"
       },
       {
         "time": "19:00",
-        "kind": "referral",
-        "projectId": "beincom",
-        "angle": "airdrop_klaim",
-        "variant": 24792,
-        "copyStyleId": "C",
-        "copyStyleName": "Gaya C (Update / Social Proof)"
+        "kind": "crypto",
+        "cryptoCategory": "spot"
       },
       {
         "time": "21:00",
         "kind": "referral",
         "projectId": "grass",
-        "angle": "airdrop_cuan",
-        "variant": 12002,
-        "copyStyleId": "C",
-        "copyStyleName": "Gaya C (Update / Social Proof)"
+        "angle": "saldo_usdc_sol",
+        "variant": 16205,
+        "copyStyleId": "A",
+        "copyStyleName": "Gaya A (Storytelling / Relatable)"
       }
     ],
-    "createdAt": "2026-11-22T03:01:53.376Z"
+    "createdAt": "2026-11-23T08:55:05.100Z"
   }
 }
