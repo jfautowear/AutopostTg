@@ -11,6 +11,15 @@
       "reactions": 0,
       "score": 10
     },
+    "652192072": {
+      "id": 652192072,
+      "username": "ZayJII",
+      "firstName": "Perlubangan",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
     "1129802030": {
       "id": 1129802030,
       "username": "hazura0",
@@ -34,9 +43,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 7,
+      "messages": 12,
       "reactions": 0,
-      "score": 14
+      "score": 24
     },
     "7947129467": {
       "id": 7947129467,
@@ -115,12 +124,30 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
+      "messages": 8,
+      "reactions": 0,
+      "score": 16
+    },
+    "6642380056": {
+      "id": 6642380056,
+      "username": null,
+      "firstName": "Shandy",
+      "lastName": "GramMiner",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "8028556373": {
+      "id": 8028556373,
+      "username": "Hanuunal",
+      "firstName": "Flying",
+      "lastName": "'S",
       "messages": 1,
       "reactions": 0,
       "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-23T08:31:15.096Z",
+  "updatedAt": "2026-11-23T14:13:47.052Z",
   "chatId": -1002232474263
 }
