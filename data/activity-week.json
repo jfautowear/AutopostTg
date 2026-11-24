@@ -7,9 +7,9 @@
       "username": "Anargyadigitizer",
       "firstName": "Gde Mahandika Surya Anarga",
       "lastName": null,
-      "messages": 5,
+      "messages": 8,
       "reactions": 0,
-      "score": 10
+      "score": 16
     },
     "652192072": {
       "id": 652192072,
@@ -43,9 +43,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 12,
+      "messages": 14,
       "reactions": 0,
-      "score": 24
+      "score": 28
     },
     "7947129467": {
       "id": 7947129467,
@@ -106,9 +106,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "7342944272": {
       "id": 7342944272,
@@ -145,9 +145,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "5978663615": {
+      "id": 5978663615,
+      "username": "Shirou01",
+      "firstName": "Shiro",
+      "lastName": "#TelomonBot",
+      "messages": 4,
+      "reactions": 0,
+      "score": 8
+    },
+    "8231841888": {
+      "id": 8231841888,
+      "username": null,
+      "firstName": "Satelit",
+      "lastName": null,
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-23T14:13:47.052Z",
+  "updatedAt": "2026-11-24T01:43:50.589Z",
   "chatId": -1002232474263
 }
