@@ -34,18 +34,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 16,
+      "messages": 17,
       "reactions": 0,
-      "score": 32
+      "score": 34
     },
     "7947129467": {
       "id": 7947129467,
@@ -79,9 +79,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 13,
+      "messages": 18,
       "reactions": 0,
-      "score": 26
+      "score": 36
     },
     "6953094293": {
       "id": 6953094293,
@@ -124,9 +124,9 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "6642380056": {
       "id": 6642380056,
@@ -178,12 +178,21 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 4,
+      "messages": 7,
       "reactions": 0,
-      "score": 8
+      "score": 14
+    },
+    "8368832872": {
+      "id": 8368832872,
+      "username": "vvhawzhsh",
+      "firstName": "ldya",
+      "lastName": "rahmi",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-25T04:34:33.599Z",
+  "updatedAt": "2026-11-25T14:56:02.986Z",
   "chatId": -1002232474263
 }
