@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-24-09:00",
-  "lastPostedAt": "2026-11-24T05:56:03.697Z",
+  "lastPostedSlot": "2026-11-25-09:00",
+  "lastPostedAt": "2026-11-25T02:17:26.551Z",
   "recentContent": [
+    {
+      "key": "referral:beincom:join_sekarang:2026-11-25",
+      "at": "2026-11-25T02:17:26.550Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1426,
+      "projectId": "beincom"
+    },
     {
       "key": "referral:chainers:withdraw_pol_bnb:2026-11-24",
       "at": "2026-11-24T05:56:03.696Z",
@@ -11,22 +19,6 @@
       "chatId": "@jfnetworknet",
       "messageId": 1424,
       "projectId": "chainers"
-    },
-    {
-      "key": "referral:okx_bot:fitur_okx:2026-11-23",
-      "at": "2026-11-23T08:55:08.715Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1421,
-      "projectId": "okx_bot"
-    },
-    {
-      "key": "spot:OKX:MENGO",
-      "at": "2026-11-22T11:07:10.333Z",
-      "category": "spot",
-      "chatId": "@jfnetworknet",
-      "messageId": 1418,
-      "projectId": null
     },
     {
       "key": "news:https://www.okx.ac/en-us/help/okx-to-support-velodrome-crypto-migration",
@@ -41,41 +33,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-24",
+    "date": "2026-11-25",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "chainers",
-        "angle": "withdraw_pol_bnb",
-        "variant": 84146,
-        "copyStyleId": "B",
-        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
-      },
-      {
-        "time": "13:00",
-        "kind": "referral",
-        "projectId": "honeygain",
-        "angle": "cair_ke_crypto",
-        "variant": 94994,
+        "projectId": "beincom",
+        "angle": "join_sekarang",
+        "variant": 84904,
         "copyStyleId": "E",
         "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
-        "time": "19:00",
+        "time": "13:00",
         "kind": "crypto",
-        "cryptoCategory": "topcoin"
+        "cryptoCategory": "spot"
+      },
+      {
+        "time": "19:00",
+        "kind": "referral",
+        "projectId": "chainers",
+        "angle": "bukti_withdraw",
+        "variant": 67759,
+        "copyStyleId": "E",
+        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
         "time": "21:00",
         "kind": "referral",
-        "projectId": "beincom",
-        "angle": "wallet_balance",
-        "variant": 51733,
-        "copyStyleId": "D",
-        "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
+        "projectId": "grass",
+        "angle": "saldo_usdc_sol",
+        "variant": 40036,
+        "copyStyleId": "B",
+        "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       }
     ],
-    "createdAt": "2026-11-24T05:55:57.082Z"
+    "createdAt": "2026-11-25T02:17:20.990Z"
   }
 }
