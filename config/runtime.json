@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-26-09:00",
-  "lastPostedAt": "2026-11-26T04:56:24.416Z",
+  "lastPostedSlot": "2026-11-26-21:00",
+  "lastPostedAt": "2026-11-26T14:59:55.430Z",
   "recentContent": [
+    {
+      "key": "referral:chainers:bukti_withdraw:2026-11-26",
+      "at": "2026-11-26T14:59:55.430Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1443,
+      "projectId": "chainers"
+    },
     {
       "key": "referral:okx_bot:fitur_okx:2026-11-26",
       "at": "2026-11-26T04:56:24.416Z",
@@ -19,14 +27,6 @@
       "chatId": "@jfnetworknet",
       "messageId": 1428,
       "projectId": "chainers"
-    },
-    {
-      "key": "referral:beincom:join_sekarang:2026-11-25",
-      "at": "2026-11-25T02:17:26.550Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1426,
-      "projectId": "beincom"
     }
   ],
   "recentNewsUrls": [
