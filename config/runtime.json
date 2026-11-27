@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-26-21:00",
-  "lastPostedAt": "2026-11-26T14:59:55.430Z",
+  "lastPostedSlot": "2026-11-27-13:00",
+  "lastPostedAt": "2026-11-27T08:10:41.117Z",
   "recentContent": [
+    {
+      "key": "referral:chainers:withdraw_pol_bnb:2026-11-27",
+      "at": "2026-11-27T08:10:41.117Z",
+      "category": "referral",
+      "chatId": "@jfnetworknet",
+      "messageId": 1445,
+      "projectId": "chainers"
+    },
     {
       "key": "referral:chainers:bukti_withdraw:2026-11-26",
       "at": "2026-11-26T14:59:55.430Z",
@@ -19,14 +27,6 @@
       "chatId": "@jfnetworknet",
       "messageId": 1437,
       "projectId": "okx_bot"
-    },
-    {
-      "key": "referral:chainers:bukti_withdraw:2026-11-25",
-      "at": "2026-11-25T12:38:32.189Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1428,
-      "projectId": "chainers"
     }
   ],
   "recentNewsUrls": [
@@ -34,41 +34,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-26",
+    "date": "2026-11-27",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
-        "projectId": "okx_bot",
-        "angle": "fitur_okx",
-        "variant": 13,
-        "copyStyleId": "D",
-        "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
+        "projectId": "beincom",
+        "angle": "join_sekarang",
+        "variant": 77179,
+        "copyStyleId": "E",
+        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
         "time": "13:00",
-        "kind": "crypto",
-        "cryptoCategory": "topcoin"
+        "kind": "referral",
+        "projectId": "chainers",
+        "angle": "withdraw_pol_bnb",
+        "variant": 29779,
+        "copyStyleId": "E",
+        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
       },
       {
         "time": "19:00",
         "kind": "referral",
-        "projectId": "grass",
-        "angle": "saldo_usdc_sol",
-        "variant": 61711,
+        "projectId": "okx_bot",
+        "angle": "tanpa_pantau_chart",
+        "variant": 74216,
         "copyStyleId": "B",
         "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       },
       {
         "time": "21:00",
-        "kind": "referral",
-        "projectId": "chainers",
-        "angle": "bukti_withdraw",
-        "variant": 39760,
-        "copyStyleId": "A",
-        "copyStyleName": "Gaya A (Storytelling / Relatable)"
+        "kind": "crypto",
+        "cryptoCategory": "topcoin"
       }
     ],
-    "createdAt": "2026-11-26T04:56:20.074Z"
+    "createdAt": "2026-11-27T08:10:31.718Z"
   }
 }
