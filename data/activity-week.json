@@ -25,9 +25,9 @@
       "username": "hazura0",
       "firstName": "Miu",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "6046806167": {
       "id": 6046806167,
@@ -43,9 +43,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 25,
+      "messages": 27,
       "reactions": 0,
-      "score": 50
+      "score": 54
     },
     "7947129467": {
       "id": 7947129467,
@@ -79,9 +79,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 24,
+      "messages": 25,
       "reactions": 0,
-      "score": 48
+      "score": 50
     },
     "6953094293": {
       "id": 6953094293,
@@ -178,9 +178,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 7,
+      "messages": 9,
       "reactions": 0,
-      "score": 14
+      "score": 18
     },
     "8368832872": {
       "id": 8368832872,
@@ -193,6 +193,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-27T00:01:42.979Z",
+  "updatedAt": "2026-11-27T08:18:01.504Z",
   "chatId": -1002232474263
 }
