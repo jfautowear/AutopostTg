@@ -43,9 +43,9 @@
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 18,
+      "messages": 25,
       "reactions": 0,
-      "score": 36
+      "score": 50
     },
     "7947129467": {
       "id": 7947129467,
@@ -61,9 +61,9 @@
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 6,
+      "messages": 9,
       "reactions": 0,
-      "score": 12
+      "score": 18
     },
     "7953256868": {
       "id": 7953256868,
@@ -79,18 +79,18 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 22,
+      "messages": 24,
       "reactions": 0,
-      "score": 44
+      "score": 48
     },
     "6953094293": {
       "id": 6953094293,
       "username": "Agnes1712",
       "firstName": "Fiqah",
       "lastName": null,
-      "messages": 3,
+      "messages": 4,
       "reactions": 0,
-      "score": 6
+      "score": 8
     },
     "6046999198": {
       "id": 6046999198,
@@ -106,9 +106,9 @@
       "username": "Hari_pornomo",
       "firstName": "Kotaro 👁️",
       "lastName": "Minami",
-      "messages": 4,
+      "messages": 5,
       "reactions": 0,
-      "score": 8
+      "score": 10
     },
     "7342944272": {
       "id": 7342944272,
@@ -124,9 +124,9 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 10,
+      "messages": 12,
       "reactions": 0,
-      "score": 20
+      "score": 24
     },
     "6642380056": {
       "id": 6642380056,
@@ -193,6 +193,6 @@
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-26T15:39:59.566Z",
+  "updatedAt": "2026-11-27T00:01:42.979Z",
   "chatId": -1002232474263
 }
