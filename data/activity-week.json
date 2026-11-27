@@ -16,9 +16,9 @@
       "username": "ZayJII",
       "firstName": "Perlubangan",
       "lastName": null,
-      "messages": 1,
+      "messages": 2,
       "reactions": 0,
-      "score": 2
+      "score": 4
     },
     "1129802030": {
       "id": 1129802030,
@@ -34,18 +34,18 @@
       "username": "Andrehalim77",
       "firstName": "Budi",
       "lastName": "Santoso PIXLANDS",
-      "messages": 5,
+      "messages": 6,
       "reactions": 0,
-      "score": 10
+      "score": 12
     },
     "7661802183": {
       "id": 7661802183,
       "username": "Roopppi",
       "firstName": "Roopi",
       "lastName": null,
-      "messages": 27,
+      "messages": 29,
       "reactions": 0,
-      "score": 54
+      "score": 58
     },
     "7947129467": {
       "id": 7947129467,
@@ -61,9 +61,9 @@
       "username": null,
       "firstName": "Denys",
       "lastName": "Cydo",
-      "messages": 9,
+      "messages": 10,
       "reactions": 0,
-      "score": 18
+      "score": 20
     },
     "7953256868": {
       "id": 7953256868,
@@ -79,9 +79,9 @@
       "username": "ajiajot",
       "firstName": "Jhon_starlex",
       "lastName": "$PERIA",
-      "messages": 25,
+      "messages": 27,
       "reactions": 0,
-      "score": 50
+      "score": 54
     },
     "6953094293": {
       "id": 6953094293,
@@ -124,9 +124,9 @@
       "username": "ahongsigma",
       "firstName": "ahong #pixelAFK",
       "lastName": null,
-      "messages": 12,
+      "messages": 13,
       "reactions": 0,
-      "score": 24
+      "score": 26
     },
     "6642380056": {
       "id": 6642380056,
@@ -151,9 +151,9 @@
       "username": "Shirou01",
       "firstName": "Shiro",
       "lastName": "#TelomonBot",
-      "messages": 11,
+      "messages": 12,
       "reactions": 0,
-      "score": 22
+      "score": 24
     },
     "8231841888": {
       "id": 8231841888,
@@ -178,9 +178,9 @@
       "username": null,
       "firstName": "Agis",
       "lastName": "Tambunan",
-      "messages": 9,
+      "messages": 11,
       "reactions": 0,
-      "score": 18
+      "score": 22
     },
     "8368832872": {
       "id": 8368832872,
@@ -190,9 +190,27 @@
       "messages": 1,
       "reactions": 0,
       "score": 2
+    },
+    "5632214690": {
+      "id": 5632214690,
+      "username": "Budiarisno",
+      "firstName": "Budi",
+      "lastName": "Arisno",
+      "messages": 1,
+      "reactions": 0,
+      "score": 2
+    },
+    "7140820314": {
+      "id": 7140820314,
+      "username": "Nandasyh779",
+      "firstName": "T",
+      "lastName": "E",
+      "messages": 3,
+      "reactions": 0,
+      "score": 6
     }
   },
   "lastPostedWeekKey": "2026-W47",
-  "updatedAt": "2026-11-27T08:18:01.504Z",
+  "updatedAt": "2026-11-27T18:17:14.658Z",
   "chatId": -1002232474263
 }
