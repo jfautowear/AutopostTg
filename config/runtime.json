@@ -1,9 +1,17 @@
 {
   "exchangeSource": "auto",
   "updatedAt": null,
-  "lastPostedSlot": "2026-11-27-13:00",
-  "lastPostedAt": "2026-11-27T08:10:41.117Z",
+  "lastPostedSlot": "2026-11-28-13:00",
+  "lastPostedAt": "2026-11-28T10:13:03.951Z",
   "recentContent": [
+    {
+      "key": "topcoin:2026-11-28:b2",
+      "at": "2026-11-28T10:13:03.950Z",
+      "category": "topcoin",
+      "chatId": "@jfnetworknet",
+      "messageId": 1451,
+      "projectId": null
+    },
     {
       "key": "referral:chainers:withdraw_pol_bnb:2026-11-27",
       "at": "2026-11-27T08:10:41.117Z",
@@ -11,22 +19,6 @@
       "chatId": "@jfnetworknet",
       "messageId": 1445,
       "projectId": "chainers"
-    },
-    {
-      "key": "referral:chainers:bukti_withdraw:2026-11-26",
-      "at": "2026-11-26T14:59:55.430Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1443,
-      "projectId": "chainers"
-    },
-    {
-      "key": "referral:okx_bot:fitur_okx:2026-11-26",
-      "at": "2026-11-26T04:56:24.416Z",
-      "category": "referral",
-      "chatId": "@jfnetworknet",
-      "messageId": 1437,
-      "projectId": "okx_bot"
     }
   ],
   "recentNewsUrls": [
@@ -34,41 +26,41 @@
   ],
   "lastNewsAt": "2026-10-26T06:01:41.735Z",
   "dailyPlan": {
-    "date": "2026-11-27",
+    "date": "2026-11-28",
     "slots": [
       {
         "time": "09:00",
         "kind": "referral",
         "projectId": "beincom",
-        "angle": "join_sekarang",
-        "variant": 77179,
-        "copyStyleId": "E",
-        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
+        "angle": "airdrop_klaim",
+        "variant": 28948,
+        "copyStyleId": "D",
+        "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
       },
       {
         "time": "13:00",
-        "kind": "referral",
-        "projectId": "chainers",
-        "angle": "withdraw_pol_bnb",
-        "variant": 29779,
-        "copyStyleId": "E",
-        "copyStyleName": "Gaya E (To-The-Point / Bullet Points)"
+        "kind": "crypto",
+        "cryptoCategory": "topcoin"
       },
       {
         "time": "19:00",
         "kind": "referral",
-        "projectId": "okx_bot",
-        "angle": "tanpa_pantau_chart",
-        "variant": 74216,
+        "projectId": "grass",
+        "angle": "airdrop_cuan",
+        "variant": 1466,
         "copyStyleId": "B",
         "copyStyleName": "Gaya B (Edukasi Singkat / Insight)"
       },
       {
         "time": "21:00",
-        "kind": "crypto",
-        "cryptoCategory": "topcoin"
+        "kind": "referral",
+        "projectId": "chainers",
+        "angle": "withdraw_pol_bnb",
+        "variant": 51718,
+        "copyStyleId": "D",
+        "copyStyleName": "Gaya D (FOMO Halus / Peluang Awal)"
       }
     ],
-    "createdAt": "2026-11-27T08:10:31.718Z"
+    "createdAt": "2026-11-28T10:12:57.021Z"
   }
 }
